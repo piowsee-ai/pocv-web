@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import { FaInstagram, FaTwitter, FaLinkedinIn } from "react-icons/fa";
 
 export function Footer() {
     return (
@@ -13,11 +14,11 @@ export function Footer() {
                             width={24}
                             height={24}
                         />
-                        <span>LandingAI</span>
+                        <span className='relative top-[-1px]'>pocv</span>
                     </Link>
                     <p className="text-neutral-500">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed fringilla lectus ut aliquam hendrerit.
-                        Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                        <span className="font-semibold text-foreground">pocv</span> dari piowsee.ai membantu kamu membuat CV modern yang rapi, cepat, dan ramah ATS untuk mendukung kariermu.
+
                     </p>
                     <p className="text-xs font-inter font-light text-neutral-400 tracking-tight">Copyright © 2025 - All rights reserved</p>
                     <div className="flex items-center gap-2 text-xs text-green-600">
@@ -26,20 +27,12 @@ export function Footer() {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-16 sm:grid-cols-3">
-                    <div className="space-y-4">
-                        <h3 className="font-semibold text-neutral-800">FREE TOOLS</h3>
-                        <ul className="space-y-2 text-neutral-500">
-                            <li><Link href="#" className="hover:text-neutral-800">Tool 1</Link></li>
-                            <li><Link href="#" className="hover:text-neutral-800">Tool 2</Link></li>
-                        </ul>
-                    </div>
-
+                <div className="grid grid-cols-2 gap-16 sm:grid-cols-2">
                     <div className="space-y-4">
                         <h3 className="font-semibold text-neutral-800">LINKS</h3>
                         <ul className="space-y-2 text-neutral-500">
-                            <li><Link href="#" className="hover:text-neutral-800">Blog</Link></li>
-                            <li><Link href="#" className="hover:text-neutral-800">Support</Link></li>
+                            {/* <li><Link href="#" className="hover:text-neutral-800">Blog</Link></li> */}
+                            <li><Link href="#" className="hover:text-neutral-800">Bantuan</Link></li>
                             <li><Link href="#" className="hover:text-neutral-800">Demo</Link></li>
                         </ul>
                     </div>
@@ -50,6 +43,21 @@ export function Footer() {
                             <li><Link href="/terms" className="hover:text-neutral-800">Terms of Service</Link></li>
                             <li><Link href="/privacy" className="hover:text-neutral-800">Privacy Policy</Link></li>
                         </ul>
+                    </div>
+                </div>
+
+                <div className="space-y-4 mr-4 text-right">
+                    <h3 className="font-semibold text-neutral-800">FOLLOW US</h3>
+                    <div className="flex gap-4 text-neutral-500">
+                        <Link href="https://instagram.com/piowsee.ai" target="_blank">
+                            <FaInstagram className="h-5 w-5 hover:text-neutral-800 transition-colors" />
+                        </Link>
+                        <Link href="https://twitter.com/piowsee_ai" target="_blank">
+                            <FaTwitter className="h-5 w-5 hover:text-neutral-800 transition-colors" />
+                        </Link>
+                        <Link href="https://linkedin.com/company/piowsee-ai" target="_blank">
+                            <FaLinkedinIn className="h-5 w-5 hover:text-neutral-800 transition-colors" />
+                        </Link>
                     </div>
                 </div>
             </div>

@@ -20,7 +20,7 @@ export function SocialProof() {
                         </span>
 
                         <span className="absolute whitespace-nowrap text-xs font-semibold opacity-0 transition-opacity duration-250 group-hover:opacity-100 group-hover:delay-200">
-                            it could be you!
+                            ini bisa kamu!
                         </span>
                     </Link>
                 </div>
@@ -34,7 +34,7 @@ export function SocialProof() {
                 </div>
 
                 <p className="text-sm text-muted-foreground sm:ml-2">
-                    <span className="font-semibold text-foreground">100+ entrepreneurs</span> solved business problems
+                    <span className="font-semibold text-foreground">100+ orang</span> telah membuat CV
                 </p>
             </div>
 
@@ -42,7 +42,7 @@ export function SocialProof() {
                 <p className="text-sm text-neutral-600">
                     Built with love by <span className="font-semibold text-foreground">piowsee.ai</span>
                 </p>
-                <Image src="/logo-192.png" alt="Piowsee Logo" width={20} height={20} className="h-5 w-5" />
+                <Image src="/images/logo-piowsee.png" alt="Piowsee Logo" width={20} height={20} className="h-5 w-5" />
             </div>
         </section>
     );

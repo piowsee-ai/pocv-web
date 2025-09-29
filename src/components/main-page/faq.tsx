@@ -7,17 +7,29 @@ import {
 
 const faqData = [
     {
-        question: "What do we provide?",
+        question: "Apa itu pocv?",
         answer:
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+            "pocv adalah pembuat CV modern dari piowsee.ai yang membantu kamu membuat CV profesional dengan cepat, rapi, dan siap dipakai untuk melamar kerja.",
     },
     {
-        question: "Can I get a refund?",
-        answer: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+        question: "Apakah pocv gratis?",
+        answer: "Ya! Kamu bisa mencoba membuat CV secara gratis. Fitur premium akan tersedia untuk pembersihan dan pembuatan dengan bantuan AI.",
     },
     {
-        question: "Do you accept PayPal?",
-        answer: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+        question: "Apa itu ATS?",
+        answer: "ATS (Applicant Tracking System) adalah sistem yang digunakan perusahaan untuk menyaring CV pelamar secara otomatis. CV yang tidak sesuai format sering kali gagal terbaca oleh ATS.",
+    },
+    {
+        question: "Apakah data saya aman?",
+        answer: "Tentu. Data pribadi dan dokumen CV kamu disimpan dengan aman dan hanya bisa diakses oleh kamu.",
+    },
+    {
+        question: "Bisa nggak saya unduh CV dalam format PDF?",
+        answer: "Bisa. Semua CV yang dibuat di pocv dapat diunduh dalam format PDF yang siap dikirim ke perusahaan atau recruiter.",
+    },
+    {
+        question: "Ada masalah dalam pembuatan CV saya, gimana?",
+        answer: "Kamu bisa menghubungi kami melalui email di support@piowsee.ai, atau klik tulisan 'Bantuan' di bagian bawah halaman ini.",
     },
 ];
 

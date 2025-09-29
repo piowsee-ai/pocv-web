@@ -56,7 +56,7 @@ export function Header({ session }: SessionData) {
                         width={24}
                         height={24}
                     />
-                    <span className="text-lg font-bold">LandingAI</span>
+                    <span className="text-lg font-bold leading-none align-middle relative top-[-1px]">pocv</span>
                 </Link>
 
                 <NavigationMenu className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden md:flex">
@@ -158,11 +158,11 @@ export function Header({ session }: SessionData) {
                     ) : (
                         <>
                             <Button variant="ghost" asChild>
-                                <Link href="/login">Log in</Link>
+                                <Link href="/login">Masuk</Link>
                             </Button>
                             <Button asChild>
                                 <Link href="/signup">
-                                    Sign up
+                                    Daftar
                                     <ArrowUpRight className="ml-2 h-4 w-4" />
                                 </Link>
                             </Button>

@@ -6,21 +6,21 @@ import Providers from "@/components/providers";
 
 export const metadata: Metadata = {
   title: {
-    template: `%s | LandingAI`,
-    default: "LandingAI :: a piowsee creation",
+    template: `%s | pocv`,
+    default: "pocv :: a piowsee creation",
   },
   description:
-    "Official Website of LandingAI.",
+    "Official Website of pocv.",
   keywords: [
     "Landing AI",
   ],
   authors: [{ name: "Vearance", url: process.env.NEXT_BASE_URL }],
-  applicationName: "LandingAI",
+  applicationName: "pocv",
   creator: "Vearance",
-  publisher: "piowseeAI",
+  publisher: "piowsee.ai",
 
   openGraph: {
-    title: "Landing AI :: a piowseeAI creation",
+    title: "Landing AI :: a piowsee.ai creation",
     description:
       "Official Website of Landing AI.",
     url: process.env.NEXT_BASE_URL,
@@ -39,9 +39,9 @@ export const metadata: Metadata = {
   // TODO: assets link, twitter site, etc.
   twitter: {
     card: "summary_large_image",
-    site: "@LandingAI",
+    site: "@pocv",
     creator: "@Vearance",
-    title: "Landing AI :: a piowseeAI creation",
+    title: "Landing AI :: a piowsee.ai creation",
     description:
       "Official Website of Landing AI.",
     images: [
