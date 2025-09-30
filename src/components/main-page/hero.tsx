@@ -6,7 +6,7 @@ export function Hero() {
     return (
         <section className="container mx-auto flex max-w-7xl flex-col items-center px-4 py-20 text-center md:py-24">
             <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl md:text-6xl lg:text-6xl">
-                Bangun CV Profesional
+                Buat CV Profesional
                 <br />
                 dalam Hitungan
                 <br />

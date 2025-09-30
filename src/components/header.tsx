@@ -23,19 +23,19 @@ export function Header({ session }: SessionData) {
 
     const features: { title: string; href: string; description: string }[] = [
         {
-            title: "Tool 1",
+            title: "AI Review",
             href: "/tools-1",
-            description: "Tool 1 description.",
+            description: "Biarkan AI mengecek CV kamu dan beri saran perbaikan langsung.",
         },
         {
-            title: "Tool 2",
+            title: "AI Job Match",
             href: "/tools-2",
-            description: "Tool 2 description.",
+            description: "Rekomendasi pekerjaan yang cocok dari AI untuk kamu.",
         },
         {
-            title: "Tool 3",
+            title: "AI CV Scoring",
             href: "/tools-3",
-            description: "Tool 3 description.",
+            description: "AI akan menilai seberapa bagus CV kamu.",
         },
     ];
 
@@ -62,13 +62,29 @@ export function Header({ session }: SessionData) {
                 <NavigationMenu className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden md:flex">
                     <NavigationMenuList className="gap-12">
                         <NavigationMenuItem>
+                            <NavigationMenuLink
+                                asChild
+                                className="inline-flex h-auto items-center justify-center bg-transparent p-0
+                                font-medium text-muted-foreground transition-colors hover:bg-transparent hover:text-foreground
+                                focus:text-muted-foreground focus:bg-transparent focus:outline-none"
+                            >
+                                <Link
+                                    href="/#pricing"
+                                    className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:bg-transparent hover:text-foreground active:bg-transparent"
+                                >
+                                    Buat CV
+                                </Link>
+                            </NavigationMenuLink>
+                        </NavigationMenuItem>
+
+                        <NavigationMenuItem>
                             <NavigationMenuTrigger
                                 className="group inline-flex h-auto items-center justify-center bg-transparent p-0
                                 font-medium text-muted-foreground transition-colors hover:bg-transparent hover:text-foreground
                                 focus:text-muted-foreground focus:bg-transparent focus:outline-none data-[state=open]:!text-foreground
                                 data-[state=open]:!bg-transparent"
                             >
-                                Features
+                                Fitur Tambahan
                             </NavigationMenuTrigger>
 
                             <NavigationMenuContent className="bg-violet-50">
@@ -116,22 +132,6 @@ export function Header({ session }: SessionData) {
                                     </li>
                                 </ul>
                             </NavigationMenuContent>
-                        </NavigationMenuItem>
-
-                        <NavigationMenuItem>
-                            <NavigationMenuLink
-                                asChild
-                                className="inline-flex h-auto items-center justify-center bg-transparent p-0
-                                font-medium text-muted-foreground transition-colors hover:bg-transparent hover:text-foreground
-                                focus:text-muted-foreground focus:bg-transparent focus:outline-none"
-                            >
-                                <Link
-                                    href="/#pricing"
-                                    className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:bg-transparent hover:text-foreground active:bg-transparent"
-                                >
-                                    Pricing
-                                </Link>
-                            </NavigationMenuLink>
                         </NavigationMenuItem>
 
                         <NavigationMenuItem>
