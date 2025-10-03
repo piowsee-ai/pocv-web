@@ -27,7 +27,7 @@ export function ProfileDropdown({ session }: ProfileDropdownProps) {
             <DropdownMenuTrigger asChild>
                 <Button
                     variant="outline"
-                    className="flex items-center gap-2 bg-violet-50 hover:bg-violet-100"
+                    className="flex items-center gap-2 bg-emerald-50 hover:bg-emerald-100"
                 >
                     <Avatar className="h-6 w-6 border-2 cursor-pointer">
                         <Image

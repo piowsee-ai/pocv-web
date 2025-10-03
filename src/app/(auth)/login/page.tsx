@@ -23,7 +23,7 @@ export default function Login() {
     return (
         <main className="flex min-h-screen flex-col items-center justify-center p-4">
             <div className="absolute inset-0 -z-10 h-full w-full">
-                <div className="absolute inset-0 bg-violet-100 bg-[radial-gradient(ellipse_at_center,transparent_40%,theme(colors.neutral.100))] dark:bg-neutral-900 dark:bg-[radial-gradient(ellipse_at_center,transparent_40%,theme(colors.neutral.900))]"></div>
+                <div className="absolute inset-0 bg-emerald-100 bg-[radial-gradient(ellipse_at_center,transparent_40%,theme(colors.neutral.100))] dark:bg-neutral-900 dark:bg-[radial-gradient(ellipse_at_center,transparent_40%,theme(colors.neutral.900))]"></div>
                 <div className="absolute inset-0 bg-[radial-gradient(theme(colors.neutral.300)_1px,transparent_1px)] bg-size-[20px_20px] dark:bg-[radial-gradient(theme(colors.neutral.700)_1px,transparent_1px)]"></div>
             </div>
 
@@ -37,7 +37,7 @@ export default function Login() {
                     </Button>
                 </div>
 
-                <Card className="w-full max-w-sm bg-violet-50 -mt-2">
+                <Card className="w-full max-w-sm bg-emerald-50 -mt-2">
                     <CardHeader>
                         <CardTitle className="text-2xl">Welcome back.</CardTitle>
                         <CardDescription>

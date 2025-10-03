@@ -34,7 +34,7 @@ export function GoogleButton() {
     };
 
     return (
-        <Button onClick={handleGoogleSignIn} variant="outline" className="bg-violet-50 hover:bg-neutral-50">
+        <Button onClick={handleGoogleSignIn} variant="outline" className="bg-emerald-50 hover:bg-neutral-50">
             <Image
                 src="/icons/google.svg"
                 alt="Google"

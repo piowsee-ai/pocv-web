@@ -5,7 +5,7 @@ import { Star, Plus } from "lucide-react";
 export function SocialProof() {
     return (
         <section className="container mx-auto max-w-7xl flex flex-col items-center px-4">
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-2">
+            {/* <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-2">
                 <div className="flex -space-x-4">
                     <Image src="/images/user1.png" alt="1" width={40} height={40} className="rounded-full border-2 border-background" />
                     <Image src="/images/user2.png" alt="2" width={40} height={40} className="rounded-full border-2 border-background" />
@@ -36,7 +36,7 @@ export function SocialProof() {
                 <p className="text-sm text-muted-foreground sm:ml-2">
                     <span className="font-semibold text-foreground">100+ orang</span> telah membuat CV
                 </p>
-            </div>
+            </div> */}
 
             <div className="justify-center flex items-center gap-2 mt-8 mb-10">
                 <p className="text-sm text-neutral-600">

@@ -42,7 +42,7 @@ export function Header({ session }: SessionData) {
     return (
         <header
             className={cn(
-                "fixed top-0 z-50 w-full border-b bg-violet-50/70 backdrop-blur-sm transition-transform duration-300",
+                "fixed top-0 z-50 w-full border-b bg-emerald-50/70 backdrop-blur-sm transition-transform duration-300",
                 scrollDirection === "down"
                     ? "-translate-y-full"
                     : "translate-y-0"
@@ -87,7 +87,7 @@ export function Header({ session }: SessionData) {
                                 Fitur Tambahan
                             </NavigationMenuTrigger>
 
-                            <NavigationMenuContent className="bg-violet-50">
+                            <NavigationMenuContent className="bg-emerald-50">
                                 <ul className="grid w-[300px]">
                                     <li>
                                         <NavigationMenuLink
@@ -157,7 +157,7 @@ export function Header({ session }: SessionData) {
                         <ProfileDropdown session={session} />
                     ) : (
                         <>
-                            <Button variant="ghost" asChild>
+                            <Button variant="ghost" className="hover:bg-emerald-100" asChild>
                                 <Link href="/login">Masuk</Link>
                             </Button>
                             <Button asChild>
