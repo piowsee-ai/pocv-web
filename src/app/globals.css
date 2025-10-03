@@ -202,3 +202,22 @@
 html {
   scroll-behavior: smooth;
 }
+
+@layer utilities {
+  .bg-line-grid {
+    background-color: hsl(var(--background));
+    background-image:
+      linear-gradient(to right, var(--color-neutral-600) 0.1px, transparent 1px),
+      linear-gradient(to bottom, var(--color-neutral-600) 0.1px, transparent 1px);
+    background-size: 10px 10px;
+    opacity: 0.1;
+  }
+
+  .dark .bg-line-grid {
+    background-image:
+      linear-gradient(to right, hsl(var(--muted-foreground) / 0.2) 1px, transparent 1px),
+      linear-gradient(to bottom, hsl(var(--muted-foreground) / 0.2) 1px, transparent 1px);
+    background-size: 10px 10px;
+    opacity: 0.1;
+  }
+}

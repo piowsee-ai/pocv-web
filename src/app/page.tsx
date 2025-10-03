@@ -5,6 +5,7 @@ import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { Hero } from "@/components/main-page/hero";
 import { SocialProof } from "@/components/main-page/social-proof";
+import { Showcase } from '@/components/main-page/showcase';
 import { Faq } from "@/components/main-page/faq";
 
 export default async function Home() {
@@ -20,6 +21,7 @@ export default async function Home() {
       <Header session={session} />
       <Hero />
       <SocialProof />
+      <Showcase />
       <Faq />
       <Footer />
     </main>
