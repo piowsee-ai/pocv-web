@@ -7,7 +7,7 @@ export default function PrivacyMulti({ lang }: { lang: "en" | "id" }) {
                 <div className="prose prose-neutral dark:prose-invert">
                     <h2>1. Introduction</h2>
                     <p>
-                        Welcome to <strong>pocv</strong>, a product operated by <strong>piowsee.ai</strong>. ! These Terms of Service
+                        Welcome to <strong>pocv</strong>, a product operated by <strong>piowsee.ai</strong>! These Terms of Service
                         (“Terms”) govern your use of our website and services. By using our
                         service, you agree to follow these Terms.
                     </p>
