@@ -1,15 +1,12 @@
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-// import { redirect } from "next/navigation";
 
 import { WizardStep } from "@/components/page-1/wizard-step";
 
 export default async function Page1() {
   const session = await auth.api.getSession({ headers: await headers() });
 
-  // if (!session) {
-  //   redirect("/");
-  // }
+  //TODO: pass session as a prop for authorization
 
   return (
     <main className="relative min-h-screen pt-16 pb-20 text-foreground">

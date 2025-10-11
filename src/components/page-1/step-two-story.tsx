@@ -2,6 +2,7 @@ import { Input } from "@/components/ui/input";
 import { TextArea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { WorkExperience } from "@/types/form-data";
+import { Button } from "@/components/ui/button";
 
 interface StepTwoStoryProps {
   formData: {
@@ -17,7 +18,7 @@ interface StepTwoStoryProps {
   removeWorkExperience: (index: number) => void;
 }
 
-function StepTwoStory({
+export function StepTwoStory({
   formData,
   formErrors,
   handleWorkExperienceChange,
@@ -26,7 +27,7 @@ function StepTwoStory({
 }: StepTwoStoryProps) {
   const { workExperiences } = formData;
   return (
-    <div className="space-y-6">
+    <div className="space-y-2">
       {workExperiences.map((exp, i) => (
         <div
           key={i}
@@ -69,15 +70,13 @@ function StepTwoStory({
         </div>
       ))}
 
-      <button
+      <Button
         type="button"
         onClick={addWorkExperience}
-        className="text-[#00B37A] font-semibold hover:underline"
+        className="text-[#00B37A] font-semibold hover:bg-transparent  hover:text-green-700 ml-2" variant="ghost"
       >
         + Tambah pekerjaan lain
-      </button>
+      </Button>
     </div>
   );
 }
-
-export { StepTwoStory };

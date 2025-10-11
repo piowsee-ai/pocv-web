@@ -9,7 +9,7 @@ import { StepTwoForm } from "@/components/page-1/step-two-form";
 import { StepTwoStory } from "@/components/page-1/step-two-story";
 import { WorkExperience } from "@/types/form-data";
 
-function WizardStep() {
+export function WizardStep() {
   const [step, setStep] = useState(1);
   const [useDefaultInput, setUseDefaultInput] = useState(true);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
@@ -85,8 +85,19 @@ function WizardStep() {
     const errors: Record<string, string> = {};
     if (step === 1) {
       if (!formData.name) errors.name = "Nama Lengkap harus diisi.";
-      if (!formData.phone) errors.phone = "Nomor Telepon harus diisi.";
-      if (!formData.email) errors.email = "Alamat Email harus diisi.";
+
+      if (!formData.phone) {
+        errors.phone = "Nomor Telepon harus diisi.";
+      } else if (!/^\d{10,15}$/.test(formData.phone)) {
+        errors.phone = "Nomor Telepon harus berupa 10-15 digit angka.";
+      }
+
+      if (!formData.email) {
+        errors.email = "Alamat Email harus diisi.";
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+        errors.email = "Format email tidak valid.";
+      }
+
       if (!formData.education) errors.education = "Pendidikan harus diisi.";
     }
     if (step === 2) {
@@ -128,20 +139,16 @@ function WizardStep() {
         workExperiences: finalWorkExperiences,
       };
 
-      console.log("Data:", finalData);
-      alert(
-        "Form submitted successfully!" + JSON.stringify(finalData, null, 2)
-      );
-      // TODO: send data to backend
+      // TODO: send "finalData" to backend
     }
   };
 
   const progress = step === 1 ? 0 : 50;
 
   return (
-    <div className="max-w-2xl mx-auto mt-10 bg-white rounded-3xl shadow-[0_8px_24px_rgba(34,197,94,0.4)] dark:bg-neutral-800 overflow-hidden">
+    <div className="max-w-2xl mx-auto mt-10 bg-white rounded-3xl [box-shadow:0_0_30px_5px_rgba(0,0,0,0.10)] dark:bg-neutral-800 overflow-hidden">
       <div className="flex items-center gap-2 px-6 pt-4 pb-2">
-        <div className="px-2 py-0.5 bg-[#EFA0A0] text-black-700 text-sm font-semibold rounded-md">
+        <div className="w-12 h-6 flex items-center justify-center px-2 py-0.5 bg-[#EFA0A0] text-black-700 text-sm font-semibold rounded-md">
           {Math.round(progress)}%
         </div>
         <p className="text-sm text-neutral-600 dark:text-neutral-300">
@@ -151,7 +158,7 @@ function WizardStep() {
 
       <Progress
         value={progress}
-        className="h-1.5 rounded-none [&>div]:bg-[#EFA0A0]"
+        className="h-0.75 mt-1.5 rounded-none [&>div]:bg-[#EFA0A0]"
       />
 
       <div className="px-10 py-6">
@@ -257,5 +264,3 @@ function WizardStep() {
     </div>
   );
 }
-
-export { WizardStep };

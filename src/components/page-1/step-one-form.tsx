@@ -12,7 +12,7 @@ interface StepOneProps {
   ) => void;
 }
 
-function StepOneForm({ formData, formErrors, handleChange }: StepOneProps) {
+export function StepOneForm({ formData, formErrors, handleChange }: StepOneProps) {
   return (
     <>
       <div className="mb-4">
@@ -119,5 +119,3 @@ function StepOneForm({ formData, formErrors, handleChange }: StepOneProps) {
     </>
   );
 }
-
-export { StepOneForm };
