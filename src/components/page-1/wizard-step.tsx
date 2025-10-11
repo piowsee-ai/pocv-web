@@ -8,6 +8,14 @@ import { StepOneForm } from "@/components/page-1/step-one-form";
 import { StepTwoForm } from "@/components/page-1/step-two-form";
 import { StepTwoStory } from "@/components/page-1/step-two-story";
 import { WorkExperience } from "@/types/form-data";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogFooter,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
 export function WizardStep() {
   const [step, setStep] = useState(1);
@@ -35,6 +43,8 @@ export function WizardStep() {
     hardSkills: "",
     achievements: "",
   });
+
+  const [submitDialogOpen, setSubmitDialogOpen] = useState(false);
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -120,27 +130,26 @@ export function WizardStep() {
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    if (validateStep()) {
-      const finalWorkExperiences = useDefaultInput
-        ? formData.workExperiences.map((exp) => ({
-            position: exp.position,
-            company: exp.company,
-            startDate: exp.startDate,
-            endDate: exp.endDate,
-            city: exp.city,
-            description: exp.description,
-          }))
-        : formData.workExperiences.map((exp) => ({
-            description: exp.description,
-          }));
+    if (validateStep()) setSubmitDialogOpen(true);
+  };
 
-      const finalData = {
-        ...formData,
-        workExperiences: finalWorkExperiences,
-      };
+  const handleConfirmSubmit = () => {
+    setSubmitDialogOpen(false);
+    const finalWorkExperiences = useDefaultInput
+      ? formData.workExperiences.map((exp) => ({
+          position: exp.position,
+          company: exp.company,
+          startDate: exp.startDate,
+          endDate: exp.endDate,
+          city: exp.city,
+          description: exp.description,
+        }))
+      : formData.workExperiences.map((exp) => ({
+          description: exp.description,
+        }));
 
-      // TODO: send "finalData" to backend
-    }
+    const finalData = { ...formData, workExperiences: finalWorkExperiences };
+    // TODO: send finalData to backend
   };
 
   const progress = step === 1 ? 0 : 50;
@@ -185,7 +194,7 @@ export function WizardStep() {
                   <h2 className="text-2xl font-bold text-neutral-900 dark:text-white mb-1">
                     Pengalaman Profesional
                   </h2>
-                  <p className="text-sm text-neutral-600 dark:text-neutral-300">
+                  <p className="text-sm text-neutral-600 dark:text-neutral-300 pr-10">
                     Bagikan pengalaman kerja atau proyekmu. Kamu bisa menulis
                     secara bebas atau mengisi kolom terstruktur di bawah.
                   </p>
@@ -261,6 +270,27 @@ export function WizardStep() {
           </div>
         </form>
       </div>
+      <Dialog open={submitDialogOpen} onOpenChange={setSubmitDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Konfirmasi Submit</DialogTitle>
+            <DialogDescription>
+              Apakah Anda yakin ingin mengirim semua data yang telah diisi?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setSubmitDialogOpen(false)}
+            >
+              Batal
+            </Button>
+            <Button variant="destructive" onClick={handleConfirmSubmit}>
+              Kirim
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
