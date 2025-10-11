@@ -1,13 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useState, ChangeEvent, FormEvent } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { Progress } from "@/components/ui/progress";
+import { Switch } from "@/components/ui/switch";
+import { StepOneForm } from "@/components/page-1/step-one-form";
+import { StepTwoForm } from "@/components/page-1/step-two-form";
+import { StepTwoStory } from "@/components/page-1/step-two-story";
+import { WorkExperience } from "@/types/form-data";
 
-export function WizardStep() {
+function WizardStep() {
+  const [step, setStep] = useState(1);
+  const [useDefaultInput, setUseDefaultInput] = useState(true);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
-
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -15,211 +20,242 @@ export function WizardStep() {
     email: "",
     github: "",
     education: "",
-    workExperience: "",
+    workExperiences: [
+      {
+        position: "",
+        company: "",
+        startDate: "",
+        endDate: "",
+        city: "",
+        description: "",
+      },
+    ],
     organization: "",
     softSkills: "",
     hardSkills: "",
     achievements: "",
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { id, value } = e.target;
     setFormData((prev) => ({ ...prev, [id]: value }));
-
-    // Hapus state error saat user mulai isi field
     setFormErrors((prev) => ({ ...prev, [id]: "" }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleWorkExperienceChange = (
+    index: number,
+    field: keyof WorkExperience,
+    value: string
+  ) => {
+    const newWorkExperiences = [...formData.workExperiences];
+    newWorkExperiences[index][field] = value;
+    setFormData((prev) => ({
+      ...prev,
+      workExperiences: newWorkExperiences,
+    }));
+  };
 
-    // Validasi field yg wajib diisi
+  const addWorkExperience = () => {
+    setFormData((prev) => ({
+      ...prev,
+      workExperiences: [
+        ...prev.workExperiences,
+        {
+          position: "",
+          company: "",
+          startDate: "",
+          endDate: "",
+          city: "",
+          description: "",
+        },
+      ],
+    }));
+  };
+
+  const removeWorkExperience = (index: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      workExperiences: prev.workExperiences.filter((_, i) => i !== index),
+    }));
+  };
+
+  const validateStep = () => {
     const errors: Record<string, string> = {};
-    if (!formData.name) errors.name = "Nama Lengkap harus diisi.";
-    if (!formData.phone) errors.phone = "Nomor Telepon harus diisi.";
-    if (!formData.education) errors.education = "Pendidikan harus diisi.";
-    if (!formData.workExperience) errors.workExperience = "Pengalaman Kerja harus diisi.";
+    if (step === 1) {
+      if (!formData.name) errors.name = "Nama Lengkap harus diisi.";
+      if (!formData.phone) errors.phone = "Nomor Telepon harus diisi.";
+      if (!formData.email) errors.email = "Alamat Email harus diisi.";
+      if (!formData.education) errors.education = "Pendidikan harus diisi.";
+    }
+    if (step === 2) {
+      formData.workExperiences.forEach((exp, i) => {
+        if (useDefaultInput) {
+          if (!exp.position) errors[`position-${i}`] = `Jabatan harus diisi.`;
+          if (!exp.company) errors[`company-${i}`] = `Perusahaan harus diisi.`;
+        }
 
+        if (!exp.description)
+          errors[`description-${i}`] = `Deskripsi harus diisi.`;
+      });
+    }
     setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
 
-    // jika gak ada error, submit data
-    if (Object.keys(errors).length === 0) {
-      alert("Form submitted successfully!");
-      // nanti tambah route tujuan
+  const nextStep = () => validateStep() && setStep((prev) => prev + 1);
+  const prevStep = () => setStep((prev) => prev - 1);
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    if (validateStep()) {
+      const finalWorkExperiences = useDefaultInput
+        ? formData.workExperiences.map((exp) => ({
+            position: exp.position,
+            company: exp.company,
+            startDate: exp.startDate,
+            endDate: exp.endDate,
+            city: exp.city,
+            description: exp.description,
+          }))
+        : formData.workExperiences.map((exp) => ({
+            description: exp.description,
+          }));
+
+      const finalData = {
+        ...formData,
+        workExperiences: finalWorkExperiences,
+      };
+
+      console.log("Data:", finalData);
+      alert(
+        "Form submitted successfully!" + JSON.stringify(finalData, null, 2)
+      );
+      // TODO: send data to backend
     }
   };
 
+  const progress = step === 1 ? 0 : 50;
+
   return (
-    <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-md dark:bg-neutral-800">
-      <h2 className="text-xl font-semibold mb-4">Lengkapi Profil Anda</h2>
-      <form onSubmit={handleSubmit} noValidate>
-        {/* Nama */}
-        <div className="mb-4">
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Nama Lengkap
-          </label>
-          <Input
-            id="name"
-            value={formData.name}
-            onChange={handleChange}
-            placeholder="Nama Lengkap"
-            required
-          />
-          {formErrors.name && (
-            <p className="mt-1 text-sm text-red-600 dark:text-red-400">{formErrors.name}</p>
+    <div className="max-w-2xl mx-auto mt-10 bg-white rounded-3xl shadow-[0_8px_24px_rgba(34,197,94,0.4)] dark:bg-neutral-800 overflow-hidden">
+      <div className="flex items-center gap-2 px-6 pt-4 pb-2">
+        <div className="px-2 py-0.5 bg-[#EFA0A0] text-black-700 text-sm font-semibold rounded-md">
+          {Math.round(progress)}%
+        </div>
+        <p className="text-sm text-neutral-600 dark:text-neutral-300">
+          Progres pengisian resume awalmu
+        </p>
+      </div>
+
+      <Progress
+        value={progress}
+        className="h-1.5 rounded-none [&>div]:bg-[#EFA0A0]"
+      />
+
+      <div className="px-10 py-6">
+        <form onSubmit={handleSubmit}>
+          {step === 1 ? (
+            <>
+              <h2 className="text-2xl font-bold text-neutral-900 dark:text-white mb-1">
+                Detail Pribadi
+              </h2>
+              <p className="text-sm text-neutral-600 dark:text-neutral-300 mb-6">
+                Pengguna yang menambahkan nomor telepon dan email menerima lebih
+                banyak umpan balik positif dari perekrut.
+              </p>
+              <StepOneForm
+                formData={formData}
+                formErrors={formErrors}
+                handleChange={handleChange}
+              />
+            </>
+          ) : (
+            <>
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h2 className="text-2xl font-bold text-neutral-900 dark:text-white mb-1">
+                    Pengalaman Profesional
+                  </h2>
+                  <p className="text-sm text-neutral-600 dark:text-neutral-300">
+                    Bagikan pengalaman kerja atau proyekmu. Kamu bisa menulis
+                    secara bebas atau mengisi kolom terstruktur di bawah.
+                  </p>
+                </div>
+
+                <div className="flex flex-col items-center">
+                  <Switch
+                    checked={useDefaultInput}
+                    onCheckedChange={setUseDefaultInput}
+                  />
+                  {useDefaultInput ? (
+                    <span className="text-[10px] text-neutral-600 dark:text-neutral-300 mt-1 whitespace-nowrap">
+                      Input Default
+                    </span>
+                  ) : (
+                    <span className="text-[10px] text-neutral-600 dark:text-neutral-300 mt-1 whitespace-nowrap">
+                      Input Bebas
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {useDefaultInput ? (
+                <StepTwoForm
+                  formData={formData}
+                  formErrors={formErrors}
+                  handleWorkExperienceChange={handleWorkExperienceChange}
+                  addWorkExperience={addWorkExperience}
+                  removeWorkExperience={removeWorkExperience}
+                />
+              ) : (
+                <StepTwoStory
+                  formData={formData}
+                  formErrors={formErrors}
+                  handleWorkExperienceChange={handleWorkExperienceChange}
+                  addWorkExperience={addWorkExperience}
+                  removeWorkExperience={removeWorkExperience}
+                />
+              )}
+            </>
           )}
-        </div>
 
-        {/* Telepon */}
-        <div className="mb-4">
-          <label htmlFor="phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Telepon
-          </label>
-          <Input
-            id="phone"
-            value={formData.phone}
-            onChange={handleChange}
-            placeholder="Nomor HP, contoh: 081234567890"
-            required
-          />
-          {formErrors.phone && (
-            <p className="mt-1 text-sm text-red-600 dark:text-red-400">{formErrors.phone}</p>
-          )}
-        </div>
-
-        {/* LinkedIn */}
-        <div className="mb-4">
-          <label htmlFor="linkedin" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            LinkedIn (Opsional)
-          </label>
-          <Input
-            id="linkedin"
-            value={formData.linkedin}
-            onChange={handleChange}
-            placeholder="Tautan LinkedIn"
-          />
-        </div>
-
-        {/* Email */}
-        <div className="mb-4">
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Email (Opsional)
-          </label>
-          <Input
-            id="email"
-            value={formData.email}
-            onChange={handleChange}
-            placeholder="Alamat Email"
-          />
-        </div>
-
-        {/* Github */}
-        <div className="mb-4">
-          <label htmlFor="github" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Github (Opsional)
-          </label>
-          <Input
-            id="github"
-            value={formData.github}
-            onChange={handleChange}
-            placeholder="Tautan Github"
-          />
-        </div>
-
-        {/* Pendidikan */}
-        <div className="mb-4">
-          <label htmlFor="education" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Pendidikan
-          </label>
-          <Textarea
-            id="education"
-            value={formData.education}
-            onChange={handleChange}
-            placeholder="Nama Institusi, Daerah, MM/YYYY - MM/YYYY, Jurusan/Gelar, Deskripsi"
-            required
-          />
-          {formErrors.education && (
-            <p className="mt-1 text-sm text-red-600 dark:text-red-400">{formErrors.education}</p>
-          )}
-        </div>
-
-        {/* Pengalaman Kerja */}
-        <div className="mb-4">
-          <label htmlFor="workExperience" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Pengalaman Kerja
-          </label>
-          <Textarea
-            id="workExperience"
-            value={formData.workExperience}
-            onChange={handleChange}
-            placeholder="Posisi di Perusahaan, MM/YYYY - MM/YYYY, Deskripsi"
-            required
-          />
-          {formErrors.workExperience && (
-            <p className="mt-1 text-sm text-red-600 dark:text-red-400">{formErrors.workExperience}</p>
-          )}
-        </div>
-
-        {/* Organisasi */}
-        <div className="mb-4">
-          <label htmlFor="organization" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Organisasi (Opsional)
-          </label>
-          <Textarea
-            id="organization"
-            value={formData.organization}
-            onChange={handleChange}
-            placeholder="Posisi di Organisasi, MM/YYYY - MM/YYYY, Deskripsi"
-          />
-        </div>
-
-        {/* Softskills */}
-        <div className="mb-4">
-          <label htmlFor="softSkills" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Softskills (Opsional)
-          </label>
-          <Input
-            id="softSkills"
-            value={formData.softSkills}
-            onChange={handleChange}
-            placeholder="Contoh: Komunikasi, Public Speaking, Kepemimpinan"
-          />
-        </div>
-
-        {/* Hardskills */}
-        <div className="mb-4">
-          <label htmlFor="hardSkills" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Hardskills (Opsional)
-          </label>
-          <Input
-            id="hardSkills"
-            value={formData.hardSkills}
-            onChange={handleChange}
-            placeholder="Contoh: Legal Writing, Microsoft Office, Legal Research"
-          />
-        </div>
-
-        {/* Prestasi */}
-        <div className="mb-4">
-          <label htmlFor="achievements" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Prestasi (Opsional)
-          </label>
-          <Textarea
-            id="achievements"
-            value={formData.achievements}
-            onChange={handleChange}
-            placeholder="Judul, Tahun. Contoh: Juara 1 Kompetisi Debat Hukum Nasional, 2023"
-          />
-        </div>
-
-        {/* Submit Button */}
-        <Button
-          type="submit"
-          className="w-full mt-4 px-4 py-2 text-center bg-violet-600 text-white rounded-md hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2"
-        >
-          Submit
-        </Button>
-      </form>
+          <div className="mt-6 flex justify-between">
+            {step > 1 && (
+              <Button
+                type="button"
+                onClick={prevStep}
+                variant="green"
+                className="w-[96px]"
+              >
+                Kembali
+              </Button>
+            )}
+            {step < 2 && (
+              <Button
+                type="button"
+                onClick={nextStep}
+                variant="green"
+                className="ml-auto w-[96px]"
+              >
+                Lanjut
+              </Button>
+            )}
+            {step === 2 && (
+              <Button
+                type="submit"
+                variant="green"
+                className="ml-auto w-[96px]"
+              >
+                Kirim
+              </Button>
+            )}
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
+
+export { WizardStep };
