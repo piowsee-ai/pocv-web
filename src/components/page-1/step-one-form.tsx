@@ -25,7 +25,7 @@ export function StepOneForm({ formData, formErrors, handleChange }: StepOneProps
           onChange={handleChange}
           placeholder="Nama Lengkap"
           required
-          className="bg-[#E9E9E9] focus-visible:ring-0 focus-visible:ring-offset-0"
+          className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0"
         />
         {formErrors.name && (
           <p className="mt-1 text-sm text-red-600 dark:text-red-400">
@@ -44,7 +44,7 @@ export function StepOneForm({ formData, formErrors, handleChange }: StepOneProps
           onChange={handleChange}
           placeholder="Nomor HP, contoh: 081234567890"
           required
-          className="bg-[#E9E9E9] focus-visible:ring-0 focus-visible:ring-offset-0"
+          className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0"
         />
         {formErrors.phone && (
           <p className="mt-1 text-sm text-red-600 dark:text-red-400">
@@ -63,7 +63,7 @@ export function StepOneForm({ formData, formErrors, handleChange }: StepOneProps
           onChange={handleChange}
           placeholder="Alamat Email"
           required
-          className="bg-[#E9E9E9] focus-visible:ring-0 focus-visible:ring-offset-0"
+          className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0"
         />
         {formErrors.email && (
           <p className="mt-1 text-sm text-red-600 dark:text-red-400">
@@ -81,7 +81,7 @@ export function StepOneForm({ formData, formErrors, handleChange }: StepOneProps
           value={formData.linkedin}
           onChange={handleChange}
           placeholder="Tautan LinkedIn"
-          className="bg-[#E9E9E9] focus-visible:ring-0 focus-visible:ring-offset-0"
+          className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0"
         />
       </div>
 
@@ -94,7 +94,7 @@ export function StepOneForm({ formData, formErrors, handleChange }: StepOneProps
           value={formData.github}
           onChange={handleChange}
           placeholder="Tautan Portofolio"
-          className="bg-[#E9E9E9] focus-visible:ring-0 focus-visible:ring-offset-0"
+          className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0"
         />
       </div>
 
@@ -108,7 +108,7 @@ export function StepOneForm({ formData, formErrors, handleChange }: StepOneProps
           onChange={handleChange}
           placeholder="Nama Institusi, Daerah, MM/YYYY - MM/YYYY, Jurusan/Gelar, Deskripsi"
           required
-          className="bg-[#E9E9E9] focus-visible:ring-0 focus-visible:ring-offset-0"
+          className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0"
         />
         {formErrors.education && (
           <p className="mt-1 text-sm text-red-600 dark:text-red-400">

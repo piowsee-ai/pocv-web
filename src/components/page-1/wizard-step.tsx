@@ -157,17 +157,17 @@ export function WizardStep() {
   return (
     <div className="max-w-2xl mx-auto mt-10 bg-white rounded-3xl [box-shadow:0_0_30px_5px_rgba(0,0,0,0.10)] dark:bg-neutral-800 overflow-hidden">
       <div className="flex items-center gap-2 px-6 pt-4 pb-2">
-        <div className="w-12 h-6 flex items-center justify-center px-2 py-0.5 bg-[#EFA0A0] text-black-700 text-sm font-semibold rounded-md">
+        <div className="w-12 h-6 flex items-center justify-center px-2 py-0.5 bg-rose-300 text-black-700 text-sm font-semibold rounded-md">
           {Math.round(progress)}%
         </div>
         <p className="text-sm text-neutral-600 dark:text-neutral-300">
-          Progres pengisian resume awalmu
+          Progress pengisian resume awalmu
         </p>
       </div>
 
       <Progress
         value={progress}
-        className="h-0.75 mt-1.5 rounded-none [&>div]:bg-[#EFA0A0]"
+        className="h-0.75 mt-1.5 rounded-none [&>div]:bg-rose-300"
       />
 
       <div className="px-10 py-6">
@@ -204,13 +204,14 @@ export function WizardStep() {
                   <Switch
                     checked={useDefaultInput}
                     onCheckedChange={setUseDefaultInput}
+                    className="cursor-pointer"
                   />
                   {useDefaultInput ? (
-                    <span className="text-[10px] text-neutral-600 dark:text-neutral-300 mt-1 whitespace-nowrap">
+                    <span className="text-[10px] text-neutral-600 dark:text-neutral-300 mt-1 whitespace-nowrap w-[70px] text-center">
                       Input Default
                     </span>
                   ) : (
-                    <span className="text-[10px] text-neutral-600 dark:text-neutral-300 mt-1 whitespace-nowrap">
+                    <span className="text-[10px] text-neutral-600 dark:text-neutral-300 mt-1 whitespace-nowrap w-[70px] text-center">
                       Input Bebas
                     </span>
                   )}

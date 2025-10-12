@@ -80,7 +80,7 @@ export function StepTwoForm({
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-2">
       {workExperiences.map((exp, i) => (
         <div
           key={i}
@@ -128,7 +128,7 @@ export function StepTwoForm({
                       handleWorkExperienceChange(i, "position", e.target.value)
                     }
                     placeholder="Jabatan"
-                    className="bg-[#E9E9E9] focus-visible:ring-0 focus-visible:ring-offset-0"
+                    className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0"
                   />
                   {formErrors[`position-${i}`] && (
                     <p className="text-red-500 text-sm mt-1">
@@ -148,7 +148,7 @@ export function StepTwoForm({
                       handleWorkExperienceChange(i, "company", e.target.value)
                     }
                     placeholder="Nama Perusahaan"
-                    className="bg-[#E9E9E9] focus-visible:ring-0 focus-visible:ring-offset-0"
+                    className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0"
                   />
                   {formErrors[`company-${i}`] && (
                     <p className="text-red-500 text-sm mt-1">
@@ -170,7 +170,7 @@ export function StepTwoForm({
                       handleWorkExperienceChange(i, "startDate", e.target.value)
                     }
                     placeholder="MM / YYYY"
-                    className="bg-[#E9E9E9] focus-visible:ring-0 focus-visible:ring-offset-0"
+                    className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0"
                   />
                 </div>
 
@@ -185,7 +185,7 @@ export function StepTwoForm({
                       handleWorkExperienceChange(i, "endDate", e.target.value)
                     }
                     placeholder="MM / YYYY"
-                    className="bg-[#E9E9E9] focus-visible:ring-0 focus-visible:ring-offset-0"
+                    className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0"
                   />
                 </div>
 
@@ -200,7 +200,7 @@ export function StepTwoForm({
                       handleWorkExperienceChange(i, "city", e.target.value)
                     }
                     placeholder="Nama Kota"
-                    className="bg-[#E9E9E9] focus-visible:ring-0 focus-visible:ring-offset-0"
+                    className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0"
                   />
                 </div>
               </div>
@@ -216,7 +216,7 @@ export function StepTwoForm({
                     handleWorkExperienceChange(i, "description", e.target.value)
                   }
                   placeholder="Ceritakan tanggung jawab dan pencapaianmu di posisi ini..."
-                  className="bg-[#E9E9E9] focus-visible:ring-0 focus-visible:ring-offset-0 min-h-[100px]"
+                  className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0 min-h-[100px]"
                 />
                 {formErrors[`description-${i}`] && (
                   <p className="text-red-500 text-sm mt-1">
@@ -231,8 +231,12 @@ export function StepTwoForm({
 
       <Button
         type="button"
-        onClick={addWorkExperience}
-        className="text-[#00B37A] font-semibold hover:bg-transparent  hover:text-green-700 ml-2"
+        onClick={()=>{
+          const newIndex = workExperiences.length;
+          addWorkExperience();
+          setOpenIndexes((prev) => [...prev, newIndex]);
+        }}
+        className="text-emerald-500 font-semibold hover:bg-transparent hover:text-emerald-600 ml-2"
         variant="ghost"
       >
         + Tambah pekerjaan lain

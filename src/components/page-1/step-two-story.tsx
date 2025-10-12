@@ -74,7 +74,7 @@ export function StepTwoStory({
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-2">
       {workExperiences.map((exp, i) => (
         <div
           key={i}
@@ -119,7 +119,7 @@ export function StepTwoStory({
                     handleWorkExperienceChange(i, "description", e.target.value)
                   }
                   placeholder="Tulis pengalaman kerja atau proyekmu secara bebas, misalnya: Saya memiliki pengalaman 5 tahun di PT Teknologi Maju sebagai UI/UX Designer, di mana saya mengerjakan..."
-                  className="bg-[#E9E9E9] focus-visible:ring-0 focus-visible:ring-offset-0 min-h-[100px]"
+                  className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0 min-h-[100px]"
                 />
                 {formErrors[`description-${i}`] && (
                   <p className="text-red-500 text-sm mt-1">
@@ -134,8 +134,12 @@ export function StepTwoStory({
 
       <Button
         type="button"
-        onClick={addWorkExperience}
-        className="text-[#00B37A] font-semibold hover:bg-transparent  hover:text-green-700 ml-2"
+        onClick={()=>{
+          const newIndex = workExperiences.length;
+          addWorkExperience();
+          setOpenIndexes((prev) => [...prev, newIndex]);
+        }}
+        className="text-emerald-500 font-semibold hover:bg-transparent hover:text-emerald-600 ml-2 cursor-pointer"
         variant="ghost"
       >
         + Tambah pekerjaan lain
