@@ -16,7 +16,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 
-interface StepTwoProps {
+interface StepThreeFormProps {
   formData: {
     workExperiences: WorkExperience[];
   };
@@ -30,13 +30,13 @@ interface StepTwoProps {
   removeWorkExperience: (index: number) => void;
 }
 
-export function StepTwoForm({
+export function StepThreeForm({
   formData,
   formErrors,
   handleWorkExperienceChange,
   addWorkExperience,
   removeWorkExperience,
-}: StepTwoProps) {
+}: StepThreeFormProps) {
   const { workExperiences } = formData;
 
   const [dialogOpen, setDialogOpen] = useState(false);

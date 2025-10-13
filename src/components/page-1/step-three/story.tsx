@@ -15,7 +15,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 
-interface StepTwoStoryProps {
+interface StepThreeStoryProps {
   formData: {
     workExperiences: WorkExperience[];
   };
@@ -29,13 +29,13 @@ interface StepTwoStoryProps {
   removeWorkExperience: (index: number) => void;
 }
 
-export function StepTwoStory({
+export function StepThreeStory({
   formData,
   formErrors,
   handleWorkExperienceChange,
   addWorkExperience,
   removeWorkExperience,
-}: StepTwoStoryProps) {
+}: StepThreeStoryProps) {
   const { workExperiences } = formData;
 
   const [dialogOpen, setDialogOpen] = useState(false);

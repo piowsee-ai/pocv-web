@@ -4,7 +4,7 @@ import { TextArea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { FormData } from "@/types/form-data";
 
-interface StepOneProps {
+interface StepOneFormProps {
   formData: FormData;
   formErrors: Record<string, string>;
   handleChange: (
@@ -12,7 +12,7 @@ interface StepOneProps {
   ) => void;
 }
 
-export function StepOneForm({ formData, formErrors, handleChange }: StepOneProps) {
+export function StepOneForm({ formData, formErrors, handleChange }: StepOneFormProps) {
   return (
     <>
       <div className="mb-4">

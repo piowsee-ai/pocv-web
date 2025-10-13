@@ -4,9 +4,9 @@ import { useState, ChangeEvent, FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Switch } from "@/components/ui/switch";
-import { StepOneForm } from "@/components/page-1/step-one-form";
-import { StepTwoForm } from "@/components/page-1/step-two-form";
-import { StepTwoStory } from "@/components/page-1/step-two-story";
+import { StepOneForm } from "@/components/page-1/step-one/form";
+import { StepThreeForm } from "@/components/page-1/step-three/form";
+import { StepThreeStory } from "@/components/page-1/step-three/story";
 import { WorkExperience } from "@/types/form-data";
 import {
   Dialog,
@@ -219,7 +219,7 @@ export function WizardStep() {
               </div>
 
               {useDefaultInput ? (
-                <StepTwoForm
+                <StepThreeForm
                   formData={formData}
                   formErrors={formErrors}
                   handleWorkExperienceChange={handleWorkExperienceChange}
@@ -227,7 +227,7 @@ export function WizardStep() {
                   removeWorkExperience={removeWorkExperience}
                 />
               ) : (
-                <StepTwoStory
+                <StepThreeStory
                   formData={formData}
                   formErrors={formErrors}
                   handleWorkExperienceChange={handleWorkExperienceChange}
