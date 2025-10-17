@@ -3,9 +3,9 @@
 import { useState, useEffect, ChangeEvent } from "react";
 import { TextArea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { WorkExperience } from "@/types/form-data";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronUp, Trash } from "lucide-react";
+import { OrganizationExperience } from "@/types/form-data";
 import {
   Dialog,
   DialogContent,
@@ -15,9 +15,9 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 
-interface StepThreeStoryProps {
+interface StepFourStoryProps {
   formData: {
-    workExperiences: WorkExperience[];
+    organizationExperiences: OrganizationExperience[];
   };
   formErrors: Record<string, string>;
   handleChange: (
@@ -38,14 +38,14 @@ interface StepThreeStoryProps {
   ) => void;
 }
 
-export function StepThreeStory({
+export function StepFourStory({
   formData,
   formErrors,
   handleChange,
   addSectionItem,
   removeSectionItem,
-}: StepThreeStoryProps) {
-  const { workExperiences } = formData;
+}: StepFourStoryProps) {
+  const { organizationExperiences } = formData;
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [targetIndex, setTargetIndex] = useState<number | null>(null);
@@ -53,12 +53,12 @@ export function StepThreeStory({
   const [openIndexes, setOpenIndexes] = useState<number[]>([]);
 
   useEffect(() => {
-    const errorIndexes = workExperiences
+    const errorIndexes = organizationExperiences
       .map((_, i) => i)
       .filter((i) => formErrors[`description-${i}`]);
 
     setOpenIndexes((prev) => Array.from(new Set([...prev, ...errorIndexes])));
-  }, [formErrors, workExperiences]);
+  }, [formErrors, organizationExperiences]);
 
   const handleDeleteClick = (index: number) => {
     setTargetIndex(index);
@@ -66,7 +66,8 @@ export function StepThreeStory({
   };
 
   const handleConfirmDelete = () => {
-    if (targetIndex !== null) removeSectionItem("workExperiences", targetIndex);
+    if (targetIndex !== null)
+      removeSectionItem("organizationExperiences", targetIndex);
     setDialogOpen(false);
     setTargetIndex(null);
   };
@@ -84,7 +85,7 @@ export function StepThreeStory({
 
   return (
     <div className="space-y-2">
-      {workExperiences.map((exp, i) => (
+      {organizationExperiences.map((exp, i) => (
         <div
           key={i}
           className="relative space-y-6 rounded-lg border-2 bg-white px-6 pb-6 pt-2 shadow-sm"
@@ -94,10 +95,10 @@ export function StepThreeStory({
             onClick={() => toggleDropdown(i)}
           >
             <h2 className="text-lg font-semibold text-gray-800">
-              Perusahaan {i + 1}
+              Organisasi {i + 1}
             </h2>
             <div className="flex items-center gap-2">
-              {workExperiences.length > 1 && (
+              {organizationExperiences.length > 1 && (
                 <Trash
                   size={15}
                   className="text-red-500 hover:text-red-700 cursor-pointer"
@@ -124,8 +125,10 @@ export function StepThreeStory({
                 <TextArea
                   id="description"
                   value={exp.description}
-                  onChange={(e) => handleChange(e, "workExperiences", i)}
-                  placeholder="Tulis pengalaman kerja atau proyekmu secara bebas, misalnya: Saya memiliki pengalaman 5 tahun di PT Teknologi Maju sebagai UI/UX Designer, di mana saya mengerjakan..."
+                  onChange={(e) =>
+                    handleChange(e, "organizationExperiences", i)
+                  }
+                  placeholder="Ceritakan pengalamanmu selama berorganisasi"
                   className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0 min-h-[100px]"
                 />
                 {formErrors[`description-${i}`] && (
@@ -142,14 +145,14 @@ export function StepThreeStory({
       <Button
         type="button"
         onClick={() => {
-          const newIndex = workExperiences.length;
-          addSectionItem("workExperiences");
+          const newIndex = organizationExperiences.length;
+          addSectionItem("organizationExperiences");
           setOpenIndexes((prev) => [...prev, newIndex]);
         }}
         className="text-emerald-500 font-semibold hover:bg-transparent hover:text-emerald-600 ml-2 cursor-pointer"
         variant="ghost"
       >
-        + Tambah pekerjaan lain
+        + Tambah Organisasi lain
       </Button>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>

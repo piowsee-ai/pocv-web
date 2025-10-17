@@ -4,10 +4,15 @@ import { useState, ChangeEvent, FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Switch } from "@/components/ui/switch";
+
 import { StepOneForm } from "@/components/page-1/step-one/form";
+import { StepTwoForm } from "@/components/page-1/step-two/form";
+import { StepTwoStory } from "@/components/page-1/step-two/story";
 import { StepThreeForm } from "@/components/page-1/step-three/form";
 import { StepThreeStory } from "@/components/page-1/step-three/story";
-import { WorkExperience } from "@/types/form-data";
+import { StepFourForm } from "@/components/page-1/step-four/form";
+import { StepFourStory } from "@/components/page-1/step-four/story";
+
 import {
   Dialog,
   DialogContent,
@@ -19,7 +24,9 @@ import {
 
 export function WizardStep() {
   const [step, setStep] = useState(1);
-  const [useDefaultInput, setUseDefaultInput] = useState(true);
+  const [useDefaultInputEdu, setUseDefaultInputEdu] = useState(true);
+  const [useDefaultInputWork, setUseDefaultInputWork] = useState(true);
+  const [useDefaultInputOrg, setUseDefaultInputOrg] = useState(true);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [formData, setFormData] = useState({
     name: "",
@@ -27,7 +34,18 @@ export function WizardStep() {
     linkedin: "",
     email: "",
     github: "",
-    education: "",
+    educations: [
+      {
+        degree: "",
+        major: "",
+        institution: "",
+        startDate: "",
+        endDate: "",
+        location: "",
+        gpa: "",
+        description: "",
+      },
+    ],
     workExperiences: [
       {
         position: "",
@@ -38,56 +56,101 @@ export function WizardStep() {
         description: "",
       },
     ],
-    organization: "",
-    softSkills: "",
-    hardSkills: "",
-    achievements: "",
+    organizationExperiences: [
+      {
+        position: "",
+        organization: "",
+        startDate: "",
+        endDate: "",
+        location: "",
+        description: "",
+      },
+    ],
   });
 
   const [submitDialogOpen, setSubmitDialogOpen] = useState(false);
 
+  type SectionType =
+    | "educations"
+    | "workExperiences"
+    | "organizationExperiences"
+    | "root";
+
   const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    section: SectionType = "root",
+    index?: number
   ) => {
     const { id, value } = e.target;
-    setFormData((prev) => ({ ...prev, [id]: value }));
-    setFormErrors((prev) => ({ ...prev, [id]: "" }));
-  };
 
-  const handleWorkExperienceChange = (
-    index: number,
-    field: keyof WorkExperience,
-    value: string
-  ) => {
-    const newWorkExperiences = [...formData.workExperiences];
-    newWorkExperiences[index][field] = value;
-    setFormData((prev) => ({
+    setFormData((prev) => {
+      if (section === "root") {
+        return { ...prev, [id]: value };
+      }
+
+      const updatedArray = [...prev[section]];
+      if (index !== undefined) {
+        updatedArray[index] = { ...updatedArray[index], [id]: value };
+      }
+
+      return { ...prev, [section]: updatedArray };
+    });
+
+    setFormErrors((prev) => ({
       ...prev,
-      workExperiences: newWorkExperiences,
+      [id]: "",
     }));
   };
 
-  const addWorkExperience = () => {
-    setFormData((prev) => ({
-      ...prev,
-      workExperiences: [
-        ...prev.workExperiences,
-        {
+  type ArraySection = Exclude<SectionType, "root">;
+
+  const createEmptyItem = (section: ArraySection) => {
+    switch (section) {
+      case "educations":
+        return {
+          degree: "",
+          major: "",
+          institution: "",
+          startDate: "",
+          endDate: "",
+          location: "",
+          gpa: "",
+          description: "",
+        };
+      case "workExperiences":
+        return {
           position: "",
           company: "",
           startDate: "",
           endDate: "",
           city: "",
           description: "",
-        },
-      ],
+        };
+      case "organizationExperiences":
+        return {
+          position: "",
+          organization: "",
+          startDate: "",
+          endDate: "",
+          location: "",
+          description: "",
+        };
+      default:
+        throw new Error("Invalid section type");
+    }
+  };
+
+  const addSectionItem = (section: ArraySection) => {
+    setFormData((prev) => ({
+      ...prev,
+      [section]: [...prev[section], createEmptyItem(section)],
     }));
   };
 
-  const removeWorkExperience = (index: number) => {
+  const removeSectionItem = (section: ArraySection, index: number) => {
     setFormData((prev) => ({
       ...prev,
-      workExperiences: prev.workExperiences.filter((_, i) => i !== index),
+      [section]: prev[section].filter((_, i) => i !== index),
     }));
   };
 
@@ -108,13 +171,38 @@ export function WizardStep() {
         errors.email = "Format email tidak valid.";
       }
 
-      if (!formData.education) errors.education = "Pendidikan harus diisi.";
+      if (!formData.educations) errors.education = "Pendidikan harus diisi.";
     }
     if (step === 2) {
+      formData.educations.forEach((exp, i) => {
+        if (useDefaultInputEdu) {
+          if (!exp.degree) errors[`degree-${i}`] = `Gelar harus diisi.`;
+          if (!exp.major) errors[`company-${i}`] = `Program Studi harus diisi.`;
+          if (!exp.institution)
+            errors[`company-${i}`] = `Institusi harus diisi.`;
+        }
+        if (!exp.description)
+          errors[`description-${i}`] = `Deskripsi harus diisi.`;
+      });
+    }
+    if (step === 3) {
       formData.workExperiences.forEach((exp, i) => {
-        if (useDefaultInput) {
+        if (useDefaultInputWork) {
           if (!exp.position) errors[`position-${i}`] = `Jabatan harus diisi.`;
           if (!exp.company) errors[`company-${i}`] = `Perusahaan harus diisi.`;
+        }
+
+        if (!exp.description)
+          errors[`description-${i}`] = `Deskripsi harus diisi.`;
+      });
+    }
+
+    if (step === 4) {
+      formData.organizationExperiences.forEach((exp, i) => {
+        if (useDefaultInputOrg) {
+          if (!exp.position) errors[`position-${i}`] = `Jabatan harus diisi.`;
+          if (!exp.organization)
+            errors[`organization-${i}`] = `Nama organisasi harus diisi.`;
         }
 
         if (!exp.description)
@@ -135,7 +223,7 @@ export function WizardStep() {
 
   const handleConfirmSubmit = () => {
     setSubmitDialogOpen(false);
-    const finalWorkExperiences = useDefaultInput
+    const finalWorkExperiences = useDefaultInputWork
       ? formData.workExperiences.map((exp) => ({
           position: exp.position,
           company: exp.company,
@@ -148,11 +236,45 @@ export function WizardStep() {
           description: exp.description,
         }));
 
-    const finalData = { ...formData, workExperiences: finalWorkExperiences };
-    // TODO: send finalData to backend
+    const finaleducations = useDefaultInputEdu
+      ? formData.educations.map((exp) => ({
+          degree: exp.degree,
+          major: exp.major,
+          institution: exp.institution,
+          startDate: exp.startDate,
+          endDate: exp.endDate,
+          location: exp.location,
+          gpa: exp.gpa,
+          description: exp.description,
+        }))
+      : formData.educations.map((exp) => ({
+          description: exp.description,
+        }));
+
+    const finalOrganizationExperiences = useDefaultInputOrg
+      ? formData.organizationExperiences.map((exp) => ({
+          position: exp.position,
+          organization: exp.organization,
+          startDate: exp.startDate,
+          endDate: exp.endDate,
+          location: exp.location,
+          description: exp.description,
+        }))
+      : formData.workExperiences.map((exp) => ({
+          description: exp.description,
+        }));
+
+    const finalData = {
+      ...formData,
+      workExperiences: finalWorkExperiences,
+      educations: finaleducations,
+      organizationExperiences: finalOrganizationExperiences,
+    };
+    console.log(finalData);
+    // TODO: send data to backend
   };
 
-  const progress = step === 1 ? 0 : 50;
+  const progress = (100 / 4) * (step - 1);
 
   return (
     <div className="max-w-2xl mx-auto mt-10 bg-white rounded-3xl [box-shadow:0_0_30px_5px_rgba(0,0,0,0.10)] dark:bg-neutral-800 overflow-hidden">
@@ -172,71 +294,161 @@ export function WizardStep() {
 
       <div className="px-10 py-6">
         <form onSubmit={handleSubmit}>
-          {step === 1 ? (
-            <>
-              <h2 className="text-2xl font-bold text-neutral-900 dark:text-white mb-1">
-                Detail Pribadi
-              </h2>
-              <p className="text-sm text-neutral-600 dark:text-neutral-300 mb-6">
-                Pengguna yang menambahkan nomor telepon dan email menerima lebih
-                banyak umpan balik positif dari perekrut.
-              </p>
-              <StepOneForm
-                formData={formData}
-                formErrors={formErrors}
-                handleChange={handleChange}
-              />
-            </>
-          ) : (
-            <>
-              <div className="flex items-center justify-between mb-4">
-                <div>
+          {(() => {
+            if (step === 1) {
+              return (
+                <>
                   <h2 className="text-2xl font-bold text-neutral-900 dark:text-white mb-1">
-                    Pengalaman Profesional
+                    Detail Pribadi
                   </h2>
-                  <p className="text-sm text-neutral-600 dark:text-neutral-300 pr-10">
-                    Bagikan pengalaman kerja atau proyekmu. Kamu bisa menulis
-                    secara bebas atau mengisi kolom terstruktur di bawah.
+                  <p className="text-sm text-neutral-600 dark:text-neutral-300 mb-6">
+                    Pengguna yang menambahkan nomor telepon dan email menerima
+                    lebih banyak umpan balik positif dari perekrut.
                   </p>
-                </div>
-
-                <div className="flex flex-col items-center">
-                  <Switch
-                    checked={useDefaultInput}
-                    onCheckedChange={setUseDefaultInput}
-                    className="cursor-pointer"
+                  <StepOneForm
+                    formData={formData}
+                    formErrors={formErrors}
+                    handleChange={handleChange}
                   />
-                  {useDefaultInput ? (
-                    <span className="text-[10px] text-neutral-600 dark:text-neutral-300 mt-1 whitespace-nowrap w-[70px] text-center">
-                      Input Default
-                    </span>
-                  ) : (
-                    <span className="text-[10px] text-neutral-600 dark:text-neutral-300 mt-1 whitespace-nowrap w-[70px] text-center">
-                      Input Bebas
-                    </span>
-                  )}
-                </div>
-              </div>
+                </>
+              );
+            } else if (step === 2) {
+              return (
+                <>
+                  <div className="flex items-center justify-between mb-4">
+                    <div>
+                      <h2 className="text-2xl font-bold text-neutral-900 dark:text-white mb-1">
+                        Pendidikan
+                      </h2>
+                      <p className="text-sm text-neutral-600 dark:text-neutral-300 pr-10">
+                        Bagikan riwayat pendidikanmu.
+                      </p>
+                    </div>
 
-              {useDefaultInput ? (
-                <StepThreeForm
-                  formData={formData}
-                  formErrors={formErrors}
-                  handleWorkExperienceChange={handleWorkExperienceChange}
-                  addWorkExperience={addWorkExperience}
-                  removeWorkExperience={removeWorkExperience}
-                />
-              ) : (
-                <StepThreeStory
-                  formData={formData}
-                  formErrors={formErrors}
-                  handleWorkExperienceChange={handleWorkExperienceChange}
-                  addWorkExperience={addWorkExperience}
-                  removeWorkExperience={removeWorkExperience}
-                />
-              )}
-            </>
-          )}
+                    <div className="flex flex-col items-center">
+                      <Switch
+                        checked={useDefaultInputEdu}
+                        onCheckedChange={setUseDefaultInputEdu}
+                        className="cursor-pointer"
+                      />
+                      <span className="text-[10px] text-neutral-600 dark:text-neutral-300 mt-1 whitespace-nowrap w-[70px] text-center">
+                        {useDefaultInputEdu ? "Input Default" : "Input Bebas"}
+                      </span>
+                    </div>
+                  </div>
+
+                  {useDefaultInputEdu ? (
+                    <StepTwoForm
+                      formData={formData}
+                      formErrors={formErrors}
+                      handleChange={handleChange}
+                      addSectionItem={addSectionItem}
+                      removeSectionItem={removeSectionItem}
+                    />
+                  ) : (
+                    <StepTwoStory
+                      formData={formData}
+                      formErrors={formErrors}
+                      handleChange={handleChange}
+                      addSectionItem={addSectionItem}
+                      removeSectionItem={removeSectionItem}
+                    />
+                  )}
+                </>
+              );
+            } else if (step === 3) {
+              return (
+                <>
+                  <div className="flex items-center justify-between mb-4">
+                    <div>
+                      <h2 className="text-2xl font-bold text-neutral-900 dark:text-white mb-1">
+                        Pengalaman Profesional
+                      </h2>
+                      <p className="text-sm text-neutral-600 dark:text-neutral-300 pr-10">
+                        Bagikan pengalaman kerja atau proyekmu. Kamu bisa
+                        menulis secara bebas atau mengisi kolom terstruktur di
+                        bawah.
+                      </p>
+                    </div>
+
+                    <div className="flex flex-col items-center">
+                      <Switch
+                        checked={useDefaultInputWork}
+                        onCheckedChange={setUseDefaultInputWork}
+                        className="cursor-pointer"
+                      />
+                      <span className="text-[10px] text-neutral-600 dark:text-neutral-300 mt-1 whitespace-nowrap w-[70px] text-center">
+                        {useDefaultInputWork ? "Input Default" : "Input Bebas"}
+                      </span>
+                    </div>
+                  </div>
+
+                  {useDefaultInputWork ? (
+                    <StepThreeForm
+                      formData={formData}
+                      formErrors={formErrors}
+                      handleChange={handleChange}
+                      addSectionItem={addSectionItem}
+                      removeSectionItem={removeSectionItem}
+                    />
+                  ) : (
+                    <StepThreeStory
+                      formData={formData}
+                      formErrors={formErrors}
+                      handleChange={handleChange}
+                      addSectionItem={addSectionItem}
+                      removeSectionItem={removeSectionItem}
+                    />
+                  )}
+                </>
+              );
+            } else if (step === 4) {
+              return (
+                <>
+                  <div className="flex items-center justify-between mb-4">
+                    <div>
+                      <h2 className="text-2xl font-bold text-neutral-900 dark:text-white mb-1">
+                        Pengalaman Organisasi
+                      </h2>
+                      <p className="text-sm text-neutral-600 dark:text-neutral-300 pr-10">
+                        Bagikan pengalaman organisasimu. Kamu bisa menulis
+                        secara bebas atau mengisi kolom terstruktur di bawah.
+                      </p>
+                    </div>
+
+                    <div className="flex flex-col items-center">
+                      <Switch
+                        checked={useDefaultInputOrg}
+                        onCheckedChange={setUseDefaultInputOrg}
+                        className="cursor-pointer"
+                      />
+                      <span className="text-[10px] text-neutral-600 dark:text-neutral-300 mt-1 whitespace-nowrap w-[70px] text-center">
+                        {useDefaultInputOrg ? "Input Default" : "Input Bebas"}
+                      </span>
+                    </div>
+                  </div>
+
+                  {useDefaultInputOrg ? (
+                    <StepFourForm
+                      formData={formData}
+                      formErrors={formErrors}
+                      handleChange={handleChange}
+                      addSectionItem={addSectionItem}
+                      removeSectionItem={removeSectionItem}
+                    />
+                  ) : (
+                    <StepFourStory
+                      formData={formData}
+                      formErrors={formErrors}
+                      handleChange={handleChange}
+                      addSectionItem={addSectionItem}
+                      removeSectionItem={removeSectionItem}
+                    />
+                  )}
+                </>
+              );
+            }
+          })()}
 
           <div className="mt-6 flex justify-between">
             {step > 1 && (
@@ -249,7 +461,7 @@ export function WizardStep() {
                 Kembali
               </Button>
             )}
-            {step < 2 && (
+            {step < 4 && (
               <Button
                 type="button"
                 onClick={nextStep}
@@ -259,7 +471,7 @@ export function WizardStep() {
                 Lanjut
               </Button>
             )}
-            {step === 2 && (
+            {step === 4 && (
               <Button
                 type="submit"
                 variant="green"

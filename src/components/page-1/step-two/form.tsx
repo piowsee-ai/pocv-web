@@ -1,12 +1,12 @@
 "use client";
 
-import { ChangeEvent, useState, useEffect } from "react";
+import { useState, useEffect, ChangeEvent } from "react";
 import { Input } from "@/components/ui/input";
 import { TextArea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { WorkExperience } from "@/types/form-data";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronUp, Trash } from "lucide-react";
+import { Education } from "@/types/form-data";
 import {
   Dialog,
   DialogContent,
@@ -16,9 +16,9 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 
-interface StepThreeFormProps {
+interface StepTwoFormProps {
   formData: {
-    workExperiences: WorkExperience[];
+    educations: Education[];
   };
   formErrors: Record<string, string>;
   handleChange: (
@@ -39,14 +39,14 @@ interface StepThreeFormProps {
   ) => void;
 }
 
-export function StepThreeForm({
+export function StepTwoForm({
   formData,
   formErrors,
   handleChange,
   addSectionItem,
   removeSectionItem,
-}: StepThreeFormProps) {
-  const { workExperiences } = formData;
+}: StepTwoFormProps) {
+  const { educations } = formData;
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [targetIndex, setTargetIndex] = useState<number | null>(null);
@@ -54,17 +54,18 @@ export function StepThreeForm({
   const [openIndexes, setOpenIndexes] = useState<number[]>([]);
 
   useEffect(() => {
-    const errorIndexes = workExperiences
+    const errorIndexes = educations
       .map((_, i) => i)
       .filter(
         (i) =>
-          formErrors[`description-${i}`] ||
-          formErrors[`position-${i}`] ||
-          formErrors[`company-${i}`]
+          formErrors[`degree-${i}`] ||
+          formErrors[`major-${i}`] ||
+          formErrors[`major-${i}`] ||
+          formErrors[`gpa-${i}`]
       );
 
     setOpenIndexes((prev) => Array.from(new Set([...prev, ...errorIndexes])));
-  }, [formErrors, workExperiences]);
+  }, [formErrors, educations]);
 
   const handleDeleteClick = (index: number) => {
     setTargetIndex(index);
@@ -72,7 +73,7 @@ export function StepThreeForm({
   };
 
   const handleConfirmDelete = () => {
-    if (targetIndex !== null) removeSectionItem("workExperiences", targetIndex);
+    if (targetIndex !== null) removeSectionItem("educations", targetIndex);
     setDialogOpen(false);
     setTargetIndex(null);
   };
@@ -90,7 +91,7 @@ export function StepThreeForm({
 
   return (
     <div className="space-y-2">
-      {workExperiences.map((exp, i) => (
+      {educations.map((exp, i) => (
         <div
           key={i}
           className="relative space-y-6 rounded-lg border-2 bg-white px-6 pb-6 pt-2 shadow-sm"
@@ -100,11 +101,11 @@ export function StepThreeForm({
             onClick={() => toggleDropdown(i)}
           >
             <h2 className="text-lg font-semibold text-gray-800">
-              Perusahaan {i + 1}
+              Pendidikan {i + 1}
             </h2>
 
             <div className="flex items-center gap-2">
-              {workExperiences.length > 1 && (
+              {educations.length > 1 && (
                 <Trash
                   size={15}
                   className="text-red-500 hover:text-red-700 cursor-pointer"
@@ -127,37 +128,75 @@ export function StepThreeForm({
             <>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
-                  <Label htmlFor={`position-${i}`} className="mb-1 block">
-                    Jabatan <span className="text-red-500">*</span>
+                  <Label htmlFor={`institution-${i}`} className="mb-1 block">
+                    Institusi <span className="text-red-500">*</span>
                   </Label>
                   <Input
-                    id="position"
-                    value={exp.position}
-                    onChange={(e) => handleChange(e, "workExperiences", i)}
-                    placeholder="Jabatan"
+                    id="institution"
+                    value={exp.institution}
+                    onChange={(e) => handleChange(e, "educations", i)}
+                    placeholder="Universitas / Sekolah"
                     className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0"
                   />
-                  {formErrors[`position-${i}`] && (
+                  {formErrors[`institution-${i}`] && (
                     <p className="text-red-500 text-sm mt-1">
-                      {formErrors[`position-${i}`]}
+                      {formErrors[`institution-${i}`]}
                     </p>
                   )}
                 </div>
 
                 <div>
-                  <Label htmlFor={`company-${i}`} className="mb-1 block">
-                    Perusahaan <span className="text-red-500">*</span>
+                  <Label htmlFor={`degree-${i}`} className="mb-1 block">
+                    Gelar <span className="text-red-500">*</span>
                   </Label>
                   <Input
-                    id="company"
-                    value={exp.company}
-                    onChange={(e) => handleChange(e, "workExperiences", i)}
-                    placeholder="Nama Perusahaan"
+                    id="degree"
+                    value={exp.degree}
+                    onChange={(e) => handleChange(e, "educations", i)}
+                    placeholder="Sarjana 1 (S1), Diploma 3 (D3), SMA, dll"
                     className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0"
                   />
-                  {formErrors[`company-${i}`] && (
+                  {formErrors[`degree-${i}`] && (
                     <p className="text-red-500 text-sm mt-1">
-                      {formErrors[`company-${i}`]}
+                      {formErrors[`degree-${i}`]}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div>
+                  <Label htmlFor={`major-${i}`} className="mb-1 block">
+                    Program Studi <span className="text-red-500">*</span>
+                  </Label>
+                  <Input
+                    id="major"
+                    value={exp.major}
+                    onChange={(e) => handleChange(e, "educations", i)}
+                    placeholder="Teknik Informatika, Manajemen, dll"
+                    className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0"
+                  />
+                  {formErrors[`major-${i}`] && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {formErrors[`major-${i}`]}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <Label htmlFor={`gpa-${i}`} className="mb-1 block">
+                    Nilai Akhir
+                  </Label>
+                  <Input
+                    id="gpa"
+                    value={exp.gpa}
+                    onChange={(e) => handleChange(e, "educations", i)}
+                    placeholder="XX.X / 4.0, XX.X / 5.0, atau XX.X / 100"
+                    className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0"
+                  />
+                  {formErrors[`gpa-${i}`] && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {formErrors[`gpa-${i}`]}
                     </p>
                   )}
                 </div>
@@ -171,7 +210,7 @@ export function StepThreeForm({
                   <Input
                     id="startDate"
                     value={exp.startDate}
-                    onChange={(e) => handleChange(e, "workExperiences", i)}
+                    onChange={(e) => handleChange(e, "educations", i)}
                     placeholder="MM / YYYY"
                     className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0"
                   />
@@ -184,21 +223,21 @@ export function StepThreeForm({
                   <Input
                     id="endDate"
                     value={exp.endDate}
-                    onChange={(e) => handleChange(e, "workExperiences", i)}
+                    onChange={(e) => handleChange(e, "educations", i)}
                     placeholder="MM / YYYY"
                     className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0"
                   />
                 </div>
 
                 <div>
-                  <Label htmlFor={`city-${i}`} className="mb-1 block">
-                    Kota
+                  <Label htmlFor={`location-${i}`} className="mb-1 block">
+                    Lokasi
                   </Label>
                   <Input
-                    id="city"
-                    value={exp.city}
-                    onChange={(e) => handleChange(e, "workExperiences", i)}
-                    placeholder="Nama Kota"
+                    id="location"
+                    value={exp.location}
+                    onChange={(e) => handleChange(e, "educations", i)}
+                    placeholder="Jaakarta, Bandung, Surabaya, dll"
                     className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0"
                   />
                 </div>
@@ -211,8 +250,8 @@ export function StepThreeForm({
                 <TextArea
                   id="description"
                   value={exp.description}
-                  onChange={(e) => handleChange(e, "workExperiences", i)}
-                  placeholder="Ceritakan tanggung jawab dan pencapaianmu di posisi ini..."
+                  onChange={(e) => handleChange(e, "educations", i)}
+                  placeholder="Tulis riwayat pendidikanmu secara bebas, misalnya: Saya menyelesaikan studi di Universitas Indonesia jurusan Ekonomi, dengan fokus pada analisis data dan manajemen bisnis."
                   className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0 min-h-[100px]"
                 />
                 {formErrors[`description-${i}`] && (
@@ -229,22 +268,22 @@ export function StepThreeForm({
       <Button
         type="button"
         onClick={() => {
-          const newIndex = workExperiences.length;
-          addSectionItem("workExperiences");
+          const newIndex = educations.length;
+          addSectionItem("educations");
           setOpenIndexes((prev) => [...prev, newIndex]);
         }}
         className="text-emerald-500 font-semibold hover:bg-transparent hover:text-emerald-600 ml-2"
         variant="ghost"
       >
-        + Tambah pekerjaan lain
+        + Tambah pendidikan lain
       </Button>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Hapus Pengalaman</DialogTitle>
+            <DialogTitle>Hapus Pendidikan</DialogTitle>
             <DialogDescription>
-              Apakah Anda yakin ingin menghapus pengalaman ini?
+              Apakah Anda yakin ingin menghapus pendidikan ini?
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
