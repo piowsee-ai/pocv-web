@@ -177,9 +177,9 @@ export function WizardStep() {
       formData.educations.forEach((exp, i) => {
         if (useDefaultInputEdu) {
           if (!exp.degree) errors[`degree-${i}`] = `Gelar harus diisi.`;
-          if (!exp.major) errors[`company-${i}`] = `Program Studi harus diisi.`;
+          if (!exp.major) errors[`major-${i}`] = `Program Studi harus diisi.`;
           if (!exp.institution)
-            errors[`company-${i}`] = `Institusi harus diisi.`;
+            errors[`institution-${i}`] = `Institusi harus diisi.`;
         }
         if (!exp.description)
           errors[`description-${i}`] = `Deskripsi harus diisi.`;
@@ -260,7 +260,7 @@ export function WizardStep() {
           location: exp.location,
           description: exp.description,
         }))
-      : formData.workExperiences.map((exp) => ({
+      : formData.organizationExperiences.map((exp) => ({
           description: exp.description,
         }));
 

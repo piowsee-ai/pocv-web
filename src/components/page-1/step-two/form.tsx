@@ -59,9 +59,9 @@ export function StepTwoForm({
       .filter(
         (i) =>
           formErrors[`degree-${i}`] ||
+          formErrors[`institution-${i}`] ||
           formErrors[`major-${i}`] ||
-          formErrors[`major-${i}`] ||
-          formErrors[`gpa-${i}`]
+          formErrors[`description-${i}`]
       );
 
     setOpenIndexes((prev) => Array.from(new Set([...prev, ...errorIndexes])));
@@ -237,7 +237,7 @@ export function StepTwoForm({
                     id="location"
                     value={exp.location}
                     onChange={(e) => handleChange(e, "educations", i)}
-                    placeholder="Jaakarta, Bandung, Surabaya, dll"
+                    placeholder="Jakarta, Bandung, Surabaya, dll"
                     className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0"
                   />
                 </div>
