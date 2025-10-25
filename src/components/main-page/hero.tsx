@@ -17,7 +17,7 @@ export function Hero() {
 
             <div className="w-[820px] max-w-4xl mx-auto flex justify-center">
                 <Image 
-                    src="/images/hero img.png" 
+                    src="/images/hero-img.png" 
                     alt="Hero" 
                     width ={4000}
                     height={3000}
