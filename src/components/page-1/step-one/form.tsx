@@ -1,18 +1,27 @@
 import { ChangeEvent } from "react";
 import { Input } from "@/components/ui/input";
-import { TextArea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { FormData } from "@/types/form-data";
 
-interface StepOneProps {
+interface StepOneFormProps {
   formData: FormData;
   formErrors: Record<string, string>;
   handleChange: (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    section?:
+      | "root"
+      | "educations"
+      | "workExperiences"
+      | "organizationExperiences",
+    index?: number
   ) => void;
 }
 
-export function StepOneForm({ formData, formErrors, handleChange }: StepOneProps) {
+export function StepOneForm({
+  formData,
+  formErrors,
+  handleChange,
+}: StepOneFormProps) {
   return (
     <>
       <div className="mb-4">
@@ -96,25 +105,6 @@ export function StepOneForm({ formData, formErrors, handleChange }: StepOneProps
           placeholder="Tautan Portofolio"
           className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0"
         />
-      </div>
-
-      <div className="mb-4">
-        <Label htmlFor="education" className="mb-1 block">
-          Pendidikan <span className="text-red-500">*</span>
-        </Label>
-        <TextArea
-          id="education"
-          value={formData.education}
-          onChange={handleChange}
-          placeholder="Nama Institusi, Daerah, MM/YYYY - MM/YYYY, Jurusan/Gelar, Deskripsi"
-          required
-          className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0"
-        />
-        {formErrors.education && (
-          <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-            {formErrors.education}
-          </p>
-        )}
       </div>
     </>
   );

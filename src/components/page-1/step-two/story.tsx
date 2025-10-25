@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, ChangeEvent } from "react";
 import { TextArea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { WorkExperience } from "@/types/form-data";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronUp, Trash } from "lucide-react";
+import { Education } from "@/types/form-data";
 import {
   Dialog,
   DialogContent,
@@ -17,26 +17,35 @@ import {
 
 interface StepTwoStoryProps {
   formData: {
-    workExperiences: WorkExperience[];
+    educations: Education[];
   };
   formErrors: Record<string, string>;
-  handleWorkExperienceChange: (
-    index: number,
-    field: keyof WorkExperience,
-    value: string
+  handleChange: (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    section?:
+      | "root"
+      | "educations"
+      | "workExperiences"
+      | "organizationExperiences",
+    index?: number
   ) => void;
-  addWorkExperience: () => void;
-  removeWorkExperience: (index: number) => void;
+  addSectionItem: (
+    section: "educations" | "workExperiences" | "organizationExperiences"
+  ) => void;
+  removeSectionItem: (
+    section: "educations" | "workExperiences" | "organizationExperiences",
+    index: number
+  ) => void;
 }
 
 export function StepTwoStory({
   formData,
   formErrors,
-  handleWorkExperienceChange,
-  addWorkExperience,
-  removeWorkExperience,
+  handleChange,
+  addSectionItem,
+  removeSectionItem,
 }: StepTwoStoryProps) {
-  const { workExperiences } = formData;
+  const { educations } = formData;
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [targetIndex, setTargetIndex] = useState<number | null>(null);
@@ -44,12 +53,12 @@ export function StepTwoStory({
   const [openIndexes, setOpenIndexes] = useState<number[]>([]);
 
   useEffect(() => {
-    const errorIndexes = workExperiences
+    const errorIndexes = educations
       .map((_, i) => i)
       .filter((i) => formErrors[`description-${i}`]);
 
     setOpenIndexes((prev) => Array.from(new Set([...prev, ...errorIndexes])));
-  }, [formErrors, workExperiences]);
+  }, [formErrors, educations]);
 
   const handleDeleteClick = (index: number) => {
     setTargetIndex(index);
@@ -57,7 +66,7 @@ export function StepTwoStory({
   };
 
   const handleConfirmDelete = () => {
-    if (targetIndex !== null) removeWorkExperience(targetIndex);
+    if (targetIndex !== null) removeSectionItem("educations", targetIndex);
     setDialogOpen(false);
     setTargetIndex(null);
   };
@@ -75,7 +84,7 @@ export function StepTwoStory({
 
   return (
     <div className="space-y-2">
-      {workExperiences.map((exp, i) => (
+      {educations.map((exp, i) => (
         <div
           key={i}
           className="relative space-y-6 rounded-lg border-2 bg-white px-6 pb-6 pt-2 shadow-sm"
@@ -85,10 +94,10 @@ export function StepTwoStory({
             onClick={() => toggleDropdown(i)}
           >
             <h2 className="text-lg font-semibold text-gray-800">
-              Perusahaan {i + 1}
+              Pendidikan {i + 1}
             </h2>
             <div className="flex items-center gap-2">
-              {workExperiences.length > 1 && (
+              {educations.length > 1 && (
                 <Trash
                   size={15}
                   className="text-red-500 hover:text-red-700 cursor-pointer"
@@ -113,12 +122,10 @@ export function StepTwoStory({
                   Ceritakan Pengalamanmu
                 </Label>
                 <TextArea
-                  id={`description-${i}`}
+                  id="description"
                   value={exp.description}
-                  onChange={(e) =>
-                    handleWorkExperienceChange(i, "description", e.target.value)
-                  }
-                  placeholder="Tulis pengalaman kerja atau proyekmu secara bebas, misalnya: Saya memiliki pengalaman 5 tahun di PT Teknologi Maju sebagai UI/UX Designer, di mana saya mengerjakan..."
+                  onChange={(e) => handleChange(e, "educations", i)}
+                  placeholder="Tulis riwayat pendidikanmu secara bebas, misalnya: Saya menyelesaikan studi di Universitas Indonesia jurusan Ekonomi, dengan fokus pada analisis data dan manajemen bisnis."
                   className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0 min-h-[100px]"
                 />
                 {formErrors[`description-${i}`] && (
@@ -134,15 +141,15 @@ export function StepTwoStory({
 
       <Button
         type="button"
-        onClick={()=>{
-          const newIndex = workExperiences.length;
-          addWorkExperience();
+        onClick={() => {
+          const newIndex = educations.length;
+          addSectionItem("educations");
           setOpenIndexes((prev) => [...prev, newIndex]);
         }}
         className="text-emerald-500 font-semibold hover:bg-transparent hover:text-emerald-600 ml-2 cursor-pointer"
         variant="ghost"
       >
-        + Tambah pekerjaan lain
+        + Tambah pendidikan lain
       </Button>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>

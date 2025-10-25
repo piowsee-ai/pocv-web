@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, ChangeEvent } from "react";
 import { Input } from "@/components/ui/input";
 import { TextArea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { WorkExperience } from "@/types/form-data";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronUp, Trash } from "lucide-react";
+import { OrganizationExperience } from "@/types/form-data";
 import {
   Dialog,
   DialogContent,
@@ -16,28 +16,37 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 
-interface StepTwoProps {
+interface StepFourFormProps {
   formData: {
-    workExperiences: WorkExperience[];
+    organizationExperiences: OrganizationExperience[];
   };
   formErrors: Record<string, string>;
-  handleWorkExperienceChange: (
-    index: number,
-    field: keyof WorkExperience,
-    value: string
+  handleChange: (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    section?:
+      | "root"
+      | "educations"
+      | "workExperiences"
+      | "organizationExperiences",
+    index?: number
   ) => void;
-  addWorkExperience: () => void;
-  removeWorkExperience: (index: number) => void;
+  addSectionItem: (
+    section: "educations" | "workExperiences" | "organizationExperiences"
+  ) => void;
+  removeSectionItem: (
+    section: "educations" | "workExperiences" | "organizationExperiences",
+    index: number
+  ) => void;
 }
 
-export function StepTwoForm({
+export function StepFourForm({
   formData,
   formErrors,
-  handleWorkExperienceChange,
-  addWorkExperience,
-  removeWorkExperience,
-}: StepTwoProps) {
-  const { workExperiences } = formData;
+  handleChange,
+  addSectionItem,
+  removeSectionItem,
+}: StepFourFormProps) {
+  const { organizationExperiences } = formData;
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [targetIndex, setTargetIndex] = useState<number | null>(null);
@@ -45,17 +54,17 @@ export function StepTwoForm({
   const [openIndexes, setOpenIndexes] = useState<number[]>([]);
 
   useEffect(() => {
-    const errorIndexes = workExperiences
+    const errorIndexes = organizationExperiences
       .map((_, i) => i)
       .filter(
         (i) =>
           formErrors[`description-${i}`] ||
           formErrors[`position-${i}`] ||
-          formErrors[`company-${i}`]
+          formErrors[`organization-${i}`]
       );
 
     setOpenIndexes((prev) => Array.from(new Set([...prev, ...errorIndexes])));
-  }, [formErrors, workExperiences]);
+  }, [formErrors, organizationExperiences]);
 
   const handleDeleteClick = (index: number) => {
     setTargetIndex(index);
@@ -63,7 +72,8 @@ export function StepTwoForm({
   };
 
   const handleConfirmDelete = () => {
-    if (targetIndex !== null) removeWorkExperience(targetIndex);
+    if (targetIndex !== null)
+      removeSectionItem("organizationExperiences", targetIndex);
     setDialogOpen(false);
     setTargetIndex(null);
   };
@@ -81,7 +91,7 @@ export function StepTwoForm({
 
   return (
     <div className="space-y-2">
-      {workExperiences.map((exp, i) => (
+      {organizationExperiences.map((exp, i) => (
         <div
           key={i}
           className="relative space-y-6 rounded-lg border-2 bg-white px-6 pb-6 pt-2 shadow-sm"
@@ -91,11 +101,11 @@ export function StepTwoForm({
             onClick={() => toggleDropdown(i)}
           >
             <h2 className="text-lg font-semibold text-gray-800">
-              Perusahaan {i + 1}
+              Organisasi {i + 1}
             </h2>
 
             <div className="flex items-center gap-2">
-              {workExperiences.length > 1 && (
+              {organizationExperiences.length > 1 && (
                 <Trash
                   size={15}
                   className="text-red-500 hover:text-red-700 cursor-pointer"
@@ -122,10 +132,10 @@ export function StepTwoForm({
                     Jabatan <span className="text-red-500">*</span>
                   </Label>
                   <Input
-                    id={`position-${i}`}
+                    id="position"
                     value={exp.position}
                     onChange={(e) =>
-                      handleWorkExperienceChange(i, "position", e.target.value)
+                      handleChange(e, "organizationExperiences", i)
                     }
                     placeholder="Jabatan"
                     className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0"
@@ -138,21 +148,21 @@ export function StepTwoForm({
                 </div>
 
                 <div>
-                  <Label htmlFor={`company-${i}`} className="mb-1 block">
-                    Perusahaan <span className="text-red-500">*</span>
+                  <Label htmlFor={`organization-${i}`} className="mb-1 block">
+                    Organisasi <span className="text-red-500">*</span>
                   </Label>
                   <Input
-                    id={`company-${i}`}
-                    value={exp.company}
+                    id="organization"
+                    value={exp.organization}
                     onChange={(e) =>
-                      handleWorkExperienceChange(i, "company", e.target.value)
+                      handleChange(e, "organizationExperiences", i)
                     }
-                    placeholder="Nama Perusahaan"
+                    placeholder="Nama Organisasi"
                     className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0"
                   />
-                  {formErrors[`company-${i}`] && (
+                  {formErrors[`organization-${i}`] && (
                     <p className="text-red-500 text-sm mt-1">
-                      {formErrors[`company-${i}`]}
+                      {formErrors[`organization-${i}`]}
                     </p>
                   )}
                 </div>
@@ -164,10 +174,10 @@ export function StepTwoForm({
                     Tanggal Mulai
                   </Label>
                   <Input
-                    id={`startDate-${i}`}
+                    id="startDate"
                     value={exp.startDate}
                     onChange={(e) =>
-                      handleWorkExperienceChange(i, "startDate", e.target.value)
+                      handleChange(e, "organizationExperiences", i)
                     }
                     placeholder="MM / YYYY"
                     className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0"
@@ -179,10 +189,10 @@ export function StepTwoForm({
                     Tanggal Akhir
                   </Label>
                   <Input
-                    id={`endDate-${i}`}
+                    id="endDate"
                     value={exp.endDate}
                     onChange={(e) =>
-                      handleWorkExperienceChange(i, "endDate", e.target.value)
+                      handleChange(e, "organizationExperiences", i)
                     }
                     placeholder="MM / YYYY"
                     className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0"
@@ -190,16 +200,16 @@ export function StepTwoForm({
                 </div>
 
                 <div>
-                  <Label htmlFor={`city-${i}`} className="mb-1 block">
-                    Kota
+                  <Label htmlFor={`location-${i}`} className="mb-1 block">
+                    Lokasi
                   </Label>
                   <Input
-                    id={`city-${i}`}
-                    value={exp.city}
+                    id="location"
+                    value={exp.location}
                     onChange={(e) =>
-                      handleWorkExperienceChange(i, "city", e.target.value)
+                      handleChange(e, "organizationExperiences", i)
                     }
-                    placeholder="Nama Kota"
+                    placeholder="Lokasi"
                     className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0"
                   />
                 </div>
@@ -207,15 +217,15 @@ export function StepTwoForm({
 
               <div>
                 <Label htmlFor={`description-${i}`} className="mb-1 block">
-                  Deskripsi
+                  Deskripsi <span className="text-red-500">*</span>
                 </Label>
                 <TextArea
-                  id={`description-${i}`}
+                  id="description"
                   value={exp.description}
                   onChange={(e) =>
-                    handleWorkExperienceChange(i, "description", e.target.value)
+                    handleChange(e, "organizationExperiences", i)
                   }
-                  placeholder="Ceritakan tanggung jawab dan pencapaianmu di posisi ini..."
+                  placeholder="Ceritakan pengalamanmu selama berorganisasi"
                   className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0 min-h-[100px]"
                 />
                 {formErrors[`description-${i}`] && (
@@ -231,15 +241,15 @@ export function StepTwoForm({
 
       <Button
         type="button"
-        onClick={()=>{
-          const newIndex = workExperiences.length;
-          addWorkExperience();
+        onClick={() => {
+          const newIndex = organizationExperiences.length;
+          addSectionItem("organizationExperiences");
           setOpenIndexes((prev) => [...prev, newIndex]);
         }}
         className="text-emerald-500 font-semibold hover:bg-transparent hover:text-emerald-600 ml-2"
         variant="ghost"
       >
-        + Tambah pekerjaan lain
+        + Tambah organisasi lain
       </Button>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
