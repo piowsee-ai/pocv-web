@@ -89,7 +89,7 @@ export function Problem() {
                     </div>
 
                     <div className="lg:col-span-5">
-                        <span className="text-sm font-semibold text-primary uppercase tracking-wider">
+                        <span className="text-sm font-semibold text-emerald-600 uppercase tracking-wider">
                             Taukah Kamu?
                         </span>
                         <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl mt-3">

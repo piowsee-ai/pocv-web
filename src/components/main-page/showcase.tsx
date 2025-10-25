@@ -58,14 +58,14 @@ const ShowcaseCard = ({ icon: Icon, title, description }: Feature) => (
     <div
         className="
             relative overflow-hidden rounded-lg border bg-card/60 p-6 backdrop-blur-lg shadow-sm transition-all duration-300
-            hover:shadow-primary/10 hover:shadow-2xl hover:-translate-y-1
+            hover:shadow-emerald-600/10 hover:shadow-2xl hover:-translate-y-1
         "
     >
 
         <div className="relative z-10 flex flex-col h-full">
             <div className="flex justify-between items-start mb-4">
                 <div className="pb-2">
-                    <Icon className="w-6 h-6 text-primary" />
+                    <Icon className="w-6 h-6 text-emerald-600" />
                 </div>
                 <ArrowUpRight className="w-5 h-5 text-muted-foreground" />
             </div>

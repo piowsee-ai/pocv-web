@@ -38,7 +38,7 @@ export function SocialProof() {
                 </p>
             </div> */}
 
-            <div className="justify-center flex items-center gap-2 mt-8 mb-10">
+            <div className="justify-center flex items-center gap-2 mb-10">
                 <p className="text-sm text-neutral-600">
                     Built with love by <span className="font-semibold text-foreground">piowsee.ai</span>
                 </p>

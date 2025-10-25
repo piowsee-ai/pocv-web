@@ -87,7 +87,7 @@ export function Benefits() {
                     </div>
 
                     <div className="lg:col-span-5">
-                        <span className="text-xs font-semibold text-primary uppercase tracking-wider">
+                        <span className="text-xs font-semibold text-emerald-600 uppercase tracking-wider">
                             Mengapa pocv Berbeda?
                         </span>
                         <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl mt-3">
@@ -98,7 +98,7 @@ export function Benefits() {
                             {keyBenefits.map((benefit, index) => (
                                 <div key={index} className="flex items-start gap-4">
                                     <div className="flex-shrink-0 mt-0.5">
-                                        <CheckCircle2 className="w-6 h-6 text-green-500" />
+                                        <CheckCircle2 className="w-6 h-6 text-emerald-600" />
                                     </div>
                                     <div>
                                         <h3 className="text-lg font-semibold text-foreground">
