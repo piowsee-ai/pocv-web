@@ -149,7 +149,7 @@ export function StepTwoStory({
         className="text-emerald-500 font-semibold hover:bg-transparent hover:text-emerald-600 ml-2 cursor-pointer"
         variant="ghost"
       >
-        + Tambah pekerjaan lain
+        + Tambah pendidikan lain
       </Button>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
