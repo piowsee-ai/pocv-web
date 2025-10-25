@@ -16,7 +16,7 @@ export default async function Home() {
   return (
     <main className="relative min-h-screen pt-16 text-foreground">
       <div className="absolute inset-0 -z-10 h-full w-full">
-        <div className="absolute inset-0 bg-neutral-100 dark:bg-neutral-900"></div>
+        <div className="absolute inset-0 bg-white dark:bg-neutral-900"></div>
       </div>
 
       <Header session={session} />
