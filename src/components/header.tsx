@@ -65,12 +65,12 @@ export function Header({ session }: SessionData) {
                             <NavigationMenuLink
                                 asChild
                                 className="inline-flex h-auto items-center justify-center bg-transparent p-0
-                                font-medium text-muted-foreground transition-colors hover:bg-transparent hover:text-foreground
+                                font-medium text-muted-foreground transition-colors hover:bg-transparent hover:text-emerald-700
                                 focus:text-muted-foreground focus:bg-transparent focus:outline-none"
                             >
                                 <Link
                                     href="/#pricing"
-                                    className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:bg-transparent hover:text-foreground active:bg-transparent"
+                                    className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:bg-transparent hover:text-emerald-700 active:bg-transparent"
                                 >
                                     Buat CV
                                 </Link>
@@ -80,15 +80,15 @@ export function Header({ session }: SessionData) {
                         <NavigationMenuItem>
                             <NavigationMenuTrigger
                                 className="group inline-flex h-auto items-center justify-center bg-transparent p-0
-                                font-medium text-muted-foreground transition-colors hover:bg-transparent hover:text-foreground
-                                focus:text-muted-foreground focus:bg-transparent focus:outline-none data-[state=open]:!text-foreground
+                                font-medium text-muted-foreground transition-colors hover:bg-transparent hover:text-emerald-700
+                                focus:text-muted-emerald-700 focus:bg-transparent focus:outline-none data-[state=open]:!text-emerald-700
                                 data-[state=open]:!bg-transparent"
                             >
                                 Fitur Tambahan
                             </NavigationMenuTrigger>
 
                             <NavigationMenuContent className="bg-white">
-                                <ul className="grid w-[300px]">
+                                <ul className="grid w-[280px]">
                                     <li>
                                         <NavigationMenuLink
                                             asChild
@@ -138,12 +138,12 @@ export function Header({ session }: SessionData) {
                             <NavigationMenuLink
                                 asChild
                                 className="inline-flex h-auto items-center justify-center bg-transparent p-0
-                                font-medium text-muted-foreground transition-colors hover:bg-transparent hover:text-foreground
+                                font-medium text-muted-foreground transition-colors hover:bg-transparent hover:text-emerald-700
                                 focus:text-muted-foreground focus:bg-transparent focus:outline-none"
                             >
                                 <Link
                                     href="/#faq"
-                                    className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:bg-transparent hover:text-foreground active:bg-transparent"
+                                    className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:bg-transparent hover:text-emerald-700 active:bg-transparent"
                                 >
                                     FAQ
                                 </Link>
