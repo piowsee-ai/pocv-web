@@ -17,7 +17,7 @@ model User {
   image         String?
   createdAt     DateTime
   updatedAt     DateTime
-  cvs      	 Cv[]
+  cvs      	    Cv[]
   accounts      Account[]
   sessions      Session[]
 
@@ -90,7 +90,7 @@ enum SectionType {
 model Section {
   id          String @id
   cvId        String
-  cv          Cv     @relation(fields: [cvId], references: [id])
+  cv          Cv     @relation(fields: [cvId], references: [id], onDelete: Cascade)
   type        SectionType
   content     Json
   order       Int  // ordering of sections

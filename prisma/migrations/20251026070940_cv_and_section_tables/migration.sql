@@ -29,4 +29,4 @@ CREATE TABLE "public"."section" (
 ALTER TABLE "public"."cv" ADD CONSTRAINT "cv_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."section" ADD CONSTRAINT "section_cvId_fkey" FOREIGN KEY ("cvId") REFERENCES "public"."cv"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "public"."section" ADD CONSTRAINT "section_cvId_fkey" FOREIGN KEY ("cvId") REFERENCES "public"."cv"("id") ON DELETE CASCADE ON UPDATE CASCADE;
