@@ -17,7 +17,7 @@ model User {
   image         String?
   createdAt     DateTime
   updatedAt     DateTime
-  cvs      	    Cv[]
+  cvs          Cv[]
   accounts      Account[]
   sessions      Session[]
 
