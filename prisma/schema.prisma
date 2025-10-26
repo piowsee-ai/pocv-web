@@ -17,7 +17,6 @@ model User {
   image         String?
   createdAt     DateTime
   updatedAt     DateTime
-  cvs      	 Cv[]
   accounts      Account[]
   sessions      Session[]
 
@@ -66,36 +65,4 @@ model Verification {
   updatedAt  DateTime?
 
   @@map("verification")
-}
-
-model Cv {
-  id          String    @id
-  userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  title       String
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  sections    Section[]
-
-  @@map("cv")
-}
-
-enum SectionType {
-  EDUCATION
-  EXPERIENCE
-  SKILLS
-  PERSONAL
-}
-
-model Section {
-  id          String @id
-  cvId        String
-  cv          Cv     @relation(fields: [cvId], references: [id])
-  type        SectionType
-  content     Json
-  order       Int  // ordering of sections
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-
-  @@map("section")
 }
