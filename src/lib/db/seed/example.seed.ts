@@ -25,7 +25,6 @@ export async function seedExample() {
       id: 'sec-1',
       cvId: cv.id,
       type: 'EDUCATION',
-      order: 1,
       content: {
         school: 'Universitas Padjadjaran',
         major: 'Computer Science',
