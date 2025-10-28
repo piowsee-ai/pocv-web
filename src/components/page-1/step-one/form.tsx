@@ -1,7 +1,7 @@
 import { ChangeEvent } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { FormData } from "@/types/form-data";
+import type { FormData } from "@/types/form-data";
 
 interface StepOneFormProps {
   formData: FormData;
