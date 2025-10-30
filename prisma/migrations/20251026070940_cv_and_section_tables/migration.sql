@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "public"."SectionType" AS ENUM ('EDUCATION', 'EXPERIENCE', 'SKILLS', 'PERSONAL');
+CREATE TYPE "public"."SectionType" AS ENUM ('EDUCATION', 'WORK', 'ORGANIZATION', 'PERSONAL');
 
 -- CreateTable
 CREATE TABLE "public"."cv" (
@@ -18,7 +18,6 @@ CREATE TABLE "public"."section" (
     "cvId" TEXT NOT NULL,
     "type" "public"."SectionType" NOT NULL,
     "content" JSONB NOT NULL,
-    "order" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 

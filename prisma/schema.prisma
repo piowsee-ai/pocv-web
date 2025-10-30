@@ -82,8 +82,8 @@ model Cv {
 
 enum SectionType {
   EDUCATION
-  EXPERIENCE
-  SKILLS
+  WORK
+  ORGANIZATION
   PERSONAL
 }
 
@@ -93,7 +93,6 @@ model Section {
   cv          Cv     @relation(fields: [cvId], references: [id], onDelete: Cascade)
   type        SectionType
   content     Json
-  order       Int  // ordering of sections
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
