@@ -46,7 +46,7 @@ export const CVRepository = {
 
   async updateCV(cvId: string, userId: string, title: string, sections: any[]) {
     return prisma.$transaction(async (tx) => {
-      const cv = await tx.cv.update({
+      await tx.cv.update({
         where: { id: cvId, userId },
         data: { title },
       });

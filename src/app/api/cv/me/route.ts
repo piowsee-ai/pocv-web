@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { CVListDTO } from "@/lib/dto/cv.schema";
 import { CVService } from "@/lib/services/cv.service";
-import { logger, logError } from "@/lib/log/logger";
+import { logError } from "@/lib/log/logger";
 
 export async function GET(req: NextRequest) {
   // TODO: replace with actual authenticated userId

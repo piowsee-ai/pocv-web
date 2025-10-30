@@ -15,17 +15,17 @@ export const CVService = {
     const id = uuidv4();
 
     const sections = [
-      ...dto.educations.map((edu, i) => ({
+      ...dto.educations.map((edu) => ({
         id: uuidv4(),
         type: SectionType.EDUCATION,
         content: edu,
       })),
-      ...dto.workExperiences.map((work, i) => ({
+      ...dto.workExperiences.map((work) => ({
         id: uuidv4(),
         type: SectionType.WORK,
         content: work,
       })),
-      ...dto.organizationExperiences.map((org, i) => ({
+      ...dto.organizationExperiences.map((org) => ({
         id: uuidv4(),
         type: SectionType.ORGANIZATION,
         content: org,

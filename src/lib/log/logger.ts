@@ -54,7 +54,9 @@ export function logError(err: unknown, context: Record<string, any> = {}) {
       err instanceof Prisma.PrismaClientKnownRequestError ||
       err instanceof Prisma.PrismaClientInitializationError
     ) {
-        const truncatedMessage = err.message.slice(0, 200);
+        const maxLength = Number(process.env.MAX_LOG_ERROR_MESSAGE_LENGTH) || 200;
+        const truncatedMessage = err.message.slice(0, maxLength);
+
       logger.error(`Prisma Error Occurred: ${truncatedMessage}...`, {
         error: {
           name: err.name,

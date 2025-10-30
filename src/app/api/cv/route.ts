@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
     const formData: FormDataDTO = result.data;
     await CVService.createCV(userId, formData);
 
-    logger.info("CV updated successfully", {
+    logger.info("CV created successfully", {
       userId,
       method: req.method,
       route: req.url,

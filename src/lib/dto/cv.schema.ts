@@ -44,9 +44,9 @@ export const PersonalDataSchema: z.ZodType<PersonalData> = z.object({
   id: z.uuid().optional(),
   name: z.string(),
   phone: z.string(),
-  linkedin: z.url(),
+  linkedin: z.union([z.url(), z.literal("")]),
   email: z.email(),
-  github: z.url(),
+  github: z.union([z.url(), z.literal("")]),
 });
 
 export const FormDataSchema: z.ZodType<FormData> = z.object({
