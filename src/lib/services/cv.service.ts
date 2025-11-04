@@ -109,21 +109,30 @@ export const CVService = {
 
   async updateCV(cvId: string, userId: string, dto: FormDataDTO) {
     const sections = [
-      ...dto.educations.map((edu, i) => ({
-        id: edu.id ?? uuidv4(),
-        type: SectionType.EDUCATION,
-        content: edu,
-      })),
-      ...dto.workExperiences.map((work, i) => ({
-        id: work.id ?? uuidv4(),
-        type: SectionType.WORK,
-        content: work,
-      })),
-      ...dto.organizationExperiences.map((org, i) => ({
-        id: org.id ?? uuidv4(),
-        type: SectionType.ORGANIZATION,
-        content: org,
-      })),
+      ...dto.educations.map((edu, i) => {
+        const { id, ...eduContent } = edu;
+        return {
+          id: id ?? uuidv4(),
+          type: SectionType.EDUCATION,
+          content: eduContent,
+        };
+      }),
+      ...dto.workExperiences.map((work, i) => {
+        const { id, ...workContent } = work;
+        return {
+          id: id ?? uuidv4(),
+          type: SectionType.WORK,
+          content: workContent,
+        }
+      }),
+      ...dto.organizationExperiences.map((org, i) => {
+        const { id, ...orgContent } = org;
+        return {
+          id: id ?? uuidv4(),
+          type: SectionType.ORGANIZATION,
+          content: orgContent,
+        };
+      }),
       {
         // TODO: replace id once FormData on types/form-data.ts is refactored to use `personalData`
         id: uuidv4(),
@@ -140,5 +149,7 @@ export const CVService = {
 
     // NOTE: Decide whether to return the updated CV (with sections) or keep it fire-and-forget
     await CVRepository.updateCV(cvId, userId, "resume", sections);
+    
+    return;
   },
 };

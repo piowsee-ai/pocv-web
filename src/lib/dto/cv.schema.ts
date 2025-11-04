@@ -44,17 +44,17 @@ export const PersonalDataSchema: z.ZodType<PersonalData> = z.object({
   id: z.uuid().optional(),
   name: z.string(),
   phone: z.string(),
-  linkedin: z.union([z.url(), z.literal("")]),
+  linkedin: z.union([z.url(), z.literal("")]).optional(),
   email: z.email(),
-  github: z.union([z.url(), z.literal("")]),
+  github: z.union([z.url(), z.literal("")]).optional(),
 });
 
 export const FormDataSchema: z.ZodType<FormData> = z.object({
   name: z.string(),
   phone: z.string(),
   email: z.email(),
-  linkedin: z.union([z.url(), z.literal("")]),
-  github: z.union([z.url(), z.literal("")]),
+  linkedin: z.union([z.url(), z.literal("")]).optional(),
+  github: z.union([z.url(), z.literal("")]).optional(),
   educations: z.array(EducationSchema),
   workExperiences: z.array(WorkExperienceSchema),
   organizationExperiences: z.array(OrganizationExperienceSchema),

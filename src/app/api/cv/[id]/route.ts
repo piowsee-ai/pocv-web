@@ -69,6 +69,7 @@ export async function PATCH(
 
     const formData: FormDataDTO = result.data;
 
+    // NOTE: Decide whether to return the updated CV (with sections) or keep it fire-and-forget
     const updatedCV = await CVService.updateCV(id, userId, formData);
 
     logger.info("CV updated successfully", {

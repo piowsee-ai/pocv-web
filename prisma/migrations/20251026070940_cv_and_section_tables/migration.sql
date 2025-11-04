@@ -24,6 +24,12 @@ CREATE TABLE "public"."section" (
     CONSTRAINT "section_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateIndex (composite unique)
+CREATE UNIQUE INDEX "cv_id_userId_key" ON "public"."cv"("id", "userId");
+
+-- CreateIndex (composite unique)
+CREATE UNIQUE INDEX "section_id_cvId_key" ON "public"."section"("id", "cvId");
+
 -- AddForeignKey
 ALTER TABLE "public"."cv" ADD CONSTRAINT "cv_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 

@@ -14,7 +14,7 @@ export const CVRepository = {
     userId: string,
     cvId: string
   ): Promise<(Cv & { sections: Section[] }) | null> {
-    return prisma.cv.findFirst({
+    return prisma.cv.findUnique({
       where: {
         userId: userId,
         id: cvId,
