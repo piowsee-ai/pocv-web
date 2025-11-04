@@ -109,7 +109,7 @@ export const CVService = {
 
   async updateCV(cvId: string, userId: string, dto: FormDataDTO) {
     const sections = [
-      ...dto.educations.map((edu, i) => {
+      ...dto.educations.map((edu) => {
         const { id, ...eduContent } = edu;
         return {
           id: id ?? uuidv4(),
@@ -117,7 +117,7 @@ export const CVService = {
           content: eduContent,
         };
       }),
-      ...dto.workExperiences.map((work, i) => {
+      ...dto.workExperiences.map((work) => {
         const { id, ...workContent } = work;
         return {
           id: id ?? uuidv4(),
@@ -125,7 +125,7 @@ export const CVService = {
           content: workContent,
         }
       }),
-      ...dto.organizationExperiences.map((org, i) => {
+      ...dto.organizationExperiences.map((org) => {
         const { id, ...orgContent } = org;
         return {
           id: id ?? uuidv4(),
