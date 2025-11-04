@@ -5,7 +5,7 @@ import { TextArea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronUp, Trash } from "lucide-react";
-import { Education } from "@/types/form-data";
+import type { Education } from "@/types/form-data";
 import {
   Dialog,
   DialogContent,

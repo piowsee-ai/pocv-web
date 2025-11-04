@@ -3,7 +3,7 @@
 import { useState, useEffect, ChangeEvent } from "react";
 import { TextArea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { WorkExperience } from "@/types/form-data";
+import type { WorkExperience } from "@/types/form-data";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronUp, Trash } from "lucide-react";
 import {

@@ -4,7 +4,7 @@ import { ChangeEvent, useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { TextArea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { WorkExperience } from "@/types/form-data";
+import type { WorkExperience } from "@/types/form-data";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronUp, Trash } from "lucide-react";
 import {
@@ -170,6 +170,7 @@ export function StepThreeForm({
                   </Label>
                   <Input
                     id="startDate"
+                    type="date"
                     value={exp.startDate}
                     onChange={(e) => handleChange(e, "workExperiences", i)}
                     placeholder="MM / YYYY"
@@ -183,6 +184,7 @@ export function StepThreeForm({
                   </Label>
                   <Input
                     id="endDate"
+                    type="date"
                     value={exp.endDate}
                     onChange={(e) => handleChange(e, "workExperiences", i)}
                     placeholder="MM / YYYY"

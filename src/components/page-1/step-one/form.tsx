@@ -1,7 +1,7 @@
 import { ChangeEvent } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { FormData } from "@/types/form-data";
+import type { FormData } from "@/types/form-data";
 
 interface StepOneFormProps {
   formData: FormData;
@@ -96,13 +96,13 @@ export function StepOneForm({
 
       <div className="mb-4">
         <Label htmlFor="github" className="mb-1 block">
-          Portofolio (Opsional)
+          Github (Opsional)
         </Label>
         <Input
           id="github"
           value={formData.github}
           onChange={handleChange}
-          placeholder="Tautan Portofolio"
+          placeholder="Tautan Github"
           className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0"
         />
       </div>
