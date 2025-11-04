@@ -77,6 +77,7 @@ model Cv {
   updatedAt   DateTime  @updatedAt
   sections    Section[]
 
+  @@unique([id, userId])
   @@map("cv")
 }
 
@@ -96,5 +97,6 @@ model Section {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
+  @@unique([id, cvId])
   @@map("section")
 }
