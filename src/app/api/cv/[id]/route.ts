@@ -3,9 +3,9 @@ import { FormDataDTO, FormDataSchema } from "@/lib/dto/cv.schema";
 import { CVService } from "@/lib/services/cv.service";
 import { logger, logError } from "@/lib/log/logger";
 
-export async function GET(req: NextRequest, ctx: RouteContext<"/api/cv/[id]">) {
+export async function GET(req: NextRequest, ctx: { params: { id: string } }) {
   // TODO: replace with actual authenticated userId
-  const { id } = await ctx.params;
+  const { id } = ctx.params;
   const userId = "user-1";
 
   try {
@@ -42,10 +42,10 @@ export async function GET(req: NextRequest, ctx: RouteContext<"/api/cv/[id]">) {
 
 export async function PATCH(
   req: NextRequest,
-  ctx: RouteContext<"/api/cv/[id]">
+  ctx: { params: { id: string } }
 ) {
   // TODO: replace with actual authenticated userId
-  const { id } = await ctx.params;
+  const { id } = ctx.params;
   const userId = "user-1";
 
   try {
