@@ -13,8 +13,8 @@ export interface User {
 }
 
 export interface SessionData {
-    user: Session;
-    session: User;
+    session: Session | null;
+    user: User | null;
 }
 
 // improved version: (not used right now)
