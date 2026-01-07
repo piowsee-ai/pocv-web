@@ -1,12 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
+import { headers } from "next/headers";
+import { auth } from "@/lib/auth";
 import { FormDataDTO, FormDataSchema } from "@/lib/dto/cv.schema";
 import { CVService } from "@/lib/services/cv.service";
 import { logger, logError } from "@/lib/log/logger";
 
 export async function GET(req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
-  // TODO: replace with actual authenticated userId
+  const session = await auth.api.getSession({ headers: await headers() });
+
+  if (!session?.user) {
+    return NextResponse.json(
+      { success: false, message: "Unauthorized" },
+      { status: 401 }
+    );
+  }
+
   const { id } = await ctx.params;
-  const userId = "user-1";
+  const userId = session.user.id;
 
   try {
     const cvs: FormDataDTO | null = await CVService.getCVDetail(id, userId);
@@ -42,11 +52,19 @@ export async function GET(req: NextRequest, ctx: { params: Promise<{ id: string 
 
 export async function PATCH(
   req: NextRequest,
-  ctx: { params:  Promise<{ id: string }> }
+  ctx: { params: Promise<{ id: string }> }
 ) {
-  // TODO: replace with actual authenticated userId
+  const session = await auth.api.getSession({ headers: await headers() });
+
+  if (!session?.user) {
+    return NextResponse.json(
+      { success: false, message: "Unauthorized" },
+      { status: 401 }
+    );
+  }
+
   const { id } = await ctx.params;
-  const userId = "user-1";
+  const userId = session.user.id;
 
   try {
     const body = await req.json();
