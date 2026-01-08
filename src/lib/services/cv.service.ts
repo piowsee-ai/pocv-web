@@ -118,7 +118,7 @@ export const CVService = {
           id: id ?? uuidv4(),
           type: SectionType.WORK,
           content: workContent,
-        }
+        };
       }),
       ...data.organizationExperiences.map((org) => {
         const { id, ...orgContent } = org;
@@ -134,7 +134,7 @@ export const CVService = {
           id: id ?? uuidv4(),
           type: SectionType.PERSONAL,
           content: personalContent
-        }
+        };
       })()
     ];
 
