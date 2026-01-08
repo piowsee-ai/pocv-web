@@ -5,16 +5,16 @@ import { FaInstagram, FaTwitter, FaLinkedinIn } from "react-icons/fa";
 export function Footer() {
     return (
         <footer className="w-full border-t border-neutral-200 py-6 text-sm">
-            <div className="container mx-auto flex max-w-7xl flex-col gap-10 px-6 md:flex-row md:justify-between">
+            <div className="container mx-auto flex max-w-7xl flex-col gap-10 px-12 md:flex-row md:justify-between">
                 <div className="w-full max-w-xs space-y-4 ml-4">
-                    <Link href="/" className="flex items-center gap-2 text-lg font-semibold text-neutral-800">
+                    <Link href="/" className="flex items-center max-w-8 gap-2 text-lg font-semibold text-neutral-800">
                         <Image
-                            src="/logo-192.png"
+                            src="/logo-beta.png"
                             alt="Logo"
                             width={24}
                             height={24}
                         />
-                        <span className='relative top-[-1px]'>pocv</span>
+                        <span className='relative -top-px'>pocv</span>
                     </Link>
                     <p className="text-neutral-500">
                         <span className="font-semibold text-foreground">pocv</span> dari piowsee.ai membantu kamu membuat CV modern yang rapi, cepat, dan ramah ATS untuk mendukung kariermu.

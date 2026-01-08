@@ -9,6 +9,7 @@ import { Showcase } from '@/components/main-page/showcase';
 import { Benefits } from "@/components/main-page/benefits";
 import { Problem } from "@/components/main-page/problem";
 import { Faq } from "@/components/main-page/faq";
+import { Cta } from "@/components/main-page/cta";
 
 export default async function Home() {
   const session = await auth.api.getSession({ headers: await headers() });
@@ -16,8 +17,7 @@ export default async function Home() {
   return (
     <main className="relative min-h-screen pt-16 text-foreground">
       <div className="absolute inset-0 -z-10 h-full w-full">
-        <div className="absolute inset-0 bg-emerald-100 bg-[radial-gradient(ellipse_at_center,transparent_40%,var(--color-neutral-100))] dark:bg-neutral-900 dark:bg-[radial-gradient(ellipse_at_center,transparent_40%,var(--color-neutral-900))]"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(var(--color-neutral-300)_1px,transparent_1px)] bg-size-[20px_20px] dark:bg-[radial-gradient(var(--color-neutral-700)_1px,transparent_1px)]"></div>
+        <div className="absolute inset-0 bg-neutral-100 dark:bg-neutral-900"></div>
       </div>
 
       <Header session={session} />
@@ -27,6 +27,7 @@ export default async function Home() {
       <Showcase />
       <Benefits />
       <Faq />
+      {/* <Cta /> */}
       <Footer />
     </main>
   );

@@ -1,6 +1,6 @@
 import {
     ScanLine,
-    LayoutTemplate,
+    CircleQuestionMark,
     Wand2,
     Zap,
     Globe,
@@ -18,15 +18,9 @@ type Feature = {
 const features: Feature[] = [
     {
         icon: Zap,
-        title: "Draf Pertama dibantu AI",
+        title: "Buat Draf CV dibantu AI",
         description:
             "Mulai bukan dari nol. AI kami akan membantu kamu dalam membuat draf CV profesional berdasarkan datamu.",
-    },
-    {
-        icon: ScanLine,
-        title: "Optimasi Lolos ATS dan AI-screening",
-        description:
-            "Struktur dan format CV dirancang khusus agar mudah dibaca oleh sistem ATS dan AI-screening yang digunakan oleh perusahaan.",
     },
     {
         icon: Wand2,
@@ -34,11 +28,17 @@ const features: Feature[] = [
         description:
             "Klik pada bagian mana pun di CV-mu dan biarkan AI membantu menulis ulang kalimat menjadi lebih ringkas, kuat, dan relevan.",
     },
-    {
-        icon: LayoutTemplate,
-        title: "Editor yang Intuitif",
+        {
+        icon: CircleQuestionMark,
+        title: "Curate isi CV",
         description:
-            "Isi, ubah, dan sesuaikan CV-mu dengan mudah. Lihat semua perubahan secara langsung dengan fitur live-preview.",
+            "Masukkan deskripsi pekerjaan dan AI kami akan mengubah CV-mu. Dapatkan CV terbaik untuk setiap pekerjaan.",
+    },
+    {
+        icon: ScanLine,
+        title: "Optimasi Lolos ATS dan AI-screening",
+        description:
+            "Struktur dan format CV dirancang khusus agar mudah dibaca oleh sistem ATS dan AI-screening yang digunakan oleh perusahaan.",
     },
     {
         icon: Globe,
@@ -57,19 +57,19 @@ const features: Feature[] = [
 const ShowcaseCard = ({ icon: Icon, title, description }: Feature) => (
     <div
         className="
-            relative overflow-hidden rounded-lg border bg-card/60 p-6 backdrop-blur-lg shadow-sm transition-all duration-300
-            hover:shadow-primary/10 hover:shadow-2xl hover:-translate-y-1
+            relative overflow-hidden rounded-lg bg-white p-6 backdrop-blur-lg shadow-sm transition-all duration-300
+            hover:shadow-10 hover:shadow-xl hover:-translate-y-0.5
         "
     >
 
         <div className="relative z-10 flex flex-col h-full">
-            <div className="flex justify-between items-start mb-4">
-                <div className="pb-2">
-                    <Icon className="w-6 h-6 text-primary" />
+            <div className="flex justify-between items-start mb-2 md:mb-3">
+                <div className="pb-0">
+                    <Icon className="w-6 h-6 text-emerald-800" />
                 </div>
-                <ArrowUpRight className="w-5 h-5 text-muted-foreground" />
+                <ArrowUpRight className="w-5 h-5 text-emerald-800" />
             </div>
-            <div className="flex-grow">
+            <div className="grow">
                 <h3 className="text-lg font-semibold text-foreground mb-2">{title}</h3>
                 <p className="text-sm text-muted-foreground">{description}</p>
             </div>
@@ -80,31 +80,34 @@ const ShowcaseCard = ({ icon: Icon, title, description }: Feature) => (
 
 export function Showcase() {
     return (
-        <section id="features" className="relative mx-auto overflow-hidden py-24 md:py-32">
+        <section
+            id="features"
+            className="relative mx-auto overflow-hidden py-24 md:py-32 bg-emerald-100/50"
+        >
+
             <div className="absolute inset-0 z-0">
-                <div className="mx-auto max-w-7xl h-[88%] bg-line-grid translate-y-16 border-2 border-neutral-400 dark:border-neutral-700 rounded-3xl"></div>
+                <div className="mx-auto max-w-7xl h-[88%] bg-line-grid translate-y-12 border-2 border-neutral-400 dark:border-neutral-700 rounded-3xl"></div>
             </div>
 
-            <div className="relative container mx-auto max-w-6xl px-4 z-10">
-                <div className="max-w-2xl mx-auto text-center mb-12">
-                    <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+            <div className="relative container mx-auto max-w-6xl px-8 md:px-4 z-10">
+                <div className="max-w-3xl mx-auto text-center md:mb-14 mb-8 px-4">
+                    <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
                         CV Builder Pintar, Cepat, dan Mudah
                     </h2>
-                    <p className="mt-4 text-lg text-muted-foreground">
-                        Biarkan AI kami membuat draf CV-mu, optimasi format, dan siap dikirim — semuanya dalam satu platform.
+                    <p className="mt-4 text-base text-emerald-800">
+                        Biarkan AI kami membuat draf CV-mu, optimasi format, dan
+                        siap dikirim—semuanya dalam satu platform.
                     </p>
                 </div>
 
-                <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                <div className="grid grid-cols-1 md:gap-8 gap-3 md:grid-cols-2 lg:grid-cols-3">
                     {features.map((feature, index) => (
-
                         <ShowcaseCard
                             key={index}
                             icon={feature.icon}
                             title={feature.title}
                             description={feature.description}
                         />
-
                     ))}
                 </div>
             </div>
