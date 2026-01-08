@@ -1,12 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 import { FormDataSchema } from "@/lib/dto/cv.schema";
 import type { FormData } from "@/types/form-data";
+import { headers } from "next/headers";
+import { auth } from "@/lib/auth";
 import { CVService } from "@/lib/services/cv.service";
 import { logger, logError } from "@/lib/log/logger";
 
 export async function POST(req: NextRequest) {
-  // TODO: replace with actual authenticated userId
-  const userId = "user-1";
+  const session = await auth.api.getSession({ headers: await headers() });
+
+  if (!session?.user) {
+    return NextResponse.json(
+      { success: false, message: "Unauthorized" },
+      { status: 401 }
+    );
+  }
+
+  const userId = session.user.id;
 
   try {
     const body = await req.json();
