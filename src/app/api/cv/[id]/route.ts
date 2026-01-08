@@ -40,7 +40,12 @@ export async function GET(req: NextRequest, ctx: { params: Promise<{ id: string 
 
     return NextResponse.json({ success: true, data: cvs }, { status: 200 });
   } catch (err) {
-    logError(err, { userId, cvId: id, method: req.method, route: req.url });
+    logError({
+      message: err instanceof Error ? err.message : "Unknown error",
+      userId, 
+      method: req.method, 
+      route: req.url 
+    });
     return NextResponse.json(
       {
         success: false,
@@ -102,7 +107,12 @@ export async function PATCH(
       { status: 200 }
     );
   } catch (err) {
-    logError(err, { userId, cvId: id, method: req.method, route: req.url });
+    logError({
+      message: err instanceof Error ? err.message : "Unknown error",
+      userId, 
+      method: req.method, 
+      route: req.url 
+    });
     return NextResponse.json(
       { success: false, message: "Internal Server Error" },
       { status: 500 }
