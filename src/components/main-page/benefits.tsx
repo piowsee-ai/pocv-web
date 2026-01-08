@@ -1,17 +1,17 @@
 import { CheckCircle2, Sparkles, Wand2 } from "lucide-react";
 
 const ConceptUI = () => (
-    <div className="relative rounded-xl bg-card p-3 border shadow-md w-full max-w-xl scale-90 sm:scale-95 origin-center">
+    <div className="relative rounded-xl bg-card p-3 border shadow-md w-full max-w-xl scale-100 sm:scale-95 origin-center">
         <div className="flex items-center gap-2 mb-3">
             <div className="flex items-center gap-1.5">
                 <div className="w-2.5 h-2.5 rounded-full bg-red-500"></div>
                 <div className="w-2.5 h-2.5 rounded-full bg-yellow-500"></div>
                 <div className="w-2.5 h-2.5 rounded-full bg-green-500"></div>
             </div>
-            <div className="flex-grow h-5 rounded-md bg-muted ml-4"></div>
+            <div className="grow h-5 rounded-md bg-muted ml-4"></div>
         </div>
 
-        <div className="flex gap-3 h-64">
+        <div className="flex gap-3 h-60">
             <div className="relative w-2/5 space-y-3 p-3 rounded-lg bg-muted/50">
                 <div className="space-y-1">
                     <div className="w-1/3 h-2 rounded-full bg-muted-foreground/30"></div>
@@ -28,7 +28,7 @@ const ConceptUI = () => (
                     <div className="w-full h-20 rounded-md bg-background border"></div>
                 </div>
 
-                <div className="w-full h-7 rounded-md bg-primary/80 mt-3"></div>
+                <div className="w-full h-4 rounded-md bg-primary/80 mt-3"></div>
 
                 <div className="absolute bottom-2 -right-10 sm:-right-12 w-36 rounded-md bg-background border shadow-md p-2 transform transition-transform hover:scale-105">
                     <div className="flex items-center gap-1 mb-1">
@@ -78,27 +78,27 @@ const keyBenefits = [
 
 export function Benefits() {
     return (
-        <section id="why-us" className="py-16 sm:py-20">
-            <div className="mx-auto max-w-6xl px-4">
-                <div className="grid grid-cols-1 lg:grid-cols-9 gap-12 items-center">
+        <section id="why-us" className="py-16 sm:py-40">
+            <div className="mx-auto max-w-6xl md:px-6 px-12">
+                <div className="grid grid-cols-1 lg:grid-cols-9 gap-6 md:gap-16 items-center">
 
                     <div className="lg:col-span-4 flex items-center justify-center">
                         <ConceptUI />
                     </div>
 
                     <div className="lg:col-span-5">
-                        <span className="text-xs font-semibold text-primary uppercase tracking-wider">
+                        <span className="text-xs font-semibold text-emerald-600 uppercase tracking-wider">
                             Mengapa pocv Berbeda?
                         </span>
                         <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl mt-3">
                             Beri CV Anda Keunggulan AI yang Sebenarnya
                         </h2>
 
-                        <div className="mt-10 space-y-8">
+                        <div className="mt-8 space-y-6">
                             {keyBenefits.map((benefit, index) => (
                                 <div key={index} className="flex items-start gap-4">
-                                    <div className="flex-shrink-0 mt-0.5">
-                                        <CheckCircle2 className="w-6 h-6 text-green-500" />
+                                    <div className="shrink-0 mt-0.5">
+                                        <CheckCircle2 className="w-6 h-6 text-emerald-600" />
                                     </div>
                                     <div>
                                         <h3 className="text-lg font-semibold text-foreground">

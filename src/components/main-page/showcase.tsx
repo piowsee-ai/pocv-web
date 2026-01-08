@@ -57,19 +57,19 @@ const features: Feature[] = [
 const ShowcaseCard = ({ icon: Icon, title, description }: Feature) => (
     <div
         className="
-            relative overflow-hidden rounded-lg border bg-card/60 p-6 backdrop-blur-lg shadow-sm transition-all duration-300
-            hover:shadow-primary/10 hover:shadow-2xl hover:-translate-y-1
+            relative overflow-hidden rounded-lg bg-white p-6 backdrop-blur-lg shadow-sm transition-all duration-300
+            hover:shadow-10 hover:shadow-xl hover:-translate-y-0.5
         "
     >
 
         <div className="relative z-10 flex flex-col h-full">
-            <div className="flex justify-between items-start mb-4">
-                <div className="pb-2">
-                    <Icon className="w-6 h-6 text-primary" />
+            <div className="flex justify-between items-start mb-2 md:mb-3">
+                <div className="pb-0">
+                    <Icon className="w-6 h-6 text-emerald-800" />
                 </div>
-                <ArrowUpRight className="w-5 h-5 text-muted-foreground" />
+                <ArrowUpRight className="w-5 h-5 text-emerald-800" />
             </div>
-            <div className="flex-grow">
+            <div className="grow">
                 <h3 className="text-lg font-semibold text-foreground mb-2">{title}</h3>
                 <p className="text-sm text-muted-foreground">{description}</p>
             </div>
@@ -80,31 +80,33 @@ const ShowcaseCard = ({ icon: Icon, title, description }: Feature) => (
 
 export function Showcase() {
     return (
-        <section id="features" className="relative mx-auto overflow-hidden py-24 md:py-32">
-            <div className="absolute inset-0 z-0">
-                <div className="mx-auto max-w-7xl h-[88%] bg-line-grid translate-y-16 border-2 border-neutral-400 dark:border-neutral-700 rounded-3xl"></div>
-            </div>
+        <section
+            id="features"
+            className="mt-6 relative mx-auto overflow-hidden py-10 md:py-16 bg-emerald-100/50">
+            <div
+                aria-hidden
+                className="pointer-events-none absolute -right-5 top-0 h-0 w-0 md:h-80 md:w-80 bg-[url('/assets/showcase-detail.png')] bg-contain opacity-20"
+            />
 
-            <div className="relative container mx-auto max-w-6xl px-4 z-10">
-                <div className="max-w-2xl mx-auto text-center mb-12">
-                    <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+            <div className="relative container mx-auto max-w-6xl px-8 md:px-4 z-10">
+                <div className="max-w-3xl mx-auto text-center md:mb-14 mb-8 px-4">
+                    <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
                         CV Builder Pintar, Cepat, dan Mudah
                     </h2>
-                    <p className="mt-4 text-lg text-muted-foreground">
-                        Biarkan AI kami membuat draf CV-mu, optimasi format, dan siap dikirim — semuanya dalam satu platform.
+                    <p className="mt-4 text-base text-emerald-800">
+                        Biarkan AI kami membuat draf CV-mu, optimasi format, dan
+                        siap dikirim — semuanya dalam satu platform.
                     </p>
                 </div>
 
-                <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                <div className="grid grid-cols-1 md:gap-8 gap-3 md:grid-cols-2 lg:grid-cols-3">
                     {features.map((feature, index) => (
-
                         <ShowcaseCard
                             key={index}
                             icon={feature.icon}
                             title={feature.title}
                             description={feature.description}
                         />
-
                     ))}
                 </div>
             </div>

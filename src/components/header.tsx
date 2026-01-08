@@ -14,7 +14,7 @@ import {
     NavigationMenuList,
     NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Sparkles, Briefcase, BarChart3 } from "lucide-react";
 import { useScroll } from "@/hooks/use-scroll";
 import type { SessionData } from "@/types/session";
 
@@ -42,36 +42,36 @@ export function Header({ session }: SessionData) {
     return (
         <header
             className={cn(
-                "fixed top-0 z-50 w-full border-b bg-emerald-50/70 backdrop-blur-sm transition-transform duration-300",
+                "fixed top-0 z-50 w-full border-b bg-white/70 backdrop-blur-sm transition-transform duration-300",
                 scrollDirection === "down"
                     ? "-translate-y-full"
                     : "translate-y-0"
-            )}
-        >
+            )}>
             <div className="relative container mx-auto flex h-16 max-w-7xl items-center justify-between px-4">
-                <Link href="/" className="flex items-center gap-3">
+                <Link href="/" className="flex items-center gap-2">
                     <Image
-                        src="/logo-192.png"
+                        src="/logo-beta.png"
                         alt="Logo"
-                        width={24}
-                        height={24}
+                        width={28}
+                        height={28}
+                        priority
                     />
-                    <span className="text-lg font-bold leading-none align-middle relative top-[-1px]">pocv</span>
+                    <span className="text-lg font-bold leading-none align-middle relative">
+                        pocv
+                    </span>
                 </Link>
 
-                <NavigationMenu className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden md:flex">
+                <NavigationMenu className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden md:flex viewport={false}">
                     <NavigationMenuList className="gap-12">
                         <NavigationMenuItem>
                             <NavigationMenuLink
                                 asChild
                                 className="inline-flex h-auto items-center justify-center bg-transparent p-0
-                                font-medium text-muted-foreground transition-colors hover:bg-transparent hover:text-foreground
-                                focus:text-muted-foreground focus:bg-transparent focus:outline-none"
-                            >
+                                font-medium text-muted-foreground transition-colors hover:bg-transparent hover:text-emerald-700
+                                focus:text-muted-foreground focus:bg-transparent focus:outline-none">
                                 <Link
                                     href="/#pricing"
-                                    className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:bg-transparent hover:text-foreground active:bg-transparent"
-                                >
+                                    className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:bg-transparent hover:text-emerald-700 active:bg-transparent">
                                     Buat CV
                                 </Link>
                             </NavigationMenuLink>
@@ -80,52 +80,73 @@ export function Header({ session }: SessionData) {
                         <NavigationMenuItem>
                             <NavigationMenuTrigger
                                 className="group inline-flex h-auto items-center justify-center bg-transparent p-0
-                                font-medium text-muted-foreground transition-colors hover:bg-transparent hover:text-foreground
-                                focus:text-muted-foreground focus:bg-transparent focus:outline-none data-[state=open]:!text-foreground
-                                data-[state=open]:!bg-transparent"
-                            >
+                                font-medium text-muted-foreground transition-colors hover:bg-transparent hover:text-emerald-700
+                                focus:text-muted-foreground focus:bg-transparent focus:outline-none data-[state=open]:text-foreground
+                                data-[state=open]:bg-transparent">
                                 Fitur Tambahan
                             </NavigationMenuTrigger>
 
-                            <NavigationMenuContent className="bg-emerald-50">
-                                <ul className="grid w-[300px]">
+                            <NavigationMenuContent className="bg-white text-foreground rounded-sm border shadow-md p-0">
+                                <ul className="grid w-[320px] py-1">
                                     <li>
-                                        <NavigationMenuLink
-                                            asChild
-                                            className="hover:bg-transparent"
-                                        >
-                                            <Link href={features[0].href}>
-                                                <div className="font-medium">
-                                                    {features[0].title}
-                                                </div>
-                                                <div className="text-muted-foreground">
-                                                    {features[0].description}
-                                                </div>
-                                            </Link>
-                                        </NavigationMenuLink>
-                                        <NavigationMenuLink
-                                            asChild
-                                            className="hover:bg-transparent"
-                                        >
-                                            <Link href={features[1].href}>
-                                                <div className="font-medium">
-                                                    {features[1].title}
-                                                </div>
-                                                <div className="text-muted-foreground">
-                                                    {features[1].description}
+                                        <NavigationMenuLink asChild>
+                                            <Link
+                                                href={features[0].href}
+                                                className="block w-full px-4 py-3 hover:bg-neutral-100 hover:text-foreground">
+                                                <div className="flex items-center gap-3">
+                                                    <Sparkles className="h-5 w-5 text-emerald-600 shrink-0" />
+
+                                                    <div className="flex-1">
+                                                        <div className="font-medium">
+                                                            {features[0].title}
+                                                        </div>
+                                                        <div className="mt-0.5 text-sm text-muted-foreground">
+                                                            {
+                                                                features[0]
+                                                                    .description
+                                                            }
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </Link>
                                         </NavigationMenuLink>
-                                        <NavigationMenuLink
-                                            asChild
-                                            className="hover:bg-transparent"
-                                        >
-                                            <Link href={features[2].href}>
-                                                <div className="font-medium">
-                                                    {features[2].title}
+                                        <NavigationMenuLink asChild>
+                                            <Link
+                                                href={features[1].href}
+                                                className="block w-full px-4 py-3 hover:bg-neutral-100 hover:text-foreground">
+                                                <div className="flex items-center gap-3">
+                                                    <Briefcase className="h-5 w-5 text-emerald-600 shrink-0" />
+
+                                                    <div className="flex-1">
+                                                        <div className="font-medium">
+                                                            {features[1].title}
+                                                        </div>
+                                                        <div className="mt-0.5 text-sm text-muted-foreground">
+                                                            {
+                                                                features[1]
+                                                                    .description
+                                                            }
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                                <div className="text-muted-foreground">
-                                                    {features[2].description}
+                                            </Link>
+                                        </NavigationMenuLink>
+                                        <NavigationMenuLink asChild>
+                                            <Link
+                                                href={features[2].href}
+                                                className="block w-full px-4 py-3 hover:bg-neutral-100 hover:text-foreground">
+                                                <div className="flex items-center gap-3">
+                                                    <BarChart3 className="h-5 w-5 text-emerald-600 shrink-0" />
+
+                                                    <div className="flex-1">
+                                                        <div className="font-medium">
+                                                            {features[2].title}
+                                                        </div>
+
+                                                        <div className="mt-0.5 text-sm text-muted-foreground">
+                                                            {features[2].description}
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </Link>
                                         </NavigationMenuLink>
@@ -138,13 +159,11 @@ export function Header({ session }: SessionData) {
                             <NavigationMenuLink
                                 asChild
                                 className="inline-flex h-auto items-center justify-center bg-transparent p-0
-                                font-medium text-muted-foreground transition-colors hover:bg-transparent hover:text-foreground
-                                focus:text-muted-foreground focus:bg-transparent focus:outline-none"
-                            >
+                                font-medium text-muted-foreground transition-colors hover:bg-transparent hover:text-emerald-700
+                                focus:text-muted-foreground focus:bg-transparent focus:outline-none">
                                 <Link
                                     href="/#faq"
-                                    className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:bg-transparent hover:text-foreground active:bg-transparent"
-                                >
+                                    className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:bg-transparent hover:text-emerald-700 active:bg-transparent">
                                     FAQ
                                 </Link>
                             </NavigationMenuLink>
@@ -157,10 +176,15 @@ export function Header({ session }: SessionData) {
                         <ProfileDropdown session={session} />
                     ) : (
                         <>
-                            <Button variant="ghost" className="hover:bg-emerald-100" asChild>
+                            <Button
+                                variant="link"
+                                className="no-underline! font-bold! text-emerald-600 hover:text-emerald-700"
+                                asChild>
                                 <Link href="/login">Masuk</Link>
                             </Button>
-                            <Button asChild>
+                            <Button
+                                className="bg-emerald-600 hover:bg-emerald-700"
+                                asChild>
                                 <Link href="/signup">
                                     Daftar
                                     <ArrowUpRight className="ml-2 h-4 w-4" />
