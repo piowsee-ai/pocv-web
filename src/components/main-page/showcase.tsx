@@ -1,6 +1,6 @@
 import {
     ScanLine,
-    LayoutTemplate,
+    CircleQuestionMark,
     Wand2,
     Zap,
     Globe,
@@ -18,15 +18,9 @@ type Feature = {
 const features: Feature[] = [
     {
         icon: Zap,
-        title: "Draf Pertama dibantu AI",
+        title: "Buat Draf CV dibantu AI",
         description:
             "Mulai bukan dari nol. AI kami akan membantu kamu dalam membuat draf CV profesional berdasarkan datamu.",
-    },
-    {
-        icon: ScanLine,
-        title: "Optimasi Lolos ATS dan AI-screening",
-        description:
-            "Struktur dan format CV dirancang khusus agar mudah dibaca oleh sistem ATS dan AI-screening yang digunakan oleh perusahaan.",
     },
     {
         icon: Wand2,
@@ -34,11 +28,17 @@ const features: Feature[] = [
         description:
             "Klik pada bagian mana pun di CV-mu dan biarkan AI membantu menulis ulang kalimat menjadi lebih ringkas, kuat, dan relevan.",
     },
-    {
-        icon: LayoutTemplate,
-        title: "Editor yang Intuitif",
+        {
+        icon: CircleQuestionMark,
+        title: "Curate isi CV",
         description:
-            "Isi, ubah, dan sesuaikan CV-mu dengan mudah. Lihat semua perubahan secara langsung dengan fitur live-preview.",
+            "Masukkan deskripsi pekerjaan dan AI kami akan mengubah CV-mu. Dapatkan CV terbaik untuk setiap pekerjaan.",
+    },
+    {
+        icon: ScanLine,
+        title: "Optimasi Lolos ATS dan AI-screening",
+        description:
+            "Struktur dan format CV dirancang khusus agar mudah dibaca oleh sistem ATS dan AI-screening yang digunakan oleh perusahaan.",
     },
     {
         icon: Globe,
@@ -82,11 +82,12 @@ export function Showcase() {
     return (
         <section
             id="features"
-            className="mt-6 relative mx-auto overflow-hidden py-10 md:py-16 bg-emerald-100/50">
-            <div
-                aria-hidden
-                className="pointer-events-none absolute -right-5 top-0 h-0 w-0 md:h-80 md:w-80 bg-[url('/assets/showcase-detail.png')] bg-contain opacity-20"
-            />
+            className="relative mx-auto overflow-hidden py-24 md:py-32 bg-emerald-100/50"
+        >
+
+            <div className="absolute inset-0 z-0">
+                <div className="mx-auto max-w-7xl h-[88%] bg-line-grid translate-y-12 border-2 border-neutral-400 dark:border-neutral-700 rounded-3xl"></div>
+            </div>
 
             <div className="relative container mx-auto max-w-6xl px-8 md:px-4 z-10">
                 <div className="max-w-3xl mx-auto text-center md:mb-14 mb-8 px-4">
@@ -95,7 +96,7 @@ export function Showcase() {
                     </h2>
                     <p className="mt-4 text-base text-emerald-800">
                         Biarkan AI kami membuat draf CV-mu, optimasi format, dan
-                        siap dikirim — semuanya dalam satu platform.
+                        siap dikirim—semuanya dalam satu platform.
                     </p>
                 </div>
 

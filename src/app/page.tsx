@@ -27,7 +27,7 @@ export default async function Home() {
       <Showcase />
       <Benefits />
       <Faq />
-      <Cta />
+      {/* <Cta /> */}
       <Footer />
     </main>
   );

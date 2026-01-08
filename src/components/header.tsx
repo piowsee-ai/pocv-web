@@ -79,7 +79,7 @@ export function Header({ session }: SessionData) {
 
                         <NavigationMenuItem>
                             <NavigationMenuTrigger
-                                className="group inline-flex h-auto items-center justify-center bg-transparent p-0
+                                className="group inline-flex h-auto items-center justify-center bg-transparent p-0 cursor-pointer
                                 font-medium text-muted-foreground transition-colors hover:bg-transparent hover:text-emerald-700
                                 focus:text-muted-foreground focus:bg-transparent focus:outline-none data-[state=open]:text-foreground
                                 data-[state=open]:bg-transparent">

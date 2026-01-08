@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { ChevronRight } from "lucide-react";
+import { ArrowUpRight, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export function Hero() {
@@ -9,8 +9,8 @@ export function Hero() {
             <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12 mt-20">
                 <div className="flex-1 text-left">
                     <h1 className="text-4xl font-semibold tracking-tight sm:text-3xl md:text-[53px]">
-                        Cepat, mudah, dan gak ribet! <br></br>
-                        Buat CV Profesional dalam Hitungan Menit
+                        Cepat, mudah, dan gak pake ribet! <br></br>
+                        Buat CV Profesional dalam Hitungan Menit.
                     </h1>
                     <p className="mt-2 text-[15px] md:text-[20px] text-muted-foreground mb-8">
                         Dengan <span className="font-semibold text-foreground">pocv</span>, kamu bisa bikin CV keren, profesional, dan lolos screening.
@@ -28,7 +28,10 @@ export function Hero() {
                             variant="link"
                             className="text-emerald-600"
                             asChild>
-                            <Link href="/learn-more">Pelajari lebih lanjut</Link>
+                            <Link href="/learn-more">
+                                Pelajari lebih lanjut
+                                <ArrowUpRight className="w-5 h-5 text-emerald-800" />
+                            </Link>
                         </Button>
                     </div>
                 </div>
