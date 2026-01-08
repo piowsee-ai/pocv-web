@@ -13,11 +13,19 @@ export function Hero() {
                         Buat CV Profesional dalam Hitungan Menit.
                     </h1>
                     <p className="mt-2 text-[15px] md:text-[20px] text-muted-foreground mb-8">
-                        Dengan <span className="font-semibold text-foreground">pocv</span>, kamu bisa bikin CV keren, profesional, dan lolos screening.
+                        Dengan{" "}
+                        <span className="font-semibold text-foreground">
+                            pocv
+                        </span>
+                        , kamu bisa bikin CV keren, profesional, dan lolos
+                        screening.
                     </p>
 
                     <div className="flex flex-col sm:flex-row items-start gap-4">
-                        <Button size="lg" className="group bg-emerald-600 hover:bg-emerald-700 text-white md:text-[16px] text-sm" asChild>
+                        <Button
+                            size="lg"
+                            className="group bg-emerald-600 hover:bg-emerald-700 text-white md:text-[16px] text-sm"
+                            asChild>
                             <Link href="/signup">
                                 Coba sekarang — Gratis
                                 <ChevronRight className="transform rotate-45 transition-all duration-300 group-hover:translate-x-1 group-hover:-translate-y-1 w-3 h-3 sm:w-4 sm:h-4" />
@@ -29,8 +37,10 @@ export function Hero() {
                             className="text-emerald-600"
                             asChild>
                             <Link href="/learn-more">
-                                Pelajari lebih lanjut
-                                <ArrowUpRight className="w-5 h-5 text-emerald-800" />
+                                <span className="inline-flex items-center gap-1">
+                                    Pelajari lebih lanjut
+                                    <ArrowUpRight className="w-4 h-4" />
+                                </span>
                             </Link>
                         </Button>
                     </div>
