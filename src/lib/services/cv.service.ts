@@ -10,6 +10,13 @@ import type { CVList } from "@/types/cv";
 import { v4 as uuidv4 } from "uuid";
 import { SectionType } from "@/generated/prisma";
 
+function eraseId(obj: any) {
+  if (obj && typeof obj === "object" && "id" in obj) {
+    delete obj.id;
+  }
+  return obj;
+}
+
 export const CVService = {
   async createCV(userId: string, data: FormData) {
     const id = uuidv4();
@@ -18,22 +25,22 @@ export const CVService = {
       ...data.educations.map((edu) => ({
         id: uuidv4(),
         type: SectionType.EDUCATION,
-        content: edu,
+        content: eraseId({ ...edu }),
       })),
       ...data.workExperiences.map((work) => ({
         id: uuidv4(),
         type: SectionType.WORK,
-        content: work,
+        content: eraseId({ ...work }),
       })),
       ...data.organizationExperiences.map((org) => ({
         id: uuidv4(),
         type: SectionType.ORGANIZATION,
-        content: org,
+        content: eraseId({ ...org }),
       })),
       {
         id: uuidv4(),
         type: SectionType.PERSONAL,
-        content: data.personalData,
+        content: eraseId({ ...data.personalData }),
       },
     ];
     // NOTE: Decide whether to return the created CV (with sections) or keep it fire-and-forget
