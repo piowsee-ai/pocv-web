@@ -29,11 +29,13 @@ export function WizardStep() {
   const [useDefaultInputOrg, setUseDefaultInputOrg] = useState(true);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [formData, setFormData] = useState({
-    name: "",
-    phone: "",
-    linkedin: "",
-    email: "",
-    github: "",
+    personalData: {
+      name: "",
+      phone: "",
+      linkedin: "",
+      email: "",
+      github: "",
+    },
     educations: [
       {
         degree: "",
@@ -74,18 +76,24 @@ export function WizardStep() {
     | "educations"
     | "workExperiences"
     | "organizationExperiences"
-    | "root";
+    | "personalData";
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    section: SectionType = "root",
+    section: SectionType = "personalData",
     index?: number
   ) => {
     const { id, value } = e.target;
 
     setFormData((prev) => {
-      if (section === "root") {
-        return { ...prev, [id]: value };
+      if (section === "personalData") {
+        return {
+          ...prev,
+          personalData: {
+            ...prev.personalData,
+            [id]: value,
+          },
+        };
       }
 
       const updatedArray = [...prev[section]];
@@ -102,7 +110,7 @@ export function WizardStep() {
     }));
   };
 
-  type ArraySection = Exclude<SectionType, "root">;
+  type ArraySection = Exclude<SectionType, "personalData">;
 
   const createEmptyItem = (section: ArraySection) => {
     switch (section) {
@@ -157,17 +165,17 @@ export function WizardStep() {
   const validateStep = () => {
     const errors: Record<string, string> = {};
     if (step === 1) {
-      if (!formData.name) errors.name = "Nama Lengkap harus diisi.";
+      if (!formData.personalData.name) errors.name = "Nama Lengkap harus diisi.";
 
-      if (!formData.phone) {
+      if (!formData.personalData.phone) {
         errors.phone = "Nomor Telepon harus diisi.";
-      } else if (!/^\d{10,15}$/.test(formData.phone)) {
+      } else if (!/^\d{10,15}$/.test(formData.personalData.phone)) {
         errors.phone = "Nomor Telepon harus berupa 10-15 digit angka.";
       }
 
-      if (!formData.email) {
+      if (!formData.personalData.email) {
         errors.email = "Alamat Email harus diisi.";
-      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.personalData.email)) {
         errors.email = "Format email tidak valid.";
       }
 

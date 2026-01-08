@@ -1,9 +1,5 @@
 export interface FormData {
-  name: string;
-  phone: string;
-  linkedin?: string;
-  email: string;
-  github?: string;
+  personalData: PersonalData;
   educations: Education[];
   workExperiences: WorkExperience[];
   organizationExperiences: OrganizationExperience[];

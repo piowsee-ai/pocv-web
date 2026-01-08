@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { FormDataDTO, FormDataSchema } from "@/lib/dto/cv.schema";
+import { FormDataSchema } from "@/lib/dto/cv.schema";
+import type { FormData } from "@/types/form-data";
 import { CVService } from "@/lib/services/cv.service";
 import { logger, logError } from "@/lib/log/logger";
 
@@ -9,7 +10,7 @@ export async function GET(req: NextRequest, ctx: { params: Promise<{ id: string 
   const userId = "user-1";
 
   try {
-    const cvs: FormDataDTO | null = await CVService.getCVDetail(id, userId);
+    const cvs: FormData | null = await CVService.getCVDetail(id, userId);
 
     if (!cvs) {
       logger.warn("CV Detail not found", {
@@ -67,7 +68,7 @@ export async function PATCH(
       return NextResponse.json({ success: false, errors }, { status: 400 });
     }
 
-    const formData: FormDataDTO = result.data;
+    const formData: FormData = result.data;
 
     // NOTE: Decide whether to return the updated CV (with sections) or keep it fire-and-forget
     const updatedCV = await CVService.updateCV(id, userId, formData);
