@@ -7,7 +7,7 @@ export function Footer() {
         <footer className="w-full border-t border-neutral-200 py-6 text-sm">
             <div className="container mx-auto flex max-w-7xl flex-col gap-10 px-12 md:flex-row md:justify-between">
                 <div className="w-full max-w-xs space-y-4 ml-4">
-                    <Link href="/" className="flex items-center max-w-8 gap-2 text-lg font-semibold text-neutral-800">
+                    <Link href="/" className="flex items-center gap-2 text-lg font-semibold text-neutral-800">
                         <Image
                             src="/logo-beta.png"
                             alt="Logo"

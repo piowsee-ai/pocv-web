@@ -61,7 +61,7 @@ export function Header({ session }: SessionData) {
                     </span>
                 </Link>
 
-                <NavigationMenu className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden md:flex viewport={false}">
+                <NavigationMenu className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden md:flex">
                     <NavigationMenuList className="gap-12">
                         <NavigationMenuItem>
                             <NavigationMenuLink
@@ -178,7 +178,7 @@ export function Header({ session }: SessionData) {
                         <>
                             <Button
                                 variant="link"
-                                className="no-underline! font-bold! text-emerald-600 hover:text-emerald-700"
+                                className="no-underline font-bold text-emerald-600 hover:text-emerald-700"
                                 asChild>
                                 <Link href="/login">Masuk</Link>
                             </Button>

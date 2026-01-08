@@ -6,7 +6,7 @@ import { ChevronRight } from "lucide-react";
 
 export function Cta() {
     return (
-        <section className="py-16 md:py-16 md: mb-28">
+        <section className="py-16 md:py-16 md:mb-28">
             <div className="container mx-auto max-w-4xl px-4 text-center">
                 <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl md:text-5xl">
                     Siap buat CV profesional pertama kamu?
