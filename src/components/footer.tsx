@@ -20,7 +20,7 @@ export function Footer() {
                         <span className="font-semibold text-foreground">pocv</span> dari piowsee.ai membantu kamu membuat CV modern yang rapi, cepat, dan ramah ATS untuk mendukung kariermu.
 
                     </p>
-                    <p className="text-xs font-inter font-light text-neutral-400 tracking-tight">Copyright © 2025 - All rights reserved</p>
+                    <p className="text-xs font-inter font-light text-neutral-400 tracking-tight">Copyright © 2026 - All rights reserved</p>
                     <div className="flex items-center gap-2 text-xs text-green-600">
                         <div className="h-2 w-2 rounded-full bg-green-500"></div>
                         <span>All systems operational</span>

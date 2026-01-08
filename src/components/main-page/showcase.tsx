@@ -5,14 +5,16 @@ import {
     Zap,
     Globe,
     Download,
-    Code,
     ArrowUpRight,
+    Sparkles,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 type Feature = {
     icon: React.ElementType;
     title: string;
     description: string;
+    featured?: boolean;
 };
 
 const features: Feature[] = [
@@ -27,12 +29,14 @@ const features: Feature[] = [
         title: "AI Smart Rewrite",
         description:
             "Klik pada bagian mana pun di CV-mu dan biarkan AI membantu menulis ulang kalimat menjadi lebih ringkas, kuat, dan relevan.",
+        featured: true,
     },
         {
         icon: CircleQuestionMark,
         title: "Curate isi CV",
         description:
             "Masukkan deskripsi pekerjaan dan AI kami akan mengubah CV-mu. Dapatkan CV terbaik untuk setiap pekerjaan.",
+        featured: true,
     },
     {
         icon: ScanLine,
@@ -54,20 +58,26 @@ const features: Feature[] = [
     },
 ];
 
-const ShowcaseCard = ({ icon: Icon, title, description }: Feature) => (
+const ShowcaseCard = ({ icon: Icon, title, description, featured }: Feature) => (
     <div
-        className="
-            relative overflow-hidden rounded-lg bg-white p-6 backdrop-blur-lg shadow-sm transition-all duration-300
-            hover:shadow-10 hover:shadow-xl hover:-translate-y-0.5
-        "
+        className={cn(
+            "relative overflow-hidden rounded-lg bg-white p-6 backdrop-blur-lg shadow-sm transition-all duration-300",
+            "hover:shadow-xl hover:-translate-y-0.5"
+        )}
     >
-
         <div className="relative z-10 flex flex-col h-full">
             <div className="flex justify-between items-start mb-2 md:mb-3">
                 <div className="pb-0">
                     <Icon className="w-6 h-6 text-emerald-800" />
                 </div>
-                <ArrowUpRight className="w-5 h-5 text-emerald-800" />
+                {featured ? (
+                    <span className="inline-flex items-center gap-1 text-xs font-medium text-emerald-700 bg-emerald-50 px-2 py-1 rounded-md">
+                        <Sparkles className="w-3.5 h-3.5" />
+                        Fitur Unggulan
+                    </span>
+                ) : (
+                    <ArrowUpRight className="w-5 h-5 text-emerald-800" />
+                )}
             </div>
             <div className="grow">
                 <h3 className="text-lg font-semibold text-foreground mb-2">{title}</h3>
@@ -107,6 +117,7 @@ export function Showcase() {
                             icon={feature.icon}
                             title={feature.title}
                             description={feature.description}
+                            featured={feature.featured}
                         />
                     ))}
                 </div>
