@@ -129,13 +129,13 @@ export const CVService = {
         };
       }),
       (() => {
-        const { id, ...personelContent } = data.personalData;
+        const { id, ...personalContent } = data.personalData;
         return {
           id: id ?? uuidv4(),
           type: SectionType.PERSONAL,
-          content: personelContent
+          content: personalContent
         }
-      })
+      })()
     ];
 
     // NOTE: Decide whether to return the updated CV (with sections) or keep it fire-and-forget
