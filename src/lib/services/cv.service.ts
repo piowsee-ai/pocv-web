@@ -10,6 +10,7 @@ import type { CVList } from "@/types/cv";
 import { v4 as uuidv4 } from "uuid";
 import { SectionType } from "@/generated/prisma";
 
+// Remove client-generated `id` to prevent saving client identifiers
 function eraseId(obj: any) {
   if (obj && typeof obj === "object" && "id" in obj) {
     delete obj.id;

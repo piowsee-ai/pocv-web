@@ -7,17 +7,16 @@ import { CVService } from "@/lib/services/cv.service";
 import { logger, logError } from "@/lib/log/logger";
 
 export async function POST(req: NextRequest) {
-  // const session = await auth.api.getSession({ headers: await headers() });
+  const session = await auth.api.getSession({ headers: await headers() });
 
-  // if (!session?.user) {
-  //   return NextResponse.json(
-  //     { success: false, message: "Unauthorized" },
-  //     { status: 401 }
-  //   );
-  // }
+  if (!session?.user) {
+    return NextResponse.json(
+      { success: false, message: "Unauthorized" },
+      { status: 401 }
+    );
+  }
 
-  // const userId = session.user.id;
-  const userId = "user-1";
+  const userId = session.user.id;
 
   try {
     const body = await req.json();
