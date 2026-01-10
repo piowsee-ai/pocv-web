@@ -65,7 +65,6 @@ export function logError(err: unknown, context: Record<string, any> = {}) {
     } else {
       logger.error(err.message, {
         name: err.name,
-        message: err.message,
         ...context,
       });
     }
