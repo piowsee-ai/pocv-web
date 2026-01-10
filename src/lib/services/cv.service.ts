@@ -1,3 +1,8 @@
+/** 
+ * Service layer for CV operations
+ * Handles logic between controllers and repositories
+ */
+
 import { CVRepository } from "../repositories/cv.repo";
 import {
   WorkExperienceSchema,
