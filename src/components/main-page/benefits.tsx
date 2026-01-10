@@ -63,17 +63,19 @@ const ConceptUI = () => (
 
 const keyBenefits = [
     {
-        title: "Tampil Percaya Diri, Bukan Sekadar Formalitas",
-        description: "Dengan bantuan AI drafting dan Smart Rewrite, CV Anda bukan lagi sebuah CV template yang membosankan, tetapi mencerminkan profesionalitas yang tinggi.",
+        title: "Prinsip \"Satu CV Satu Lamaran\"",
+        description: "Rahasia top company job-seekers di Indonesia! Cukup tulis job description dan AI kami akan membuatkan CV yang sesuai.",
+    },
+    {
+        title: (
+            <> Buat CV Anda <i>Stand Out</i>! </>
+        ),
+        description: "Dengan bantuan AI drafting dan Smart Rewrite, CV Anda tidak lagi hilang di tumpukan, tetapi menjadi salah satu yang terbaik.",
     },
     {
         title: "Dapetin Wawancara Pertama Kamu!",
         description: "CV yang lolos AI-checker dan saringan ATS berarti Anda melewati gerbang robot dan memberi diri Anda kesempatan untuk benar-benar dinilai oleh perusahaan.",
     },
-    {
-        title: "Buka Peluang Karir ke Luar Negeri",
-        description: "Fitur terjemahan oleh AI membuka pintu bagi Anda untuk melamar pekerjaan impian di perusahaan multinasional atau internasional dengan mudah.",
-    }
 ];
 
 export function Benefits() {

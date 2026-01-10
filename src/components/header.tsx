@@ -97,14 +97,16 @@ export function Header({ session }: SessionData) {
                                                     <Sparkles className="h-5 w-5 text-emerald-600 shrink-0" />
 
                                                     <div className="flex-1">
-                                                        <div className="font-medium">
-                                                            {features[0].title}
+                                                        <div className="flex items-center gap-2">
+                                                            <span className="font-medium">
+                                                                {features[0].title}
+                                                            </span>
+                                                            <span className="text-[10px] font-semibold text-neutral-600 bg-emerald-100 px-2 py-0.5 rounded-full">
+                                                                Coming Soon
+                                                            </span>
                                                         </div>
                                                         <div className="mt-0.5 text-sm text-muted-foreground">
-                                                            {
-                                                                features[0]
-                                                                    .description
-                                                            }
+                                                            {features[0].description}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -118,8 +120,13 @@ export function Header({ session }: SessionData) {
                                                     <Briefcase className="h-5 w-5 text-emerald-600 shrink-0" />
 
                                                     <div className="flex-1">
-                                                        <div className="font-medium">
-                                                            {features[1].title}
+                                                        <div className="flex items-center gap-2">
+                                                            <span className="font-medium">
+                                                                {features[1].title}
+                                                            </span>
+                                                            <span className="text-[10px] font-semibold text-neutral-600 bg-emerald-100 px-2 py-0.5 rounded-full">
+                                                                Coming Soon
+                                                            </span>
                                                         </div>
                                                         <div className="mt-0.5 text-sm text-muted-foreground">
                                                             {
@@ -139,10 +146,14 @@ export function Header({ session }: SessionData) {
                                                     <BarChart3 className="h-5 w-5 text-emerald-600 shrink-0" />
 
                                                     <div className="flex-1">
-                                                        <div className="font-medium">
-                                                            {features[2].title}
+                                                        <div className="flex items-center gap-2">
+                                                            <span className="font-medium">
+                                                                {features[2].title}
+                                                            </span>
+                                                            <span className="text-[10px] font-semibold text-neutral-600 bg-emerald-100 px-2 py-0.5 rounded-full">
+                                                                Coming Soon
+                                                            </span>
                                                         </div>
-
                                                         <div className="mt-0.5 text-sm text-muted-foreground">
                                                             {features[2].description}
                                                         </div>
