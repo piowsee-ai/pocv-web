@@ -40,8 +40,7 @@ export async function GET(req: NextRequest, ctx: { params: Promise<{ id: string 
 
     return NextResponse.json({ success: true, data: cvs }, { status: 200 });
   } catch (err) {
-    logError({
-      message: err instanceof Error ? err.message : "Unknown error",
+    logError(err, {
       userId, 
       method: req.method, 
       route: req.url 
@@ -107,8 +106,7 @@ export async function PATCH(
       { status: 200 }
     );
   } catch (err) {
-    logError({
-      message: err instanceof Error ? err.message : "Unknown error",
+    logError(err, {
       userId, 
       method: req.method, 
       route: req.url 

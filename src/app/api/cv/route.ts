@@ -52,8 +52,7 @@ export async function POST(req: NextRequest) {
       { status: 201 }
     );
   } catch (err) {
-    logError({
-      message: err instanceof Error ? err.message : "Unknown error",
+    logError(err, {
       userId, 
       method: req.method, 
       route: req.url 
