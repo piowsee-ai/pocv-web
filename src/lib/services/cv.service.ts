@@ -12,10 +12,10 @@ import { SectionType } from "@/generated/prisma";
 
 // Remove client-generated `id` to prevent saving client identifiers
 function eraseId(obj: any) {
-  if (obj && typeof obj === "object" && "id" in obj) {
-    delete obj.id;
+  if (obj && typeof obj === "object") {
+    const { id, ...rest } = obj;
+    return rest;
   }
-  return obj;
 }
 
 export const CVService = {
