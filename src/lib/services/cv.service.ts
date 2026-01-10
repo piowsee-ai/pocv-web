@@ -16,6 +16,9 @@ function eraseId(obj: any) {
     const { id, ...rest } = obj;
     return rest;
   }
+
+  // If the input is not an object, return it unchanged to avoid returning undefined
+  return obj;
 }
 
 export const CVService = {
