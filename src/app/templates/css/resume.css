@@ -1,0 +1,234 @@
+/* ===== CUSTOM FONT SETTINGS ===== */
+body {
+    font-family: 'Arial', sans-serif;
+}
+
+/* ===== RESET AND BASE STYLES ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    line-height: 1.4;
+    color: #000;
+    background-color: #ffffff;
+}
+
+/* ===== PDF PAGE MARGIN (F4 SIZE) ===== */
+@page {
+    size: 8.28in 11.71in;
+    margin: 0.3in; /* Atur margin kiri-kanan PDF di sini */
+}
+
+/* ===== RESUME CONTAINER ===== */
+.resume {
+    width: 8.28in;
+    min-height: 11.71in;
+    margin: 0 auto;
+    padding: 1in -0.4in 0.4in; /* Top | Horizontal | Bottom */
+    box-sizing: border-box;
+}
+
+/* ===== HEADER SECTION ===== */
+.header {
+    text-align: center;
+    margin-bottom: 25px;
+    margin-top: 9.5px;
+}
+
+.header-name {
+    font-size: 19pt;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 4px;
+}
+
+.header-contact {
+    display: flex;
+    color: #505050;
+    justify-content: center;
+    flex-wrap: wrap;
+    font-size: 9.5pt;
+    margin-bottom: 2px;
+}
+
+.contact-item {
+    color: gray;
+    text-decoration: none;
+}
+
+.contact-item:hover {
+    text-decoration: underline;
+}
+
+.separator {
+    margin: 0 5px;
+    color: black;
+}
+
+/* ===== SECTION STYLES ===== */
+.section {
+    margin-bottom: 11px;
+}
+
+.section-title {
+    font-size: 13.5pt;
+    font-weight: bold;
+    margin-bottom: 8px;
+    border-bottom: 1.5px solid #000;
+    padding-bottom: 2px;
+    padding-left: 4px;
+}
+
+/* ===== ENTRY STYLES ===== */
+.entry {
+    margin-bottom: 10px;
+    padding-left: 11px;
+}
+
+.entry-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 1.5px;
+    font-size: 10pt;
+}
+
+.entry-title {
+    font-weight: bold;
+    font-size: 10pt;
+}
+
+.entry-date {
+    font-size: 9.5pt;
+    font-weight: 400;
+    white-space: nowrap;
+    color: black;
+}
+
+.entry-subheader {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 4px;
+    font-size: 10pt;
+}
+
+.entry-subtitle {
+    font-style: italic;
+    font-size: 10pt;
+    margin-bottom: 4px;
+}
+
+.entry-gpa {
+    font-size: 10pt;
+}
+
+.entry-details {
+    padding-left: 0;
+    list-style-position: inside;
+    margin-top: 3.5px;
+    font-size: 10pt;
+}
+
+.entry-details li {
+    margin-bottom: 1px;
+    padding-left: 4px;
+
+
+}
+
+.hyphen-fix::after {
+    content: "";
+    margin-right: -0.3em;  /* Compensate for mobile hyphen spacing */
+}
+
+.entry-details li::marker {
+    font-size: 10pt;
+}
+
+/* ===== SKILLS SECTION ===== */
+.skills-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.skill-tag {
+    font-size: 10pt !important;
+    background-color: #f5f5f5;
+    padding: 3px 10px;
+    border-radius: 3px;
+    border: 1px solid #ddd;
+}
+
+.skill-line {
+    font-size: 10pt !important;
+    line-height: 1.4;
+    margin-bottom: 6px;
+    padding-left: 4px; /* Match other sections */
+}
+
+.skill-line strong {
+    display: inline-block;
+    font-size: 10pt !important;
+    min-width: 80px; /* Align labels */
+}
+
+/* ===== ACHIEVEMENTS LIST ===== */
+.achievements-list {
+    padding-left: 20px;
+    font-size: 10pt;
+}
+
+.achievements-list li {
+    margin-bottom: 3px;
+}
+
+.location-text {
+    color: grey;
+}
+
+/* ===== PRINT OPTIMIZATION ===== */
+@media print {
+    @page {
+        size: 8.28in 11.71in;
+        margin: 0.3in;
+    }
+    
+    .resume {
+        width: 8.28in !important;
+        min-height: 11.71in !important;
+        padding: 1in -0.4in 0.4in !important;
+    }
+}
+
+/* ===== WATERMARK WITH BACKGROUND PATTERN ===== */
+.watermark {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.15;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Ctext x='0' y='20' font-size='36' fill='%23ff0000'%3Epocv%3C/text%3E%3C/svg%3E");
+    background-repeat: repeat;
+}
+
+.main-watermark {
+    position: absolute;
+    font-size: 6rem;
+    color: #ff0000;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-45deg);
+    font-weight: 900;
+    white-space: nowrap;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+}
