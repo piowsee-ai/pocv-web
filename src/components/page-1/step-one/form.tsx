@@ -9,7 +9,7 @@ interface StepOneFormProps {
   handleChange: (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     section?:
-      | "root"
+      | "personalData"
       | "educations"
       | "workExperiences"
       | "organizationExperiences",
@@ -30,7 +30,7 @@ export function StepOneForm({
         </Label>
         <Input
           id="name"
-          value={formData.name}
+          value={formData.personalData.name}
           onChange={handleChange}
           placeholder="Nama Lengkap"
           required
@@ -49,7 +49,7 @@ export function StepOneForm({
         </Label>
         <Input
           id="phone"
-          value={formData.phone}
+          value={formData.personalData.phone}
           onChange={handleChange}
           placeholder="Nomor HP, contoh: 081234567890"
           required
@@ -68,7 +68,7 @@ export function StepOneForm({
         </Label>
         <Input
           id="email"
-          value={formData.email}
+          value={formData.personalData.email}
           onChange={handleChange}
           placeholder="Alamat Email"
           required
@@ -87,7 +87,7 @@ export function StepOneForm({
         </Label>
         <Input
           id="linkedin"
-          value={formData.linkedin}
+          value={formData.personalData.linkedin}
           onChange={handleChange}
           placeholder="Tautan LinkedIn"
           className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0"
@@ -100,7 +100,7 @@ export function StepOneForm({
         </Label>
         <Input
           id="github"
-          value={formData.github}
+          value={formData.personalData.github}
           onChange={handleChange}
           placeholder="Tautan Github"
           className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0"

@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
+import { FormDataSchema } from "@/lib/dto/cv.schema";
+import type { FormData } from "@/types/form-data";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
-import { FormDataDTO, FormDataSchema } from "@/lib/dto/cv.schema";
 import { CVService } from "@/lib/services/cv.service";
 import { logger, logError } from "@/lib/log/logger";
 
@@ -19,7 +20,7 @@ export async function GET(req: NextRequest, ctx: { params: Promise<{ id: string 
   const userId = session.user.id;
 
   try {
-    const cvs: FormDataDTO | null = await CVService.getCVDetail(id, userId);
+    const cvs: FormData | null = await CVService.getCVDetail(id, userId);
 
     if (!cvs) {
       logger.warn("CV Detail not found", {
@@ -39,7 +40,11 @@ export async function GET(req: NextRequest, ctx: { params: Promise<{ id: string 
 
     return NextResponse.json({ success: true, data: cvs }, { status: 200 });
   } catch (err) {
-    logError(err, { userId, cvId: id, method: req.method, route: req.url });
+    logError(err, {
+      userId, 
+      method: req.method, 
+      route: req.url 
+    });
     return NextResponse.json(
       {
         success: false,
@@ -85,7 +90,7 @@ export async function PATCH(
       return NextResponse.json({ success: false, errors }, { status: 400 });
     }
 
-    const formData: FormDataDTO = result.data;
+    const formData: FormData = result.data;
 
     // NOTE: Decide whether to return the updated CV (with sections) or keep it fire-and-forget
     const updatedCV = await CVService.updateCV(id, userId, formData);
@@ -101,7 +106,11 @@ export async function PATCH(
       { status: 200 }
     );
   } catch (err) {
-    logError(err, { userId, cvId: id, method: req.method, route: req.url });
+    logError(err, {
+      userId, 
+      method: req.method, 
+      route: req.url 
+    });
     return NextResponse.json(
       { success: false, message: "Internal Server Error" },
       { status: 500 }

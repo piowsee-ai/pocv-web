@@ -1,52 +1,57 @@
 import { CVRepository } from "../repositories/cv.repo";
 import {
-  FormDataDTO,
-  CVListDTO,
   WorkExperienceSchema,
   OrganizationExperienceSchema,
   EducationSchema,
   PersonalDataSchema,
 } from "../dto/cv.schema";
+import type { Education, FormData, OrganizationExperience, PersonalData, WorkExperience } from "@/types/form-data";
+import type { CVList } from "@/types/cv";
 import { v4 as uuidv4 } from "uuid";
 import { SectionType } from "@/generated/prisma";
 
+// Remove client-generated `id` to prevent saving client identifiers
+function eraseId(obj: any) {
+  if (obj && typeof obj === "object") {
+    const { id, ...rest } = obj;
+    return rest;
+  }
+
+  // If the input is not an object, return it unchanged to avoid returning undefined
+  return obj;
+}
+
 export const CVService = {
-  async createCV(userId: string, dto: FormDataDTO) {
+  async createCV(userId: string, data: FormData) {
     const id = uuidv4();
 
     const sections = [
-      ...dto.educations.map((edu) => ({
+      ...data.educations.map((edu) => ({
         id: uuidv4(),
         type: SectionType.EDUCATION,
-        content: edu,
+        content: eraseId({ ...edu }),
       })),
-      ...dto.workExperiences.map((work) => ({
+      ...data.workExperiences.map((work) => ({
         id: uuidv4(),
         type: SectionType.WORK,
-        content: work,
+        content: eraseId({ ...work }),
       })),
-      ...dto.organizationExperiences.map((org) => ({
+      ...data.organizationExperiences.map((org) => ({
         id: uuidv4(),
         type: SectionType.ORGANIZATION,
-        content: org,
+        content: eraseId({ ...org }),
       })),
       {
         id: uuidv4(),
         type: SectionType.PERSONAL,
-        content: {
-          name: dto.name,
-          phone: dto.phone,
-          linkedin: dto.linkedin,
-          email: dto.email,
-          github: dto.github,
-        },
+        content: eraseId({ ...data.personalData }),
       },
     ];
     // NOTE: Decide whether to return the created CV (with sections) or keep it fire-and-forget
     await CVRepository.createCV(id, userId, "Resume", sections);
   },
 
-  async getAllCVByUserId(userId: string): Promise<CVListDTO[]> {
+  async getAllCVByUserId(userId: string): Promise<CVList[]> {
     const retrievedCVs = await CVRepository.findAllCVByUserId(userId);
 
     return retrievedCVs.map((cv) => ({
@@ -57,48 +62,49 @@ export const CVService = {
     }));
   },
 
-  async getCVDetail(cvId: string, userId: string): Promise<FormDataDTO | null> {
+  async getCVDetail(cvId: string, userId: string): Promise<FormData | null> {
     const retrievedCV = await CVRepository.findCVDetail(userId, cvId);
 
     if (!retrievedCV) {
       return null;
     }
 
-    const educations = retrievedCV.sections
+    const educations: Education[] = retrievedCV.sections
       .filter((s) => s.type === SectionType.EDUCATION)
       .map((s) => ({
         id: s.id,
         ...EducationSchema.parse(s.content),
       }));
 
-    const workExperiences = retrievedCV.sections
+    const workExperiences: WorkExperience[] = retrievedCV.sections
       .filter((s) => s.type === SectionType.WORK)
       .map((s) => ({
         id: s.id,
         ...WorkExperienceSchema.parse(s.content),
       }));
 
-    const organizationExperiences = retrievedCV.sections
+    const organizationExperiences: OrganizationExperience[] = retrievedCV.sections
       .filter((s) => s.type === SectionType.ORGANIZATION)
       .map((s) => ({
         id: s.id,
         ...OrganizationExperienceSchema.parse(s.content),
       }));
 
-    // TODO: add id once FormData on types/form-data.ts is refactored to use `personalData`
-    const personalSection = retrievedCV.sections.find(
+    const personal = retrievedCV.sections.find(
       (s) => s.type === SectionType.PERSONAL
     );
-    const personal = personalSection
-      ? PersonalDataSchema.parse(personalSection.content)
-      : undefined;
 
-    const formData: FormDataDTO = {
-      name: personal?.name || "",
-      phone: personal?.phone || "",
-      linkedin: personal?.linkedin || "",
-      email: personal?.email || "",
-      github: personal?.github || "",
+    if (!personal) {
+      throw new Error("PERSONAL section not found");
+    }
+
+    const personalData: PersonalData = { 
+      id: personal.id, 
+      ...PersonalDataSchema.parse(personal.content),
+    };
+
+    const formData: FormData = {
+      personalData,
       educations,
       workExperiences,
       organizationExperiences,
@@ -107,9 +113,9 @@ export const CVService = {
     return formData;
   },
 
-  async updateCV(cvId: string, userId: string, dto: FormDataDTO) {
+  async updateCV(cvId: string, userId: string, data: FormData) {
     const sections = [
-      ...dto.educations.map((edu) => {
+      ...data.educations.map((edu) => {
         const { id, ...eduContent } = edu;
         return {
           id: id ?? uuidv4(),
@@ -117,15 +123,15 @@ export const CVService = {
           content: eduContent,
         };
       }),
-      ...dto.workExperiences.map((work) => {
+      ...data.workExperiences.map((work) => {
         const { id, ...workContent } = work;
         return {
           id: id ?? uuidv4(),
           type: SectionType.WORK,
           content: workContent,
-        }
+        };
       }),
-      ...dto.organizationExperiences.map((org) => {
+      ...data.organizationExperiences.map((org) => {
         const { id, ...orgContent } = org;
         return {
           id: id ?? uuidv4(),
@@ -133,18 +139,14 @@ export const CVService = {
           content: orgContent,
         };
       }),
-      {
-        // TODO: replace id once FormData on types/form-data.ts is refactored to use `personalData`
-        id: uuidv4(),
-        type: SectionType.PERSONAL,
-        content: {
-          name: dto.name,
-          phone: dto.phone,
-          linkedin: dto.linkedin,
-          email: dto.email,
-          github: dto.github,
-        },
-      },
+      (() => {
+        const { id, ...personalContent } = data.personalData;
+        return {
+          id: id ?? uuidv4(),
+          type: SectionType.PERSONAL,
+          content: personalContent
+        };
+      })()
     ];
 
     // NOTE: Decide whether to return the updated CV (with sections) or keep it fire-and-forget

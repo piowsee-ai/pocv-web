@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
+import { FormDataSchema } from "@/lib/dto/cv.schema";
+import type { FormData } from "@/types/form-data";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
-import { FormDataSchema, FormDataDTO } from "@/lib/dto/cv.schema";
 import { CVService } from "@/lib/services/cv.service";
 import { logger, logError } from "@/lib/log/logger";
 
@@ -35,7 +36,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, errors }, { status: 400 });
     }
 
-    const formData: FormDataDTO = result.data;
+    const formData: FormData = result.data;
     await CVService.createCV(userId, formData);
 
     logger.info("CV created successfully", {
@@ -51,7 +52,11 @@ export async function POST(req: NextRequest) {
       { status: 201 }
     );
   } catch (err) {
-    logError(err, { userId, method: req.method, route: req.url });
+    logError(err, {
+      userId, 
+      method: req.method, 
+      route: req.url 
+    });
     return NextResponse.json(
       {
         success: false,

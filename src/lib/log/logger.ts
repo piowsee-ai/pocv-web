@@ -58,16 +58,17 @@ export function logError(err: unknown, context: Record<string, any> = {}) {
       const truncatedMessage = err.message.slice(0, maxLength);
 
       logger.error(`Prisma Error Occurred: ${truncatedMessage}...`, {
-        error: {
-          name: err.name,
-          clientVersion: (err as any).clientVersion,
-        },
+        name: err.name,
+        clientVersion: (err as any).clientVersion,
         ...context,
       });
     } else {
-      logger.error("Error Occurred", { error: err, ...context });
+      logger.error(err.message, {
+        name: err.name,
+        ...context,
+      });
     }
   } else {
-    logger.error("Unknown error", { error: err, ...context });
+    logger.error("Unknown error", { error: String(err), ...context });
   }
 }

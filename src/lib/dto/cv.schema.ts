@@ -50,21 +50,8 @@ export const PersonalDataSchema: z.ZodType<PersonalData> = z.object({
 });
 
 export const FormDataSchema: z.ZodType<FormData> = z.object({
-  name: z.string(),
-  phone: z.string(),
-  email: z.email(),
-  linkedin: z.union([z.url(), z.literal("")]).optional(),
-  github: z.union([z.url(), z.literal("")]).optional(),
+  personalData: PersonalDataSchema,
   educations: z.array(EducationSchema),
   workExperiences: z.array(WorkExperienceSchema),
   organizationExperiences: z.array(OrganizationExperienceSchema),
 });
-
-export type FormDataDTO = z.infer<typeof FormDataSchema>;
-
-export type CVListDTO = {
-  id: string;
-  title: string;
-  createdAt: Date;
-  updatedAt: Date;
-};
