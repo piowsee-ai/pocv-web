@@ -28,6 +28,8 @@ export function WizardStep() {
   const [useDefaultInputWork, setUseDefaultInputWork] = useState(true);
   const [useDefaultInputOrg, setUseDefaultInputOrg] = useState(true);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     personalData: {
       name: "",
@@ -229,57 +231,121 @@ export function WizardStep() {
     if (validateStep()) setSubmitDialogOpen(true);
   };
 
-  const handleConfirmSubmit = () => {
+  const handleConfirmSubmit = async () => {
     setSubmitDialogOpen(false);
-    const finalWorkExperiences = useDefaultInputWork
-      ? formData.workExperiences.map((exp) => ({
-          position: exp.position,
-          company: exp.company,
-          startDate: exp.startDate,
-          endDate: exp.endDate,
-          city: exp.city,
-          description: exp.description,
-        }))
-      : formData.workExperiences.map((exp) => ({
-          description: exp.description,
-        }));
+    setIsSubmitting(true);
+    setSubmitError(null);
 
-    const finaleducations = useDefaultInputEdu
-      ? formData.educations.map((exp) => ({
-          degree: exp.degree,
-          major: exp.major,
-          institution: exp.institution,
-          startDate: exp.startDate,
-          endDate: exp.endDate,
-          location: exp.location,
-          gpa: exp.gpa,
-          description: exp.description,
-        }))
-      : formData.educations.map((exp) => ({
-          description: exp.description,
-        }));
+    try {
+      const finalWorkExperiences = useDefaultInputWork
+        ? formData.workExperiences.map((exp) => ({
+            position: exp.position,
+            company: exp.company,
+            startDate: exp.startDate,
+            endDate: exp.endDate,
+            city: exp.city,
+            description: exp.description,
+          }))
+        : formData.workExperiences.map((exp) => ({
+            position: "",
+            company: "",
+            startDate: "",
+            endDate: "",
+            city: "",
+            description: exp.description,
+          }));
 
-    const finalOrganizationExperiences = useDefaultInputOrg
-      ? formData.organizationExperiences.map((exp) => ({
-          position: exp.position,
-          organization: exp.organization,
-          startDate: exp.startDate,
-          endDate: exp.endDate,
-          location: exp.location,
-          description: exp.description,
-        }))
-      : formData.organizationExperiences.map((exp) => ({
-          description: exp.description,
-        }));
+      const finaleducations = useDefaultInputEdu
+        ? formData.educations.map((exp) => ({
+            degree: exp.degree,
+            major: exp.major,
+            institution: exp.institution,
+            startDate: exp.startDate,
+            endDate: exp.endDate,
+            location: exp.location,
+            gpa: exp.gpa,
+            description: exp.description,
+          }))
+        : formData.educations.map((exp) => ({
+            degree: "",
+            major: "",
+            institution: "",
+            startDate: "",
+            endDate: "",
+            location: "",
+            gpa: "",
+            description: exp.description,
+          }));
 
-    const finalData = {
-      ...formData,
-      workExperiences: finalWorkExperiences,
-      educations: finaleducations,
-      organizationExperiences: finalOrganizationExperiences,
-    };
-    console.log(finalData);
-    // TODO: send data to backend
+      const finalOrganizationExperiences = useDefaultInputOrg
+        ? formData.organizationExperiences.map((exp) => ({
+            position: exp.position,
+            organization: exp.organization,
+            startDate: exp.startDate,
+            endDate: exp.endDate,
+            location: exp.location,
+            description: exp.description,
+          }))
+        : formData.organizationExperiences.map((exp) => ({
+            position: "",
+            organization: "",
+            startDate: "",
+            endDate: "",
+            location: "",
+            description: exp.description,
+          }));
+
+      const finalData = {
+        personalData: {
+          name: formData.personalData.name,
+          phone: formData.personalData.phone,
+          email: formData.personalData.email,
+          linkedin: formData.personalData.linkedin,
+          github: formData.personalData.github,
+        },
+        workExperiences: finalWorkExperiences,
+        educations: finaleducations,
+        organizationExperiences: finalOrganizationExperiences,
+      };
+
+      // Call the generate API
+      const response = await fetch("/api/cv/generate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          formData: finalData,
+          options: {
+            provider: "openai", // or "gemini"
+            isPreview: false,
+          },
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to generate CV");
+      }
+
+      // Download the PDF
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `resume-${Date.now()}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error("Error generating CV:", error);
+      setSubmitError(
+        error instanceof Error ? error.message : "Terjadi kesalahan saat membuat CV"
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const progress = (100 / 4) * (step - 1);
@@ -339,7 +405,7 @@ export function WizardStep() {
                         onCheckedChange={setUseDefaultInputEdu}
                         className="cursor-pointer"
                       />
-                      <span className="text-[10px] text-neutral-600 dark:text-neutral-300 mt-1 whitespace-nowrap w-[70px] text-center">
+                      <span className="text-[10px] text-neutral-600 dark:text-neutral-300 mt-1 whitespace-nowrap w-17.5 text-center">
                         {useDefaultInputEdu ? "Input Default" : "Input Bebas"}
                       </span>
                     </div>
@@ -385,7 +451,7 @@ export function WizardStep() {
                         onCheckedChange={setUseDefaultInputWork}
                         className="cursor-pointer"
                       />
-                      <span className="text-[10px] text-neutral-600 dark:text-neutral-300 mt-1 whitespace-nowrap w-[70px] text-center">
+                      <span className="text-[10px] text-neutral-600 dark:text-neutral-300 mt-1 whitespace-nowrap w-17.5 text-center">
                         {useDefaultInputWork ? "Input Default" : "Input Bebas"}
                       </span>
                     </div>
@@ -430,7 +496,7 @@ export function WizardStep() {
                         onCheckedChange={setUseDefaultInputOrg}
                         className="cursor-pointer"
                       />
-                      <span className="text-[10px] text-neutral-600 dark:text-neutral-300 mt-1 whitespace-nowrap w-[70px] text-center">
+                      <span className="text-[10px] text-neutral-600 dark:text-neutral-300 mt-1 whitespace-nowrap w-17.5 text-center">
                         {useDefaultInputOrg ? "Input Default" : "Input Bebas"}
                       </span>
                     </div>
@@ -464,7 +530,7 @@ export function WizardStep() {
                 type="button"
                 onClick={prevStep}
                 variant="green"
-                className="w-[96px]"
+                className="w-24"
               >
                 Kembali
               </Button>
@@ -474,7 +540,7 @@ export function WizardStep() {
                 type="button"
                 onClick={nextStep}
                 variant="green"
-                className="ml-auto w-[96px]"
+                className="ml-auto w-24"
               >
                 Lanjut
               </Button>
@@ -483,7 +549,7 @@ export function WizardStep() {
               <Button
                 type="submit"
                 variant="green"
-                className="ml-auto w-[96px]"
+                className="ml-auto w-24"
               >
                 Kirim
               </Button>
@@ -491,6 +557,34 @@ export function WizardStep() {
           </div>
         </form>
       </div>
+
+      {/* Loading overlay */}
+      {isSubmitting && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-neutral-800 rounded-lg p-6 flex flex-col items-center gap-4">
+            <div className="animate-spin rounded-full h-10 w-10 border-4 border-emerald-500 border-t-transparent"></div>
+            <p className="text-neutral-700 dark:text-neutral-300">
+              Sedang membuat CV dengan AI...
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Error message */}
+      {submitError && (
+        <div className="fixed bottom-4 right-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg z-50">
+          <div className="flex items-center gap-2">
+            <span>{submitError}</span>
+            <button
+              onClick={() => setSubmitError(null)}
+              className="text-red-700 hover:text-red-900"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
+
       <Dialog open={submitDialogOpen} onOpenChange={setSubmitDialogOpen}>
         <DialogContent>
           <DialogHeader>
