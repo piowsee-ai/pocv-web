@@ -19,3 +19,28 @@ Output format:
 export const CURATE_RESUME_PROMPT = `Tailor this resume for the job. Output ONLY the JSON object, no other text.
 
 IMPORTANT:.`
+
+export const PARSE_RESUME_PROMPT = `Parse this resume into JSON. Output ONLY the JSON object, no other text.
+
+Map content to standard sections when possible. For non-standard sections (like Publications, Volunteer Work, Research, Hobbies), add them to customSections with an appropriate type.
+
+Example output format:
+{schema}
+
+Custom section types:
+- "text": Single text block (e.g., objective, statement)
+- "itemList": List of items with title, subtitle, years, description (e.g., publications, research)
+- "stringList": Simple list of strings (e.g., hobbies, interests)
+
+Rules:
+- Use "" for missing text fields, [] for missing arrays, null for optional fields
+- Number IDs starting from 1
+- Format years as "YYYY - YYYY" or "YYYY - Present"
+- Use snake_case for custom section keys (e.g., "volunteer_work", "publications")
+- Preserve the original section name as a descriptive key
+- Normalize dates: "Jan 2020" → "2020", "2020-2021" → "2020 - 2021", "Current"/"Ongoing" → "Present"
+- For ambiguous dates like "3 years experience", infer approximate years from context or use "~YYYY"
+- Flag overlapping dates (concurrent roles) by preserving both, don't merge
+
+Resume to parse:
+{resume_text}`
