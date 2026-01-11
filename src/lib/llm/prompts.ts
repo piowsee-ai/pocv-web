@@ -1,6 +1,12 @@
 // LLM prompts templates
 
-export const RESUME_ENHANCEMENT_PROMPT = `You are an expert resume writer. Your job is to enhance resume descriptions to be more impactful and professional.
+// Used when first generating CV
+// Input: Resume data (user-inputed)
+// Output: JSON of resume data
+export const RESUME_ENHANCEMENT_PROMPT = (resumeData: string) => `You are an expert resume writer. Your job is to enhance resume descriptions to be more impactful and professional.
+
+Current Resume:
+${resumeData}
 
 Guidelines:
 1. Start each bullet point with a strong action verb (e.g., Led, Developed, Implemented, Achieved)
@@ -16,16 +22,30 @@ Output format:
 - Each bullet should start with "• " (bullet character)
 - Do not include any other text or explanations`;
 
-export const CURATE_RESUME_PROMPT = `Tailor this resume for the job. Output ONLY the JSON object, no other text.
+// Used when curate based on job desc
+export const CURATE_RESUME_PROMPT = (resumeData: string, jobDescription: string) => 
+  `Tailor this resume for the job. Output ONLY the JSON object, no other text.
 
-IMPORTANT:.`
+Job Description:
+${jobDescription}
 
-export const PARSE_RESUME_PROMPT = `Parse this resume into JSON. Output ONLY the JSON object, no other text.
+Current Resume:
+${resumeData}
+
+Instructions:
+- Reorder and emphasize relevant skills and experiences
+- DO NOT invent new information
+- Adjust language to match job requirements
+- Keep all information truthful
+- Return the same JSON structure with optimized content`;
+
+export const PARSE_RESUME_PROMPT = (resumeText: string, schema: string) => 
+  `Parse this resume into JSON. Output ONLY the JSON object, no other text.
 
 Map content to standard sections when possible. For non-standard sections (like Publications, Volunteer Work, Research, Hobbies), add them to customSections with an appropriate type.
 
 Example output format:
-{schema}
+${schema}
 
 Custom section types:
 - "text": Single text block (e.g., objective, statement)
@@ -43,4 +63,76 @@ Rules:
 - Flag overlapping dates (concurrent roles) by preserving both, don't merge
 
 Resume to parse:
-{resume_text}`
+${resumeText}`;
+
+export const RESUME_SCHEMA_EXAMPLE = `{
+  "personalInfo": {
+    "name": "John Doe",
+    "title": "Software Engineer",
+    "email": "john@example.com",
+    "phone": "+1-555-0100",
+    "location": "San Francisco, CA",
+    "website": "https://johndoe.dev",
+    "linkedin": "linkedin.com/in/johndoe",
+    "github": "github.com/johndoe"
+  },
+  "summary": "Experienced software engineer with 5+ years...",
+  "workExperience": [
+    {
+      "id": 1,
+      "title": "Senior Software Engineer",
+      "company": "Tech Corp",
+      "location": "San Francisco, CA",
+      "years": "2020 - Present",
+      "description": [
+        "Led development of microservices architecture",
+        "Improved system performance by 40%"
+      ]
+    }
+  ],
+  "education": [
+    {
+      "id": 1,
+      "institution": "University of California",
+      "degree": "B.S. Computer Science",
+      "years": "2014 - 2018",
+      "description": "Graduated with honors"
+    }
+  ],
+  "personalProjects": [
+    {
+      "id": 1,
+      "name": "Open Source Tool",
+      "role": "Creator & Maintainer",
+      "years": "2021 - Present",
+      "description": [
+        "Built CLI tool with 1000+ GitHub stars",
+        "Used by 50+ companies worldwide"
+      ]
+    }
+  ],
+  "additional": {
+    "technicalSkills": ["Python", "JavaScript", "AWS", "Docker"],
+    "languages": ["English (Native)", "Spanish (Conversational)"],
+    "certificationsTraining": ["AWS Solutions Architect"],
+    "awards": ["Employee of the Year 2022"]
+  },
+  "customSections": {
+    "publications": {
+      "sectionType": "itemList",
+      "items": [
+        {
+          "id": 1,
+          "title": "Paper Title",
+          "subtitle": "Journal Name",
+          "years": "2023",
+          "description": ["Brief description of the publication"]
+        }
+      ]
+    },
+    "volunteer_work": {
+      "sectionType": "text",
+      "text": "Description of volunteer activities..."
+    }
+  }
+}`
