@@ -31,14 +31,17 @@ export class GeminiProvider implements LLMProviderClient {
     const systemMessage = messages.find((m) => m.role === "system");
     const userMessages = messages.filter((m) => m.role !== "system");
 
-    // Build contents from user messages
-    const contents = userMessages.map((m) => m.content).join("\n\n");
+    // Build contents with system instruction included as first user message
+    let fullContents = "";
+    if (systemMessage?.content) {
+      fullContents = `Instructions: ${systemMessage.content}\n\n`;
+    }
+    fullContents += userMessages.map((m) => m.content).join("\n\n");
 
     const response = await this.client.models.generateContent({
       model,
-      contents,
+      contents: fullContents,
       config: {
-        systemInstruction: systemMessage?.content,
         temperature,
         maxOutputTokens: maxTokens,
       },
