@@ -558,7 +558,7 @@ export function WizardStep() {
         </form>
       </div>
 
-      {/* Loading overlay */}
+      // TODO: add loading library
       {isSubmitting && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white dark:bg-neutral-800 rounded-lg p-6 flex flex-col items-center gap-4">
@@ -570,17 +570,19 @@ export function WizardStep() {
         </div>
       )}
 
-      {/* Error message */}
+      // TODO: add error component; fix button style
       {submitError && (
         <div className="fixed bottom-4 right-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg z-50">
           <div className="flex items-center gap-2">
             <span>{submitError}</span>
-            <button
+            <Button
               onClick={() => setSubmitError(null)}
-              className="text-red-700 hover:text-red-900"
+              variant="ghost"
+              size="sm"
+              className="text-red-700 hover:text-red-900 h-auto p-0"
             >
               ✕
-            </button>
+            </Button>
           </div>
         </div>
       )}
