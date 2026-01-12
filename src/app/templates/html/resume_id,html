@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CV</title>
+    <link rel="stylesheet" href="static/css/resume.css" />
+  </head>
+  <body>
+    {% if is_preview %}
+    <div class="watermark">
+      <div class="main-watermark">BELUM BAYAR</div>
+    </div>
+    {% endif %}
+    <div class="resume">
+      <!-- Bagian Header -->
+      <div class="header">
+        <h1 class="header-name">{{ data.name }}</h1>
+
+        {% if data.phone or data.email or data.linkedin or data.github %}
+        <div class="header-contact">
+          {% if data.phone %}
+          <a href="tel:{{ data.phone }}" class="contact-item"
+            >{{ data.phone }}</a
+          >
+          {% endif %} {% if data.email %}
+          <span class="separator">|</span>
+          <a href="mailto:{{ data.email }}" class="contact-item"
+            >{{ data.email }}</a
+          >
+          {% endif %} {% if data.linkedin %}
+          <span class="separator">|</span>
+          <a href="{{ data.linkedin }}" class="contact-item"
+            >{{ data.linkedin }}</a
+          >
+          {% endif %} {% if data.github %}
+          <span class="separator">|</span>
+          <a href="{{ data.github }}" class="contact-item">{{ data.github }}</a>
+          {% endif %}
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Bagian Pendidikan -->
+      {% if data.education %}
+      <div class="section">
+        <h2 class="section-title">Pendidikan</h2>
+        {% for edu in data.education %}
+        <div class="entry">
+          <div class="entry-header">
+            <div class="entry-title">
+              {{ edu.institution }} {% if edu.location %}<span
+                class="location-text"
+              >
+                - {{ edu.location }}</span
+              >{% endif %}
+            </div>
+            <div class="entry-date">
+              {{ edu.start_date }} - {{ edu.end_date }}
+            </div>
+          </div>
+          <div class="entry-subheader">
+            <div class="entry-subtitle">
+              {{ edu.degree }}{% if edu.gpa %}, {{ edu.gpa }}{% endif %}
+            </div>
+          </div>
+          {% if edu.description %}
+          <ul class="entry-details">
+            {% if edu.description is string %} {% for item in
+            edu.description.split('\n') %} {% if item.strip() %}
+            <li>{{ item.strip() }}</li>
+            {% endif %} {% endfor %} {% else %} {% for item in edu.description %}
+            <li>{{ item }}</li>
+            {% endfor %} {% endif %}
+          </ul>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <!-- Pengalaman Kerja -->
+      {% if data.work_experience %}
+      <div class="section">
+        <h2 class="section-title">Pengalaman Kerja</h2>
+        {% for exp in data.work_experience %}
+        <div class="entry">
+          <div class="entry-header">
+            <div class="entry-title">
+              {{ exp.company }} {% if exp.location %} - {{ exp.location }}{% endif %}
+            </div>
+            <div class="entry-date">
+              {{ exp.start_date }} - {{ exp.end_date }}
+            </div>
+          </div>
+          <div class="entry-subtitle">{{ exp.position }}</div>
+          {% if exp.description %}
+          <ul class="entry-details">
+            {% if exp.description is string %} {% for item in
+            exp.description.split('\n') %} {% if item.strip() %}
+            <li>{{ item.strip() }}</li>
+            {% endif %} {% endfor %} {% else %} {% for item in exp.description %}
+            <li>{{ item }}</li>
+            {% endfor %} {% endif %}
+          </ul>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <!-- Pengalaman Organisasi -->
+      {% if data.organizations %}
+      <div class="section">
+        <h2 class="section-title">Pengalaman Organisasi</h2>
+        {% for org in data.organizations %}
+        <div class="entry">
+          <div class="entry-header">
+            <div class="entry-title">
+              {{ org.organization }} {% if org.location %} - {{ org.location }}{% endif %}
+            </div>
+            <div class="entry-date">
+              {{ org.start_date }} - {{ org.end_date }}
+            </div>
+          </div>
+          <div class="entry-subtitle">{{ org.position }}</div>
+          {% if org.description %}
+          <ul class="entry-details">
+            {% if org.description is string %} {% for item in
+            org.description.split('\n') %} {% if item.strip() %}
+            <li>{{ item.strip() }}</li>
+            {% endif %} {% endfor %} {% else %} {% for item in org.description %}
+            <li>{{ item }}</li>
+            {% endfor %} {% endif %}
+          </ul>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <!-- Keterampilan -->
+      {% if data.hardskills or data.softskills %}
+      <div class="section">
+        <h2 class="section-title">Keterampilan</h2>
+        <div class="entry">
+            <ul class="entry-details">
+            {% if data.hardskills %}
+            <li>
+              <strong>Hardskills</strong>
+              : {{ data.hardskills | join(', ') }}
+            </li>
+            {% endif %} 
+            {% if data.softskills %}
+            <li>
+              <strong>Softskills</strong>
+              : {{ data.softskills | join(', ') }}
+            </li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Prestasi -->
+      {% if data.achievements %}
+      <div class="section">
+        <h2 class="section-title">Prestasi</h2>
+        <div class="entry">
+          <ul class="entry-details">
+            {% for achievement in data.achievements %}
+            <li>
+              <strong>Prestasi ({{ achievement.year }})</strong>
+              : {{ achievement.title }}
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+
+    <script>
+      function parseMonthYear(dateStr) {
+        const parts = dateStr.split("/");
+        if (parts.length === 2) {
+          const month = parseInt(parts[0], 10) - 1;
+          const year = parseInt(parts[1], 10);
+          return new Date(year, month);
+        }
+        return new Date(dateStr);
+      }
+
+      function formatDate(date) {
+        if (isNaN(date)) return "";
+        return date.toLocaleDateString("id-ID", {
+          month: "short",
+          year: "numeric",
+        });
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        const now = new Date();
+        const dateElements = document.querySelectorAll(".entry-date");
+
+        dateElements.forEach(function (el) {
+          const text = el.textContent.trim();
+          const parts = text.split(" - ");
+
+          if (parts.length === 2) {
+            const startDate = parseMonthYear(parts[0].trim());
+            const endDate = parseMonthYear(parts[1].trim());
+
+            const formattedStart = formatDate(startDate);
+            const formattedEnd = formatDate(endDate);
+            let displayText = formattedStart + " - " + formattedEnd;
+
+            if (!isNaN(endDate) && endDate > now) {
+              displayText += " (Diperkirakan)";
+            }
+            if (isNaN(endDate)) {
+              displayText = formattedStart + " - Sekarang";
+            }
+            el.textContent = displayText;
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
