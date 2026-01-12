@@ -1,9 +1,26 @@
 // LLM prompts templates
 
-// Used when first generating CV
-// Input: Resume data (user-inputed)
-// Output: JSON of resume data
-export const RESUME_ENHANCEMENT_PROMPT = (resumeData: string) => `You are an expert resume writer. Your job is to enhance resume descriptions to be more impactful and professional.
+// Supported languages
+export type ResumeLanguage = "en" | "id";
+
+export const LANGUAGE_LABELS: Record<ResumeLanguage, string> = {
+  en: "English",
+  id: "Bahasa Indonesia",
+};
+
+/**
+ * RESUME_ENHANCEMENT_PROMPT
+ * Used when first generating/enhancing CV descriptions
+ * 
+ * @param resumeData - User-inputted resume data as formatted string
+ * @param lang - Target language for output ("en" | "id")
+ * 
+ * Input: Formatted string (sections with headers like "EDUCATION:", "WORK EXPERIENCE:", each with bullet descriptions)
+ * Output: Plain text (bullet points starting with "• ", separated by newlines)
+ */
+export const RESUME_ENHANCEMENT_PROMPT = (resumeData: string, lang: ResumeLanguage = "en") => `You are an expert resume writer. Your job is to enhance resume descriptions to be more impactful and professional.
+
+IMPORTANT: Write the enhanced resume in ${LANGUAGE_LABELS[lang]}.
 
 Current Resume:
 ${resumeData}
@@ -22,9 +39,22 @@ Output format:
 - Each bullet should start with "• " (bullet character)
 - Do not include any other text or explanations`;
 
-// Used when curate based on job desc
-export const CURATE_RESUME_PROMPT = (resumeData: string, jobDescription: string) => 
+/**
+ * CURATE_RESUME_PROMPT
+ * Used to curate resume based on specific job description
+ * 
+ * @param resumeData - Current resume data as JSON string
+ * @param jobDescription - Target job description to tailor for
+ * @param lang - Target language for output ("en" | "id")
+ * @param schema - JSON schema example for output structure (use RESUME_SCHEMA_EXAMPLE)
+ * 
+ * Input: JSON (FormData structure), plain text (job description)
+ * Output: JSON (same FormData structure with optimized content)
+ */
+export const CURATE_RESUME_PROMPT = (resumeData: string, jobDescription: string, lang: ResumeLanguage = "en") => 
   `Tailor this resume for the job. Output ONLY the JSON object, no other text.
+
+IMPORTANT: Write the output in ${LANGUAGE_LABELS[lang]}.
 
 Job Description:
 ${jobDescription}
@@ -39,6 +69,13 @@ Instructions:
 - Keep all information truthful
 - Return the same JSON structure with optimized content`;
 
+/**
+ * PARSE_RESUME_PROMPT
+ * Used to parse raw resume text (from PDF/document upload) into structured JSON
+ * 
+ * @param resumeText - Raw text extracted from resume document
+ * @param schema - JSON schema example for output structure (use RESUME_SCHEMA_EXAMPLE)
+ */
 export const PARSE_RESUME_PROMPT = (resumeText: string, schema: string) => 
   `Parse this resume into JSON. Output ONLY the JSON object, no other text.
 
@@ -65,8 +102,12 @@ Rules:
 Resume to parse:
 ${resumeText}`;
 
+/**
+ * RESUME_SCHEMA_EXAMPLE
+ * JSON schema example used as reference for PARSE_RESUME_PROMPT output structure
+ */
 export const RESUME_SCHEMA_EXAMPLE = `{
-  "personalInfo": {
+  "personalData": {
     "name": "John Doe",
     "title": "Software Engineer",
     "email": "john@example.com",
@@ -135,4 +176,51 @@ export const RESUME_SCHEMA_EXAMPLE = `{
       "text": "Description of volunteer activities..."
     }
   }
+}`
+
+export const RESUME_SCHEMA_EXAMPLE2 = `{
+  "personalData": {
+    "name": "John Doe",
+    "phone": "+1-555-0100",
+    "email": "john@example.com",
+    "location": "San Francisco, CA",
+    "website": "https://johndoe.dev",
+    "linkedin": "linkedin.com/in/johndoe",
+    "github": "github.com/johndoe"
+  },
+  "summary": "Experienced software engineer with 5+ years...",
+  "workExperiences": [
+    {
+      "position": "Senior Software Engineer",
+      "company": "Tech Corp",
+      "location": "San Francisco, CA",
+      "startDate": "2020-01-01",
+      "endDate": "Present",
+      "description": [
+        "Led development of microservices architecture",
+        "Improved system performance by 40%"
+      ]
+    }
+  ],
+  "educations": [
+    {
+      "id": 1,
+      "institution": "University of California",
+      "degree": "B.S. Computer Science",
+      "years": "2014 - 2018",
+      "description": "Graduated with honors"
+    }
+  ],
+  "personalProjects": [
+    {
+      "id": 1,
+      "name": "Open Source Tool",
+      "role": "Creator & Maintainer",
+      "years": "2021 - Present",
+      "description": [
+        "Built CLI tool with 1000+ GitHub stars",
+        "Used by 50+ companies worldwide"
+      ]
+    }
+  ],
 }`
