@@ -317,7 +317,7 @@ export function WizardStep() {
         body: JSON.stringify({
           formData: finalData,
           options: {
-            provider: "openai", // or "gemini"
+            provider: process.env.DEFAULT_LLM_PROVIDER,
             isPreview: false,
           },
         }),

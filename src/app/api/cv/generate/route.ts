@@ -5,7 +5,7 @@ import { FormDataSchema } from "@/lib/dto/cv.schema";
 import { enhanceResume, toTemplateData } from "@/lib/services/enhance.service";
 import { generatePDF } from "@/lib/services/generate.service";
 import { logger, logError } from "@/lib/log/logger";
-import { LLMProvider } from "@/lib/llm";
+import { LLMProvider, getDefaultProvider } from "@/lib/llm";
 
 export const maxDuration = 300;
 
@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
 
     logger.info("Starting CV generation", {
       userId,
-      provider: options?.provider ?? "openai",
+      provider: options?.provider ?? getDefaultProvider(),
       isPreview: options?.isPreview ?? false,
     });
 
