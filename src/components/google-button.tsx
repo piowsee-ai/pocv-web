@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { signIn } from "@/lib/auth-client";
+import { signIn } from "@/lib/auth/auth-client";
 
 export function GoogleButton() {
     const handleGoogleSignIn = async () => {

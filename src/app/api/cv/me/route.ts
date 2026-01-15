@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { headers } from "next/headers";
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth/auth";
 import { CVService } from "@/lib/services/cv.service";
 import type { CVList } from "@/types/cv";
 import { logError } from "@/lib/log/logger";

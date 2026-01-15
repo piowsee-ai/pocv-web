@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { FormDataSchema } from "@/lib/dto/cv.schema";
 import type { FormData } from "@/types/form-data";
 import { headers } from "next/headers";
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth/auth";
 import { CVService } from "@/lib/services/cv.service";
 import { logger, logError } from "@/lib/log/logger";
 

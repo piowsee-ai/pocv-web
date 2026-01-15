@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { headers } from "next/headers";
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth/auth";
 import { FormDataSchema } from "@/lib/dto/cv.schema";
 import { enhanceResume, toTemplateData } from "@/lib/services/enhance.service";
 import { generatePDF } from "@/lib/services/generate.service";
