@@ -1,25 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { FormDataSchema } from "@/lib/dto/cv.schema";
 import type { FormData } from "@/types/form-data";
-import { headers } from "next/headers";
-import { auth } from "@/lib/auth/auth";
 import { CVService } from "@/lib/services/cv.service";
 import { logger, logError } from "@/lib/log/logger";
+import { requireUser } from "@/lib/auth/auth-server-helper";
 
-export async function GET(req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
-  const session = await auth.api.getSession({ headers: await headers() });
-
-  if (!session?.user) {
-    return NextResponse.json(
-      { success: false, message: "Unauthorized" },
-      { status: 401 }
-    );
-  }
-
+export async function GET(
+  req: NextRequest,
+  ctx: { params: Promise<{ id: string }> }
+) {
   const { id } = await ctx.params;
-  const userId = session.user.id;
+  let userId: string | undefined;
 
   try {
+    userId = await requireUser();
     const cvs: FormData | null = await CVService.getCVDetail(id, userId);
 
     if (!cvs) {
@@ -39,12 +33,18 @@ export async function GET(req: NextRequest, ctx: { params: Promise<{ id: string 
     }
 
     return NextResponse.json({ success: true, data: cvs }, { status: 200 });
-  } catch (err) {
+  } catch (err: any) {
     logError(err, {
-      userId, 
-      method: req.method, 
-      route: req.url 
+      userId,
+      method: req.method,
+      route: req.url,
     });
+    if (err.status) {
+      return NextResponse.json(
+        { success: false, message: err.message },
+        { status: err.status }
+      );
+    }
     return NextResponse.json(
       {
         success: false,
@@ -59,19 +59,11 @@ export async function PATCH(
   req: NextRequest,
   ctx: { params: Promise<{ id: string }> }
 ) {
-  const session = await auth.api.getSession({ headers: await headers() });
-
-  if (!session?.user) {
-    return NextResponse.json(
-      { success: false, message: "Unauthorized" },
-      { status: 401 }
-    );
-  }
-
   const { id } = await ctx.params;
-  const userId = session.user.id;
+  let userId: string | undefined;
 
   try {
+    userId = await requireUser();
     const body = await req.json();
     const result = FormDataSchema.safeParse(body);
 
@@ -105,12 +97,18 @@ export async function PATCH(
       { success: true, message: "CV Updated Successfully", data: updatedCV },
       { status: 200 }
     );
-  } catch (err) {
+  } catch (err: any) {
     logError(err, {
-      userId, 
-      method: req.method, 
-      route: req.url 
+      userId,
+      method: req.method,
+      route: req.url,
     });
+    if (err.status) {
+      return NextResponse.json(
+        { success: false, message: err.message },
+        { status: err.status }
+      );
+    }
     return NextResponse.json(
       { success: false, message: "Internal Server Error" },
       { status: 500 }
