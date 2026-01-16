@@ -11,10 +11,9 @@ class UnauthorizedError extends Error {
 }
 
 export async function requireUser() {
-    const session = await auth.api.getSession({ headers: await headers() });
-    if (!session?.user) {
-      throw new UnauthorizedError("Unauthorized");
-    }
-    return session.user.id;
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session?.user) {
+    throw new UnauthorizedError("Unauthorized");
+  }
+  return session.user.id;
 }
-  
