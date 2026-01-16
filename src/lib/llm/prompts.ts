@@ -39,6 +39,8 @@ Follow these rules:
     Good: "Spearheaded X and Y resulting in Z"
 - Use past tense for past roles, present tense for current roles
 - Avoid buzzwords and fluff - be specific and concrete
+- Do NOT use em dash ("—") anywhere in the writing/output, even if it exists, remove it
+- Use "" for missing text fields and [] for missing arrays
 
 3. Formatting Rules:
 - Treat these as equivalent list markers: •, ‣, ➢, 1., a, -, etc.)
@@ -89,7 +91,7 @@ Instructions:
 `;
 
 /**
- * PARSE_RESUME_PROMPT
+ * PARSE_RESUME_PROMPT (currently not being used - no pdf upload)
  * Used to parse raw resume text (from PDF/document upload) into structured JSON
  * 
  * @param resumeText - Raw text extracted from resume document
@@ -208,6 +210,22 @@ const RESUME_SCHEMA_EXAMPLE2 = `{
     "github": "github.com/johndoe"
   },
   "summary": "Experienced software engineer with 5+ years...",
+  "educations": [
+    {
+      "id": 1,
+      "institution": "University of California",
+      "degree": "Bachelor of Science",
+      "major": "Computer Science",
+      "location": "Los Angeles, CA",
+      "gpa": "3.8/4.0",
+      "startDate": "08/2014",
+      "endDate": "05/2018",
+      "description": [
+        "Graduate with honors.",
+        "Part of Robotics, Consulting, and Programming club."
+      ]
+    }
+  ],
   "workExperiences": [
     {
       "id": 1,
@@ -222,27 +240,53 @@ const RESUME_SCHEMA_EXAMPLE2 = `{
       ]
     }
   ],
-  "educations": [
+  "organizationExperiences": [
     {
       "id": 1,
-      "institution": "University of California",
-      "degree": "B.S. Computer Science",
-      "years": "2014 - 2018",
-      "description": "Graduated with honors"
+      "position": "Volunteer Coordinator",
+      "organization": "Nonprofit Org",
+      "startDate": "01/2019",
+      "endDate": "12/2021",
+      "description": [
+        "Organized community events with 200+ attendees",
+        "Managed team of 10 volunteers"
+    ]
     }
   ],
   "personalProjects": [
     {
       "id": 1,
       "name": "Open Source Tool",
-      "role": "Creator & Maintainer",
-      "years": "2021 - Present",
       "description": [
         "Built CLI tool with 1000+ GitHub stars",
         "Used by 50+ companies worldwide"
       ]
     }
   ],
+  "additional": {
+    "skills": ["Python", "JavaScript", "AWS", "Docker"],
+    "languages": ["English (Native)", "Spanish (Conversational)"],
+    "certifications": ["AWS Solutions Architect"],
+    "achievements": ["Employee of the Year 2022"]
+  },
+  "customSections": {
+    "publications": {
+      "sectionType": "itemList",
+      "items": [
+        {
+          "id": 1,
+          "title": "Paper Title",
+          "subtitle": "Journal Name",
+          "years": "2023",
+          "description": ["Brief description of the publication"]
+        }
+      ]
+    },
+    "volunteer_work": {
+      "sectionType": "text",
+      "text": "Description of volunteer activities..."
+    }
+  }
 }`
 
 // Use this as reference
