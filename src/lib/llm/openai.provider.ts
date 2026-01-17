@@ -33,7 +33,6 @@ const RESUME_JSON_SCHEMA = {
         items: {
           type: "object",
           properties: {
-            id: { type: "number" },
             institution: { type: "string" },
             degree: { type: "string" },
             major: { type: "string" },
@@ -43,7 +42,7 @@ const RESUME_JSON_SCHEMA = {
             endDate: { type: "string" },
             description: { type: "array", items: { type: "string" } },
           },
-          required: ["id", "institution", "degree", "major", "location", "gpa", "startDate", "endDate", "description"],
+          required: ["institution", "degree", "major", "location", "gpa", "startDate", "endDate", "description"],
           additionalProperties: false,
         },
       },
@@ -52,7 +51,6 @@ const RESUME_JSON_SCHEMA = {
         items: {
           type: "object",
           properties: {
-            id: { type: "number" },
             position: { type: "string" },
             company: { type: "string" },
             location: { type: "string" },
@@ -60,7 +58,7 @@ const RESUME_JSON_SCHEMA = {
             endDate: { type: "string" },
             description: { type: "array", items: { type: "string" } },
           },
-          required: ["id", "position", "company", "location", "startDate", "endDate", "description"],
+          required: ["position", "company", "location", "startDate", "endDate", "description"],
           additionalProperties: false,
         },
       },
@@ -69,14 +67,13 @@ const RESUME_JSON_SCHEMA = {
         items: {
           type: "object",
           properties: {
-            id: { type: "number" },
             position: { type: "string" },
             organization: { type: "string" },
             startDate: { type: "string" },
             endDate: { type: "string" },
             description: { type: "array", items: { type: "string" } },
           },
-          required: ["id", "position", "organization", "startDate", "endDate", "description"],
+          required: ["position", "organization", "startDate", "endDate", "description"],
           additionalProperties: false,
         },
       },
@@ -85,11 +82,10 @@ const RESUME_JSON_SCHEMA = {
         items: {
           type: "object",
           properties: {
-            id: { type: "number" },
             name: { type: "string" },
             description: { type: "array", items: { type: "string" } },
           },
-          required: ["id", "name", "description"],
+          required: ["name", "description"],
           additionalProperties: false,
         },
       },
@@ -105,10 +101,12 @@ const RESUME_JSON_SCHEMA = {
         additionalProperties: false,
       },
       customSections: {
-        type: "object",
-        additionalProperties: {
+        type: "array",
+        items: {
           type: "object",
           properties: {
+            sectionKey: { type: "string" },
+            sectionTitle: { type: "string" },
             sectionType: { type: "string", enum: ["text", "itemList", "stringList"] },
             text: { type: "string" },
             items: {
@@ -116,18 +114,17 @@ const RESUME_JSON_SCHEMA = {
               items: {
                 type: "object",
                 properties: {
-                  id: { type: "number" },
                   title: { type: "string" },
                   subtitle: { type: "string" },
                   years: { type: "string" },
                   description: { type: "array", items: { type: "string" } },
                 },
-                required: ["id", "title", "subtitle", "years", "description"],
+                required: ["title", "subtitle", "years", "description"],
                 additionalProperties: false,
               },
             },
           },
-          required: ["sectionType"],
+          required: ["sectionKey", "sectionTitle", "sectionType", "text", "items"],
           additionalProperties: false,
         },
       },
@@ -174,8 +171,6 @@ export class OpenAIProvider implements LLMProviderClient {
       model,
       instructions: systemMessage?.content,
       input,
-      temperature,
-      max_output_tokens: maxTokens,
       text: {
         format: {
           type: "json_schema",
