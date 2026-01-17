@@ -3,7 +3,7 @@
 import { useState, useEffect, ChangeEvent } from "react";
 import { TextArea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import type { WorkExperience } from "@/types/form-data";
+import type { WizardWorkExperience } from "@/types/form-data";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronUp, Trash } from "lucide-react";
 import {
@@ -17,13 +17,13 @@ import {
 
 interface StepThreeStoryProps {
   formData: {
-    workExperiences: WorkExperience[];
+    workExperiences: WizardWorkExperience[];
   };
   formErrors: Record<string, string>;
   handleChange: (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     section?:
-      | "root"
+      | "personalData"
       | "educations"
       | "workExperiences"
       | "organizationExperiences",
