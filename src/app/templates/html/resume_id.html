@@ -15,63 +15,71 @@
     <div class="resume">
       <!-- Bagian Header -->
       <div class="header">
-        <h1 class="header-name">{{ data.name }}</h1>
+        <h1 class="header-name">{{ data.personalData.name }}</h1>
 
-        {% if data.phone or data.email or data.linkedin or data.github %}
+        {% if data.personalData.phone or data.personalData.email or data.personalData.linkedin or data.personalData.github %}
         <div class="header-contact">
-          {% if data.phone %}
-          <a href="tel:{{ data.phone }}" class="contact-item"
-            >{{ data.phone }}</a
-          >
-          {% endif %} {% if data.email %}
+          {% if data.personalData.location %}
+          <span class="contact-item">{{ data.personalData.location }}</span>
           <span class="separator">|</span>
-          <a href="mailto:{{ data.email }}" class="contact-item"
-            >{{ data.email }}</a
-          >
-          {% endif %} {% if data.linkedin %}
+          {% endif %}
+          {% if data.personalData.phone %}
+          <a href="tel:{{ data.personalData.phone }}" class="contact-item">{{ data.personalData.phone }}</a>
           <span class="separator">|</span>
-          <a href="{{ data.linkedin }}" class="contact-item"
-            >{{ data.linkedin }}</a
-          >
-          {% endif %} {% if data.github %}
+          {% endif %}
+          {% if data.personalData.email %}
+          <a href="mailto:{{ data.personalData.email }}" class="contact-item">{{ data.personalData.email }}</a>
+          {% endif %}
+          {% if data.personalData.linkedin %}
           <span class="separator">|</span>
-          <a href="{{ data.github }}" class="contact-item">{{ data.github }}</a>
+          <a href="{{ data.personalData.linkedin }}" class="contact-item">{{ data.personalData.linkedin }}</a>
+          {% endif %}
+          {% if data.personalData.github %}
+          <span class="separator">|</span>
+          <a href="{{ data.personalData.github }}" class="contact-item">{{ data.personalData.github }}</a>
+          {% endif %}
+          {% if data.personalData.website %}
+          <span class="separator">|</span>
+          <a href="{{ data.personalData.website }}" class="contact-item">{{ data.personalData.website }}</a>
           {% endif %}
         </div>
         {% endif %}
       </div>
 
+      <!-- Bagian Ringkasan -->
+      {% if data.summary %}
+      <div class="section">
+        <h2 class="section-title">Ringkasan</h2>
+        <div class="entry">
+          <p>{{ data.summary }}</p>
+        </div>
+      </div>
+      {% endif %}
+
       <!-- Bagian Pendidikan -->
-      {% if data.education %}
+      {% if data.educations %}
       <div class="section">
         <h2 class="section-title">Pendidikan</h2>
-        {% for edu in data.education %}
+        {% for edu in data.educations %}
         <div class="entry">
           <div class="entry-header">
             <div class="entry-title">
-              {{ edu.institution }} {% if edu.location %}<span
-                class="location-text"
-              >
-                - {{ edu.location }}</span
-              >{% endif %}
+              {{ edu.institution }}{% if edu.location %}<span class="location-text"> - {{ edu.location }}</span>{% endif %}
             </div>
             <div class="entry-date">
-              {{ edu.start_date }} - {{ edu.end_date }}
+              {{ edu.startDate }} - {{ edu.endDate }}
             </div>
           </div>
           <div class="entry-subheader">
             <div class="entry-subtitle">
-              {{ edu.degree }}{% if edu.gpa %}, {{ edu.gpa }}{% endif %}
+              {{ edu.degree }} - {{ edu.major }}{% if edu.gpa %}, IPK: {{ edu.gpa }}{% endif %}
             </div>
           </div>
           {% if edu.description %}
           <ul class="entry-details">
-            {% if edu.description is string %} {% for item in
-            edu.description.split('\n') %} {% if item.strip() %}
-            <li>{{ item.strip() }}</li>
-            {% endif %} {% endfor %} {% else %} {% for item in edu.description %}
+            {% for item in edu.description %}
             <li>{{ item }}</li>
-            {% endfor %} {% endif %}
+            {% endfor %}
           </ul>
           {% endif %}
         </div>
@@ -80,28 +88,25 @@
       {% endif %}
 
       <!-- Pengalaman Kerja -->
-      {% if data.work_experience %}
+      {% if data.workExperiences %}
       <div class="section">
         <h2 class="section-title">Pengalaman Kerja</h2>
-        {% for exp in data.work_experience %}
+        {% for exp in data.workExperiences %}
         <div class="entry">
           <div class="entry-header">
             <div class="entry-title">
-              {{ exp.company }} {% if exp.location %} - {{ exp.location }}{% endif %}
+              {{ exp.company }}{% if exp.location %} - {{ exp.location }}{% endif %}
             </div>
             <div class="entry-date">
-              {{ exp.start_date }} - {{ exp.end_date }}
+              {{ exp.startDate }} - {{ exp.endDate }}
             </div>
           </div>
           <div class="entry-subtitle">{{ exp.position }}</div>
           {% if exp.description %}
           <ul class="entry-details">
-            {% if exp.description is string %} {% for item in
-            exp.description.split('\n') %} {% if item.strip() %}
-            <li>{{ item.strip() }}</li>
-            {% endif %} {% endfor %} {% else %} {% for item in exp.description %}
+            {% for item in exp.description %}
             <li>{{ item }}</li>
-            {% endfor %} {% endif %}
+            {% endfor %}
           </ul>
           {% endif %}
         </div>
@@ -110,28 +115,44 @@
       {% endif %}
 
       <!-- Pengalaman Organisasi -->
-      {% if data.organizations %}
+      {% if data.organizationExperiences %}
       <div class="section">
         <h2 class="section-title">Pengalaman Organisasi</h2>
-        {% for org in data.organizations %}
+        {% for org in data.organizationExperiences %}
         <div class="entry">
           <div class="entry-header">
-            <div class="entry-title">
-              {{ org.organization }} {% if org.location %} - {{ org.location }}{% endif %}
-            </div>
+            <div class="entry-title">{{ org.organization }}</div>
             <div class="entry-date">
-              {{ org.start_date }} - {{ org.end_date }}
+              {{ org.startDate }} - {{ org.endDate }}
             </div>
           </div>
           <div class="entry-subtitle">{{ org.position }}</div>
           {% if org.description %}
           <ul class="entry-details">
-            {% if org.description is string %} {% for item in
-            org.description.split('\n') %} {% if item.strip() %}
-            <li>{{ item.strip() }}</li>
-            {% endif %} {% endfor %} {% else %} {% for item in org.description %}
+            {% for item in org.description %}
             <li>{{ item }}</li>
-            {% endfor %} {% endif %}
+            {% endfor %}
+          </ul>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <!-- Proyek Pribadi -->
+      {% if data.personalProjects %}
+      <div class="section">
+        <h2 class="section-title">Proyek</h2>
+        {% for project in data.personalProjects %}
+        <div class="entry">
+          <div class="entry-header">
+            <div class="entry-title">{{ project.name }}</div>
+          </div>
+          {% if project.description %}
+          <ul class="entry-details">
+            {% for item in project.description %}
+            <li>{{ item }}</li>
+            {% endfor %}
           </ul>
           {% endif %}
         </div>
@@ -140,39 +161,47 @@
       {% endif %}
 
       <!-- Keterampilan -->
-      {% if data.hardskills or data.softskills %}
+      {% if data.additional and data.additional.skills %}
       <div class="section">
         <h2 class="section-title">Keterampilan</h2>
         <div class="entry">
-            <ul class="entry-details">
-            {% if data.hardskills %}
-            <li>
-              <strong>Hardskills</strong>
-              : {{ data.hardskills | join(', ') }}
-            </li>
-            {% endif %} 
-            {% if data.softskills %}
-            <li>
-              <strong>Softskills</strong>
-              : {{ data.softskills | join(', ') }}
-            </li>
-            {% endif %}
+          <p>{{ data.additional.skills | join(', ') }}</p>
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Bahasa -->
+      {% if data.additional and data.additional.languages %}
+      <div class="section">
+        <h2 class="section-title">Bahasa</h2>
+        <div class="entry">
+          <p>{{ data.additional.languages | join(', ') }}</p>
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Sertifikasi -->
+      {% if data.additional and data.additional.certifications %}
+      <div class="section">
+        <h2 class="section-title">Sertifikasi</h2>
+        <div class="entry">
+          <ul class="entry-details">
+            {% for cert in data.additional.certifications %}
+            <li>{{ cert }}</li>
+            {% endfor %}
           </ul>
         </div>
       </div>
       {% endif %}
 
       <!-- Prestasi -->
-      {% if data.achievements %}
+      {% if data.additional and data.additional.achievements %}
       <div class="section">
         <h2 class="section-title">Prestasi</h2>
         <div class="entry">
           <ul class="entry-details">
-            {% for achievement in data.achievements %}
-            <li>
-              <strong>Prestasi ({{ achievement.year }})</strong>
-              : {{ achievement.title }}
-            </li>
+            {% for achievement in data.additional.achievements %}
+            <li>{{ achievement }}</li>
             {% endfor %}
           </ul>
         </div>
