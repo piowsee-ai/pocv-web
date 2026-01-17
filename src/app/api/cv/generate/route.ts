@@ -63,26 +63,36 @@ export async function POST(req: NextRequest) {
       provider: options?.provider,
     });
 
-    // Step 2: Generate PDF directly from enhanced data
-    const pdfBuffer = await generatePDF(enhancedData, {
-      isPreview: options?.isPreview,
-      format: "F4",
+    // TODO: Remove this temporary return - for LLM testing only
+    // Return enhanced data as JSON for testing
+    console.log("=== LLM returns ===");
+    console.log(JSON.stringify(enhancedData, null, 2));
+    
+    return NextResponse.json({
+      success: true,
+      data: enhancedData,
     });
 
-    logger.info("CV generated successfully", {
-      userId,
-      pdfSize: pdfBuffer.length,
-    });
+    // Step 2: Generate PDF directly from enhanced data (temporarily disabled)
+    // const pdfBuffer = await generatePDF(enhancedData, {
+    //   isPreview: options?.isPreview,
+    //   format: "F4",
+    // });
 
-    // Return PDF as downloadable file
-    return new NextResponse(new Uint8Array(pdfBuffer), {
-      status: 200,
-      headers: {
-        "Content-Type": "application/pdf",
-        "Content-Disposition": `attachment; filename="resume-${Date.now()}.pdf"`,
-        "Content-Length": pdfBuffer.length.toString(),
-      },
-    });
+    // logger.info("CV generated successfully", {
+    //   userId,
+    //   pdfSize: pdfBuffer.length,
+    // });
+
+    // // Return PDF as downloadable file
+    // return new NextResponse(new Uint8Array(pdfBuffer), {
+    //   status: 200,
+    //   headers: {
+    //     "Content-Type": "application/pdf",
+    //     "Content-Disposition": `attachment; filename="resume-${Date.now()}.pdf"`,
+    //     "Content-Length": pdfBuffer.length.toString(),
+    //   },
+    // });
   } catch (error) {
     logError(error, {
       userId,
