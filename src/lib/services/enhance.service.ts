@@ -6,20 +6,12 @@ import { chat, LLMProvider, LLMConfig } from "@/lib/llm";
 import { RESUME_ENHANCEMENT_PROMPT, ResumeLanguage } from "@/lib/llm/prompts";
 import type { FormData } from "@/types/form-data";
 
-export interface EnhancedFormData extends FormData {
-  enhancedEducations: { description: string[] }[];
-  enhancedWorkExperiences: { description: string[] }[];
-  enhancedOrganizationExperiences: { description: string[] }[];
-}
+export type EnhancedFormData = FormData;
 
 interface EnhanceOptions {
   provider?: LLMProvider;
   model?: string;
   language?: ResumeLanguage;
-}
-
-function resumeToString(formData: FormData): string {
-  return JSON.stringify(formData, null, 2);
 }
 
 /**
@@ -33,75 +25,85 @@ export async function enhanceResume(formData: FormData, options?: EnhanceOptions
   };
 
   const language = options?.language ?? "en";
-  const resumeDataStr = resumeToString(formData);
 
-  const prompt = RESUME_ENHANCEMENT_PROMPT(resumeDataStr, language);
+  const prompt = RESUME_ENHANCEMENT_PROMPT(JSON.stringify(formData, null, 2), language);
 
-  const response = await chat(
-    [{ role: "user", content: prompt }],
-    config
-  );
+  const response = await chat([{ role: "user", content: prompt }], config);
 
-  // Parse the JSON response
-  const enhanced = JSON.parse(response.content.trim());
-
-  // Map enhanced data back to our format
-  const enhancedEducations = formData.educations.map((_, i) => ({
-    description: enhanced.educations[i]?.description || [],
-  }));
-
-  const enhancedWorkExperiences = formData.workExperiences.map((_, i) => ({
-    description: enhanced.workExperiences[i]?.description || [],
-  }));
-
-  const enhancedOrganizationExperiences = formData.organizationExperiences.map((_, i) => ({
-    description: enhanced.organizationExperiences[i]?.description || [],
-  }));
-
-  return {
-    ...formData,
-    enhancedEducations,
-    enhancedWorkExperiences,
-    enhancedOrganizationExperiences,
-  };
+  return JSON.parse(response.content.trim());
 }
 
 /**
  * Convert enhanced form data to resume format (TODO: needed change based on the structure)
  */
-export function toTemplateData(enhanced: EnhancedFormData) {
-  const { personalData, educations, workExperiences, organizationExperiences } = enhanced;
+export function toTemplateData(data: EnhancedFormData) {
+  const {
+    personalData,
+    summary,
+    educations,
+    workExperiences,
+    organizationExperiences,
+    personalProjects,
+    additional,
+    customSections,
+  } = data;
 
   return {
+    // Personal data
     name: personalData.name,
     phone: personalData.phone,
     email: personalData.email,
+    location: personalData.location,
+    website: personalData.website,
     linkedin: personalData.linkedin,
     github: personalData.github,
-    education: educations.map((edu, i) => ({
+
+    // Summary
+    summary,
+
+    // Education
+    education: educations.map((edu) => ({
       institution: edu.institution,
       location: edu.location,
       degree: `${edu.degree} in ${edu.major}`,
       gpa: edu.gpa ? `GPA: ${edu.gpa}` : undefined,
       start_date: edu.startDate,
       end_date: edu.endDate,
-      description: enhanced.enhancedEducations[i]?.description || [],
+      description: edu.description,
     })),
-    work_experience: workExperiences.map((work, i) => ({
+
+    // Work experience
+    work_experience: workExperiences.map((work) => ({
       company: work.company,
-      location: work.city,
+      location: work.location,
       position: work.position,
       start_date: work.startDate,
       end_date: work.endDate,
-      description: enhanced.enhancedWorkExperiences[i]?.description || [],
+      description: work.description,
     })),
-    organizations: organizationExperiences.map((org, i) => ({
+
+    // Organizations
+    organizations: organizationExperiences.map((org) => ({
       organization: org.organization,
-      location: org.location,
       position: org.position,
       start_date: org.startDate,
       end_date: org.endDate,
-      description: enhanced.enhancedOrganizationExperiences[i]?.description || [],
+      description: org.description,
     })),
+
+    // Personal projects
+    projects: personalProjects?.map((project) => ({
+      name: project.name,
+      description: project.description,
+    })),
+
+    // Additional info
+    skills: additional?.skills,
+    languages: additional?.languages,
+    certifications: additional?.certifications,
+    achievements: additional?.achievements,
+
+    // Custom sections
+    customSections,
   };
 }

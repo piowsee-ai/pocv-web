@@ -1,46 +1,78 @@
 export interface FormData {
   personalData: PersonalData;
+  summary?: string;
   educations: Education[];
   workExperiences: WorkExperience[];
   organizationExperiences: OrganizationExperience[];
+  personalProjects?: PersonalProject[];
+  additional?: AdditionalInfo;
+  customSections?: Record<string, CustomSection>;
 }
+
 export interface WorkExperience {
-  id?: string;
+  id?: number;
   position: string;
   company: string;
+  location: string;
   startDate: string;
   endDate: string;
-  city: string;
-  description: string;
+  description: string[];
 }
 
 export interface Education {
-  id?: string;
+  id?: number;
+  institution: string;
   degree: string;
   major: string;
-  institution: string;
+  location: string;
+  gpa?: string;
   startDate: string;
   endDate: string;
-  location: string;
-  gpa: string;
-  description: string;
+  description: string[];
 }
 
 export interface OrganizationExperience {
-  id?: string;
+  id?: number;
   position: string;
   organization: string;
   startDate: string;
   endDate: string;
-  location: string;
-  description: string;
+  description: string[];
 }
 
 export interface PersonalData {
-  id?: string;
   name: string;
   phone: string;
   email: string;
+  location?: string;
+  website?: string;
   linkedin?: string;
   github?: string;
+}
+
+export interface PersonalProject {
+  id?: number;
+  name: string;
+  description: string[];
+}
+
+export interface AdditionalInfo {
+  skills?: string[];
+  languages?: string[];
+  certifications?: string[];
+  achievements?: string[];
+}
+
+export interface CustomSection {
+  sectionType: "text" | "itemList" | "stringList";
+  text?: string;
+  items?: CustomSectionItem[];
+}
+
+export interface CustomSectionItem {
+  id?: number;
+  title: string;
+  subtitle?: string;
+  years?: string;
+  description?: string[];
 }
