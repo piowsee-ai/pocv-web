@@ -38,11 +38,14 @@ export async function middleware(request: NextRequest) {
 export const config = {
   runtime: "nodejs", // Required for auth.api calls
   matcher: [
-		"/",
-		"/privacy",
-		"/terms",
-		"/login",
-		"/signup",
-		"/page-1"
-	], // NOTE: add more routes if needed
+    /*
+     * Match all paths except:
+     * - api (API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization)
+     * - images, icons, assets (public folders)
+     * - favicon, logo, apple-touch-icon (root public files)
+     */
+    "/((?!api|_next/static|_next/image|images|icons|assets|favicon|logo|apple-touch-icon).*)",
+  ],
 };
