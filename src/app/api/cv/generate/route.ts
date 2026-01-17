@@ -6,8 +6,39 @@ import { enhanceResume } from "@/lib/services/enhance.service";
 import { generatePDF } from "@/lib/services/generate.service";
 import { logger, logError } from "@/lib/log/logger";
 import { LLMProvider, getDefaultProvider } from "@/lib/llm";
+import type { FormData } from "@/types/form-data";
+import { v4 as uuidv4 } from "uuid";
 
 export const maxDuration = 300;
+
+function addIdsToFormData(data: FormData): FormData {
+  return {
+    ...data,
+    educations: data.educations.map((item) => ({
+      ...item,
+      id: item.id ?? uuidv4(),
+    })),
+    workExperiences: data.workExperiences.map((item) => ({
+      ...item,
+      id: item.id ?? uuidv4(),
+    })),
+    organizationExperiences: data.organizationExperiences.map((item) => ({
+      ...item,
+      id: item.id ?? uuidv4(),
+    })),
+    personalProjects: data.personalProjects.map((item) => ({
+      ...item,
+      id: item.id ?? uuidv4(),
+    })),
+    customSections: data.customSections.map((section) => ({
+      ...section,
+      items: section.items.map((item) => ({
+        ...item,
+        id: item.id ?? uuidv4(),
+      })),
+    })),
+  };
+}
 
 export async function POST(req: NextRequest) {
   const session = await auth.api.getSession({ headers: await headers() });
@@ -63,14 +94,17 @@ export async function POST(req: NextRequest) {
       provider: options?.provider,
     });
 
+    // Step 2: Add client-side IDs to all items for React key stability
+    const dataWithIds = addIdsToFormData(enhancedData);
+
     // TODO: Remove this temporary return - for LLM testing only
     // Return enhanced data as JSON for testing
     console.log("=== LLM returns ===");
-    console.log(JSON.stringify(enhancedData, null, 2));
+    console.log(JSON.stringify(dataWithIds, null, 2));
     
     return NextResponse.json({
       success: true,
-      data: enhancedData,
+      data: dataWithIds,
     });
 
     // Step 2: Generate PDF directly from enhanced data (temporarily disabled)
