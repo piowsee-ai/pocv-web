@@ -89,16 +89,15 @@ export async function POST(req: NextRequest) {
       isPreview: options?.isPreview ?? false,
     });
 
-    // Step 1: Enhance resume content with AI
+    // Step 1: pass to LLM
     const enhancedData = await enhanceResume(formData, {
       provider: options?.provider,
     });
 
-    // Step 2: Add client-side IDs to all items for React key stability
+    // Step 2: add uuid
     const dataWithIds = addIdsToFormData(enhancedData);
 
-    // TODO: Remove this temporary return - for LLM testing only
-    // Return enhanced data as JSON for testing
+    // TODO: remove the log and push to database
     console.log("=== LLM returns ===");
     console.log(JSON.stringify(dataWithIds, null, 2));
     
