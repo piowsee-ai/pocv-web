@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { FormDataSchema } from "@/lib/dto/cv.schema";
-import { enhanceResume, toTemplateData } from "@/lib/services/enhance.service";
+import { enhanceResume } from "@/lib/services/enhance.service";
 import { generatePDF } from "@/lib/services/generate.service";
 import { logger, logError } from "@/lib/log/logger";
 import { LLMProvider, getDefaultProvider } from "@/lib/llm";
@@ -63,11 +63,8 @@ export async function POST(req: NextRequest) {
       provider: options?.provider,
     });
 
-    // Step 2: Convert to template format
-    const templateData = toTemplateData(enhancedData);
-
-    // Step 3: Generate PDF
-    const pdfBuffer = await generatePDF(templateData, {
+    // Step 2: Generate PDF directly from enhanced data
+    const pdfBuffer = await generatePDF(enhancedData, {
       isPreview: options?.isPreview,
       format: "F4",
     });

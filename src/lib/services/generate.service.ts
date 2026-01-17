@@ -8,6 +8,7 @@ import chromium from "@sparticuz/chromium";
 import nunjucks from "nunjucks";
 import { readFileSync } from "fs";
 import { join } from "path";
+import type { FormData } from "@/types/form-data";
 
 // Configure Nunjucks
 const templatesDir = join(process.cwd(), "src/app/templates/html");
@@ -84,7 +85,7 @@ async function getBrowser(): Promise<Browser> {
  * Render resume data to HTML using Nunjucks template
  */
 export function renderHTML(
-  data: Record<string, unknown>,
+  data: FormData,
   options?: PDFGenerationOptions
 ): string {
   const template = getTemplate();
@@ -109,7 +110,7 @@ export function renderHTML(
  * Generate PDF from resume data
  */
 export async function generatePDF(
-  data: Record<string, unknown>,
+  data: FormData,
   options?: PDFGenerationOptions
 ): Promise<Buffer> {
   const html = renderHTML(data, options);
