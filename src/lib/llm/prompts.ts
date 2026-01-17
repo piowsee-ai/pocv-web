@@ -140,7 +140,6 @@ const RESUME_SCHEMA_EXAMPLE = `{
   "summary": "Experienced software engineer with 5+ years...",
   "educations": [
     {
-      "id": 1,
       "institution": "University of California",
       "degree": "Bachelor of Science",
       "major": "Computer Science",
@@ -156,7 +155,6 @@ const RESUME_SCHEMA_EXAMPLE = `{
   ],
   "workExperiences": [
     {
-      "id": 1,
       "position": "Senior Software Engineer",
       "company": "Tech Corp",
       "location": "San Francisco, CA",
@@ -170,7 +168,6 @@ const RESUME_SCHEMA_EXAMPLE = `{
   ],
   "organizationExperiences": [
     {
-      "id": 1,
       "position": "Volunteer Coordinator",
       "organization": "Nonprofit Org",
       "startDate": "01/2019",
@@ -183,7 +180,6 @@ const RESUME_SCHEMA_EXAMPLE = `{
   ],
   "personalProjects": [
     {
-      "id": 1,
       "name": "Open Source Tool",
       "description": [
         "Built CLI tool with 1000+ GitHub stars",
@@ -197,12 +193,14 @@ const RESUME_SCHEMA_EXAMPLE = `{
     "certifications": ["AWS Solutions Architect"],
     "achievements": ["Employee of the Year 2022"]
   },
-  "customSections": {
-    "publications": {
+  "customSections": [
+    {
+      "sectionKey": "publications",
+      "sectionTitle": "Publications",
       "sectionType": "itemList",
+      "text": "",
       "items": [
         {
-          "id": 1,
           "title": "Paper Title",
           "subtitle": "Journal Name",
           "years": "2023",
@@ -210,11 +208,14 @@ const RESUME_SCHEMA_EXAMPLE = `{
         }
       ]
     },
-    "volunteer_work": {
+    {
+      "sectionKey": "volunteer_work",
+      "sectionTitle": "Volunteer Work",
       "sectionType": "text",
-      "text": "Description of volunteer activities..."
+      "text": "Description of volunteer activities...",
+      "items": []
     }
-  }
+  ]
 }`
 
 // Use this as reference
