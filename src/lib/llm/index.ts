@@ -39,10 +39,7 @@ export function getDefaultProvider(): LLMProvider {
 /**
  * Function to chat with the provider
  */
-export async function chat(
-  messages: LLMMessage[],
-  config?: Partial<LLMConfig>
-): Promise<LLMResponse> {
+export async function chat(messages: LLMMessage[], config?: Partial<LLMConfig>): Promise<LLMResponse> {
   const provider = config?.provider ?? getDefaultProvider();
   const client = getLLMProvider(provider);
   return client.chat(messages, config);

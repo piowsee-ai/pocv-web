@@ -18,10 +18,7 @@ export class OpenAIProvider implements LLMProviderClient {
     this.client = new OpenAI({ apiKey });
   }
 
-  async chat(
-    messages: LLMMessage[],
-    config?: Partial<LLMConfig>
-  ): Promise<LLMResponse> {
+  async chat(messages: LLMMessage[], config?: Partial<LLMConfig>): Promise<LLMResponse> {
     const defaults = DEFAULT_CONFIGS.openai;
     const model = config?.model ?? defaults.model;
     const temperature = config?.temperature ?? defaults.temperature;

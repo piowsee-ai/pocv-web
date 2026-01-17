@@ -3,83 +3,60 @@
  */
 
 import { chat, LLMProvider, LLMConfig } from "@/lib/llm";
-import { RESUME_ENHANCEMENT_PROMPT } from "@/lib/llm/prompts";
+import { RESUME_ENHANCEMENT_PROMPT, ResumeLanguage } from "@/lib/llm/prompts";
 import type { FormData } from "@/types/form-data";
 
 export interface EnhancedFormData extends FormData {
-  enhancedEducations: { description: string }[];
-  enhancedWorkExperiences: { description: string }[];
-  enhancedOrganizationExperiences: { description: string }[];
+  enhancedEducations: { description: string[] }[];
+  enhancedWorkExperiences: { description: string[] }[];
+  enhancedOrganizationExperiences: { description: string[] }[];
 }
 
 interface EnhanceOptions {
   provider?: LLMProvider;
   model?: string;
-  language?: "en" | "id";
+  language?: ResumeLanguage;
 }
 
-async function enhanceDescription(
-  description: string,
-  context: string,
-  config?: Partial<LLMConfig>
-): Promise<string> {
-  if (!description.trim()) {
-    return description;
-  }
-
-  const response = await chat(
-    [
-      { role: "system", content: RESUME_ENHANCEMENT_PROMPT },
-      {
-        role: "user",
-        content: `Context: ${context}\n\nOriginal description:\n${description}\n\nPlease enhance this description into professional bullet points.`,
-      },
-    ],
-    config
-  );
-
-  return response.content;
+function resumeToString(formData: FormData): string {
+  return JSON.stringify(formData, null, 2);
 }
 
 /**
  * Enhance all descriptions in a resume form data
  */
-export async function enhanceResume(
-  formData: FormData,
-  options?: EnhanceOptions
-): Promise<EnhancedFormData> {
+export async function enhanceResume(formData: FormData, options?: EnhanceOptions): Promise<EnhancedFormData> {
   const config: Partial<LLMConfig> = {
     provider: options?.provider,
     model: options?.model,
     temperature: 0.7,
   };
 
-  // Enhance educations
-  const enhancedEducations = await Promise.all(
-    formData.educations.map(async (edu) => {
-      const context = `Education at ${edu.institution}, studying ${edu.major} for ${edu.degree} degree`;
-      const enhanced = await enhanceDescription(edu.description, context, config);
-      return { description: enhanced };
-    })
+  const language = options?.language ?? "en";
+  const resumeDataStr = resumeToString(formData);
+
+  const prompt = RESUME_ENHANCEMENT_PROMPT(resumeDataStr, language);
+
+  const response = await chat(
+    [{ role: "user", content: prompt }],
+    config
   );
 
-  // Enhance work experiences
-  const enhancedWorkExperiences = await Promise.all(
-    formData.workExperiences.map(async (work) => {
-      const context = `Work experience as ${work.position} at ${work.company}`;
-      const enhanced = await enhanceDescription(work.description, context, config);
-      return { description: enhanced };
-    })
-  );
+  // Parse the JSON response
+  const enhanced = JSON.parse(response.content.trim());
 
-  // Enhance organization experiences
-  const enhancedOrganizationExperiences = await Promise.all(
-    formData.organizationExperiences.map(async (org) => {
-      const context = `Organization experience as ${org.position} at ${org.organization}`;
-      const enhanced = await enhanceDescription(org.description, context, config);
-      return { description: enhanced };
-    })
-  );
+  // Map enhanced data back to our format
+  const enhancedEducations = formData.educations.map((_, i) => ({
+    description: enhanced.educations[i]?.description || [],
+  }));
+
+  const enhancedWorkExperiences = formData.workExperiences.map((_, i) => ({
+    description: enhanced.workExperiences[i]?.description || [],
+  }));
+
+  const enhancedOrganizationExperiences = formData.organizationExperiences.map((_, i) => ({
+    description: enhanced.organizationExperiences[i]?.description || [],
+  }));
 
   return {
     ...formData,
@@ -90,7 +67,7 @@ export async function enhanceResume(
 }
 
 /**
- * Convert enhanced form data to template-ready format
+ * Convert enhanced form data to resume format (TODO: needed change based on the structure)
  */
 export function toTemplateData(enhanced: EnhancedFormData) {
   const { personalData, educations, workExperiences, organizationExperiences } = enhanced;
@@ -108,7 +85,7 @@ export function toTemplateData(enhanced: EnhancedFormData) {
       gpa: edu.gpa ? `GPA: ${edu.gpa}` : undefined,
       start_date: edu.startDate,
       end_date: edu.endDate,
-      description: enhanced.enhancedEducations[i]?.description || edu.description,
+      description: enhanced.enhancedEducations[i]?.description || [],
     })),
     work_experience: workExperiences.map((work, i) => ({
       company: work.company,
@@ -116,7 +93,7 @@ export function toTemplateData(enhanced: EnhancedFormData) {
       position: work.position,
       start_date: work.startDate,
       end_date: work.endDate,
-      description: enhanced.enhancedWorkExperiences[i]?.description || work.description,
+      description: enhanced.enhancedWorkExperiences[i]?.description || [],
     })),
     organizations: organizationExperiences.map((org, i) => ({
       organization: org.organization,
@@ -124,7 +101,7 @@ export function toTemplateData(enhanced: EnhancedFormData) {
       position: org.position,
       start_date: org.startDate,
       end_date: org.endDate,
-      description: enhanced.enhancedOrganizationExperiences[i]?.description || org.description,
+      description: enhanced.enhancedOrganizationExperiences[i]?.description || [],
     })),
   };
 }
