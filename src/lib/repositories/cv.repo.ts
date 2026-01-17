@@ -1,5 +1,6 @@
 import { prisma } from "../db/prisma-client";
-import type { Cv, Section } from "@/generated/prisma";
+import type { Cv } from "@/generated/prisma";
+import type { FormData } from "@/types/form-data";
 
 export const CVRepository = {
   async findAllCVByUserId(userId: string): Promise<Cv[]> {
@@ -10,17 +11,11 @@ export const CVRepository = {
     });
   },
 
-  async findCVDetail(
-    userId: string,
-    cvId: string
-  ): Promise<(Cv & { sections: Section[] }) | null> {
+  async findCVDetail(userId: string, cvId: string): Promise<Cv | null> {
     return prisma.cv.findUnique({
       where: {
         userId: userId,
         id: cvId,
-      },
-      include: {
-        sections: true,
       },
     });
   },
@@ -29,49 +24,30 @@ export const CVRepository = {
     cvId: string,
     userId: string,
     title: string,
-    sections: any[]
-  ): Promise<Cv & { sections: Section[] }> {
+    content: FormData
+  ): Promise<Cv> {
     return prisma.cv.create({
       data: {
         id: cvId,
         userId,
         title,
-        sections: {
-          create: sections,
-        },
+        content: content as any,
       },
-      include: { sections: true },
     });
   },
 
-  async updateCV(cvId: string, userId: string, title: string, sections: any[]) {
-    return prisma.$transaction(async (tx) => {
-      await tx.cv.update({
-        where: { id: cvId, userId },
-        data: { title },
-      });
-
-      await Promise.all(
-        sections.map((s) =>
-          tx.section.upsert({
-            where: { id: s.id, cvId: cvId },
-            update: {
-              type: s.type,
-              content: s.content,
-            },
-            create: {
-              id: s.id,
-              cvId: cvId,
-              type: s.type,
-              content: s.content,
-            },
-          })
-        )
-      );
-      return tx.cv.findUnique({
-        where: { id: cvId, userId },
-        include: { sections: true },
-      });
+  async updateCV(
+    cvId: string,
+    userId: string,
+    title: string,
+    content: FormData
+  ): Promise<Cv> {
+    return prisma.cv.update({
+      where: { id: cvId, userId },
+      data: {
+        title,
+        content: content as any,
+      },
     });
   },
 };
