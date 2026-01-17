@@ -16,9 +16,10 @@ import {
 } from "@/components/ui/navigation-menu";
 import { ArrowUpRight, Sparkles, Briefcase, BarChart3 } from "lucide-react";
 import { useScroll } from "@/hooks/use-scroll";
-import type { SessionData } from "@/types/session";
+import { useSession } from "@/lib/auth/auth-client";
 
-export function Header({ session }: SessionData) {
+export function Header() {
+    const { data: session } = useSession();
     const scrollDirection = useScroll();
 
     const features: { title: string; href: string; description: string }[] = [
@@ -184,7 +185,7 @@ export function Header({ session }: SessionData) {
 
                 <div className="flex items-center gap-2">
                     {session ? (
-                        <ProfileDropdown session={session} />
+                        <ProfileDropdown />
                     ) : (
                         <>
                             <Button

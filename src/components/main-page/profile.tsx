@@ -13,13 +13,10 @@ import {
 import { Avatar } from "@/components/ui/avatar";
 import { LogoutButton } from "@/components/logout-button";
 import { Button } from "@/components/ui/button";
-import type { SessionData } from "@/types/session";
+import { useSession } from "@/lib/auth/auth-client";
 
-interface ProfileDropdownProps {
-    session: SessionData["session"] | null;
-}
-
-export function ProfileDropdown({ session }: ProfileDropdownProps) {
+export function ProfileDropdown() {
+    const { data: session } = useSession();
     if (!session) return null;
 
     return (
