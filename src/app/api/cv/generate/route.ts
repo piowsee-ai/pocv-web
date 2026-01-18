@@ -7,6 +7,7 @@ import { LLMProvider, getDefaultProvider } from "@/lib/llm";
 import type { FormData } from "@/types/form-data";
 import { v4 as uuidv4 } from "uuid";
 import { requireUser } from "@/lib/auth/auth-server-helper";
+import { CVService } from "@/lib/services/cv.service";
 
 export const maxDuration = 300;
 
@@ -88,13 +89,18 @@ export async function POST(req: NextRequest) {
     // Step 2: add uuid
     const dataWithIds = addIdsToFormData(enhancedData);
 
-    // TODO: remove the log and push to database
-    console.log("=== LLM returns ===");
-    console.log(JSON.stringify(dataWithIds, null, 2));
-    
+    // Step 3: save to database
+    const saved = await CVService.createCV(userId, dataWithIds);
+
+    logger.info("CV saved to database", {
+      userId,
+      cvId: saved.id,
+    });
+
     return NextResponse.json({
       success: true,
       data: dataWithIds,
+      cvId: saved.id,
     });
 
     // Step 2: Generate PDF directly from enhanced data (temporarily disabled)

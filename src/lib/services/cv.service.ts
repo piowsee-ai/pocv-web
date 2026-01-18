@@ -11,7 +11,11 @@ import { v4 as uuidv4 } from "uuid";
 export const CVService = {
   async createCV(userId: string, data: FormData) {
     const id = uuidv4();
-    await CVRepository.createCV(id, userId, "Resume", data);
+    const title = data.personalData.name
+      ? `${data.personalData.name}'s CV`
+      : "Untitled CV";
+    const cv = await CVRepository.createCV(id, userId, title, data);
+    return { id: cv.id };
   },
 
   async getAllCVByUserId(userId: string): Promise<CVList[]> {
