@@ -7,6 +7,142 @@ import {
   DEFAULT_CONFIGS,
 } from "./types";
 
+const RESUME_JSON_SCHEMA = {
+  name: "resume",
+  strict: true,
+  schema: {
+    type: "object",
+    properties: {
+      personalData: {
+        type: "object",
+        properties: {
+          name: { type: "string" },
+          phone: { type: "string" },
+          email: { type: "string" },
+          location: { type: "string" },
+          website: { type: "string" },
+          linkedin: { type: "string" },
+          github: { type: "string" },
+        },
+        required: ["name", "phone", "email", "location", "website", "linkedin", "github"],
+        additionalProperties: false,
+      },
+      summary: { type: "string" },
+      educations: {
+        type: "array",
+        items: {
+          type: "object",
+          properties: {
+            institution: { type: "string" },
+            degree: { type: "string" },
+            major: { type: "string" },
+            location: { type: "string" },
+            gpa: { type: "string" },
+            startDate: { type: "string" },
+            endDate: { type: "string" },
+            description: { type: "array", items: { type: "string" } },
+          },
+          required: ["institution", "degree", "major", "location", "gpa", "startDate", "endDate", "description"],
+          additionalProperties: false,
+        },
+      },
+      workExperiences: {
+        type: "array",
+        items: {
+          type: "object",
+          properties: {
+            position: { type: "string" },
+            company: { type: "string" },
+            location: { type: "string" },
+            startDate: { type: "string" },
+            endDate: { type: "string" },
+            description: { type: "array", items: { type: "string" } },
+          },
+          required: ["position", "company", "location", "startDate", "endDate", "description"],
+          additionalProperties: false,
+        },
+      },
+      organizationExperiences: {
+        type: "array",
+        items: {
+          type: "object",
+          properties: {
+            position: { type: "string" },
+            organization: { type: "string" },
+            startDate: { type: "string" },
+            endDate: { type: "string" },
+            description: { type: "array", items: { type: "string" } },
+          },
+          required: ["position", "organization", "startDate", "endDate", "description"],
+          additionalProperties: false,
+        },
+      },
+      personalProjects: {
+        type: "array",
+        items: {
+          type: "object",
+          properties: {
+            name: { type: "string" },
+            description: { type: "array", items: { type: "string" } },
+          },
+          required: ["name", "description"],
+          additionalProperties: false,
+        },
+      },
+      additional: {
+        type: "object",
+        properties: {
+          skills: { type: "array", items: { type: "string" } },
+          languages: { type: "array", items: { type: "string" } },
+          certifications: { type: "array", items: { type: "string" } },
+          achievements: { type: "array", items: { type: "string" } },
+        },
+        required: ["skills", "languages", "certifications", "achievements"],
+        additionalProperties: false,
+      },
+      customSections: {
+        type: "array",
+        items: {
+          type: "object",
+          properties: {
+            sectionKey: { type: "string" },
+            sectionTitle: { type: "string" },
+            sectionType: { type: "string", enum: ["text", "itemList", "stringList"] },
+            text: { type: "string" },
+            items: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  title: { type: "string" },
+                  subtitle: { type: "string" },
+                  years: { type: "string" },
+                  description: { type: "array", items: { type: "string" } },
+                },
+                required: ["title", "subtitle", "years", "description"],
+                additionalProperties: false,
+              },
+            },
+          },
+          required: ["sectionKey", "sectionTitle", "sectionType", "text", "items"],
+          additionalProperties: false,
+        },
+      },
+    },
+    required: [
+      "personalData",
+      "summary",
+      "educations",
+      "workExperiences",
+      "organizationExperiences",
+      "personalProjects",
+      "additional",
+      "customSections",
+    ],
+    additionalProperties: false,
+  },
+};
+
 export class OpenAIProvider implements LLMProviderClient {
   private client: OpenAI;
 
@@ -35,8 +171,12 @@ export class OpenAIProvider implements LLMProviderClient {
       model,
       instructions: systemMessage?.content,
       input,
-      temperature,
-      max_output_tokens: maxTokens,
+      text: {
+        format: {
+          type: "json_schema",
+          ...RESUME_JSON_SCHEMA,
+        },
+      },
     });
 
     // Extract text from response

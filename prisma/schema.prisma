@@ -73,30 +73,10 @@ model Cv {
   userId      String
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   title       String
+  content     Json      // Stores entire FormData as single JSON blob
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-  sections    Section[]
 
   @@unique([id, userId])
   @@map("cv")
-}
-
-enum SectionType {
-  EDUCATION
-  WORK
-  ORGANIZATION
-  PERSONAL
-}
-
-model Section {
-  id          String @id
-  cvId        String
-  cv          Cv     @relation(fields: [cvId], references: [id], onDelete: Cascade)
-  type        SectionType
-  content     Json
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-
-  @@unique([id, cvId])
-  @@map("section")
 }

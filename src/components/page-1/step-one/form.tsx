@@ -1,10 +1,10 @@
 import { ChangeEvent } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import type { FormData } from "@/types/form-data";
+import type { WizardFormData } from "@/types/form-data";
 
 interface StepOneFormProps {
-  formData: FormData;
+  formData: WizardFormData;
   formErrors: Record<string, string>;
   handleChange: (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,

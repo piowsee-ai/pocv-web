@@ -6,8 +6,39 @@ import { enhanceResume } from "@/lib/services/enhance.service";
 import { generatePDF } from "@/lib/services/generate.service";
 import { logger, logError } from "@/lib/log/logger";
 import { LLMProvider, getDefaultProvider } from "@/lib/llm";
+import type { FormData } from "@/types/form-data";
+import { v4 as uuidv4 } from "uuid";
 
 export const maxDuration = 300;
+
+function addIdsToFormData(data: FormData): FormData {
+  return {
+    ...data,
+    educations: data.educations.map((item) => ({
+      ...item,
+      id: item.id ?? uuidv4(),
+    })),
+    workExperiences: data.workExperiences.map((item) => ({
+      ...item,
+      id: item.id ?? uuidv4(),
+    })),
+    organizationExperiences: data.organizationExperiences.map((item) => ({
+      ...item,
+      id: item.id ?? uuidv4(),
+    })),
+    personalProjects: data.personalProjects.map((item) => ({
+      ...item,
+      id: item.id ?? uuidv4(),
+    })),
+    customSections: data.customSections.map((section) => ({
+      ...section,
+      items: section.items.map((item) => ({
+        ...item,
+        id: item.id ?? uuidv4(),
+      })),
+    })),
+  };
+}
 
 export async function POST(req: NextRequest) {
   const session = await auth.api.getSession({ headers: await headers() });
@@ -58,31 +89,43 @@ export async function POST(req: NextRequest) {
       isPreview: options?.isPreview ?? false,
     });
 
-    // Step 1: Enhance resume content with AI
+    // Step 1: pass to LLM
     const enhancedData = await enhanceResume(formData, {
       provider: options?.provider,
     });
 
-    // Step 2: Generate PDF directly from enhanced data
-    const pdfBuffer = await generatePDF(enhancedData, {
-      isPreview: options?.isPreview,
-      format: "F4",
+    // Step 2: add uuid
+    const dataWithIds = addIdsToFormData(enhancedData);
+
+    // TODO: remove the log and push to database
+    console.log("=== LLM returns ===");
+    console.log(JSON.stringify(dataWithIds, null, 2));
+    
+    return NextResponse.json({
+      success: true,
+      data: dataWithIds,
     });
 
-    logger.info("CV generated successfully", {
-      userId,
-      pdfSize: pdfBuffer.length,
-    });
+    // Step 2: Generate PDF directly from enhanced data (temporarily disabled)
+    // const pdfBuffer = await generatePDF(enhancedData, {
+    //   isPreview: options?.isPreview,
+    //   format: "F4",
+    // });
 
-    // Return PDF as downloadable file
-    return new NextResponse(new Uint8Array(pdfBuffer), {
-      status: 200,
-      headers: {
-        "Content-Type": "application/pdf",
-        "Content-Disposition": `attachment; filename="resume-${Date.now()}.pdf"`,
-        "Content-Length": pdfBuffer.length.toString(),
-      },
-    });
+    // logger.info("CV generated successfully", {
+    //   userId,
+    //   pdfSize: pdfBuffer.length,
+    // });
+
+    // // Return PDF as downloadable file
+    // return new NextResponse(new Uint8Array(pdfBuffer), {
+    //   status: 200,
+    //   headers: {
+    //     "Content-Type": "application/pdf",
+    //     "Content-Disposition": `attachment; filename="resume-${Date.now()}.pdf"`,
+    //     "Content-Length": pdfBuffer.length.toString(),
+    //   },
+    // });
   } catch (error) {
     logError(error, {
       userId,
