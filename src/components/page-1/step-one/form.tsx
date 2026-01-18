@@ -1,7 +1,9 @@
 import { ChangeEvent } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PhoneInput } from "@/components/ui/phone-input";
 import type { WizardFormData } from "@/types/form-data";
+
 
 interface StepOneFormProps {
   formData: WizardFormData;
@@ -47,13 +49,13 @@ export function StepOneForm({
         <Label htmlFor="phone" className="mb-1 block">
           Telepon <span className="text-red-500">*</span>
         </Label>
-        <Input
+
+        <PhoneInput
           id="phone"
           value={formData.personalData.phone}
           onChange={handleChange}
-          placeholder="Nomor HP, contoh: 081234567890"
+          placeholder="6281234567890"
           required
-          className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0"
         />
         {formErrors.phone && (
           <p className="mt-1 text-sm text-red-600 dark:text-red-400">
