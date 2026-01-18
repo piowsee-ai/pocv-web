@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, ChangeEvent, FormEvent } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Switch } from "@/components/ui/switch";
@@ -23,6 +24,7 @@ import {
 } from "@/components/ui/dialog";
 
 export function WizardStep() {
+  const router = useRouter();
   const [step, setStep] = useState(1);
   const [useDefaultInputEdu, setUseDefaultInputEdu] = useState(true);
   const [useDefaultInputWork, setUseDefaultInputWork] = useState(true);
@@ -330,10 +332,9 @@ export function WizardStep() {
 
       // Parse enhanced data from API
       const result = await response.json();
-      console.log("=== Enhanced CV Data ===", result.data);
-      
-      // TODO: Navigate to CV editor with result.data
-      // Example: router.push(`/editor?data=${encodeURIComponent(JSON.stringify(result.data))}`)
+
+      // route to editor page with cvId
+      router.push(`/editor/${result.cvId}`);
     } catch (error) {
       console.error("Error generating CV:", error);
       setSubmitError(
