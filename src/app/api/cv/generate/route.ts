@@ -117,16 +117,16 @@ export async function POST(req: NextRequest) {
     //     "Content-Length": pdfBuffer.length.toString(),
     //   },
     // });
-  } catch (error) {
+  } catch (error: any) {
     logError(error, {
       userId,
       method: req.method,
       route: req.url,
     });
-    if (err.status) {
+    if (error.status) {
       return NextResponse.json(
-        { success: false, message: err.message },
-        { status: err.status }
+        { success: false, message: error.message },
+        { status: error.status }
       );
     }
     return NextResponse.json(
