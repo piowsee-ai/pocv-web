@@ -1,6 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { headers } from "next/headers";
-import { auth } from "@/lib/auth";
 import { FormDataSchema } from "@/lib/dto/cv.schema";
 import { enhanceResume } from "@/lib/services/enhance.service";
 import { generatePDF } from "@/lib/services/generate.service";
@@ -8,6 +6,7 @@ import { logger, logError } from "@/lib/log/logger";
 import { LLMProvider, getDefaultProvider } from "@/lib/llm";
 import type { FormData } from "@/types/form-data";
 import { v4 as uuidv4 } from "uuid";
+import { requireUser } from "@/lib/auth/auth-server-helper";
 
 export const maxDuration = 300;
 
@@ -41,20 +40,12 @@ function addIdsToFormData(data: FormData): FormData {
 }
 
 export async function POST(req: NextRequest) {
-  const session = await auth.api.getSession({ headers: await headers() });
-
-  if (!session?.user) {
-    return NextResponse.json(
-      { success: false, message: "Unauthorized" },
-      { status: 401 }
-    );
-  }
-
-  const userId = session.user.id;
+  let userId: string | undefined;
 
   try {
+    userId = await requireUser();
     const body = await req.json();
-    
+
     // Extract options from request
     const { formData: rawFormData, options } = body as {
       formData: unknown;
@@ -132,7 +123,12 @@ export async function POST(req: NextRequest) {
       method: req.method,
       route: req.url,
     });
-    
+    if (err.status) {
+      return NextResponse.json(
+        { success: false, message: err.message },
+        { status: err.status }
+      );
+    }
     return NextResponse.json(
       {
         success: false,
