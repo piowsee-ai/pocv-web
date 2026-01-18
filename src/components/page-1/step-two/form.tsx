@@ -5,6 +5,8 @@ import { Input } from "@/components/ui/input";
 import { TextArea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { DegreeSelect } from "@/components/page-1/step-two/degree-select";
+import { GpaScaleSelect } from "@/components/page-1/step-two/gpa-scale-select";
 import { ChevronDown, ChevronUp, Trash } from "lucide-react";
 import type { WizardEducation } from "@/types/form-data";
 import {
@@ -149,12 +151,10 @@ export function StepTwoForm({
                   <Label htmlFor={`degree-${i}`} className="mb-1 block">
                     Gelar <span className="text-red-500">*</span>
                   </Label>
-                  <Input
+                  <DegreeSelect
                     id="degree"
                     value={exp.degree}
                     onChange={(e) => handleChange(e, "educations", i)}
-                    placeholder="Sarjana 1 (S1), Diploma 3 (D3), SMA, dll"
-                    className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0"
                   />
                   {formErrors[`degree-${i}`] && (
                     <p className="text-red-500 text-sm mt-1">
@@ -187,13 +187,41 @@ export function StepTwoForm({
                   <Label htmlFor={`gpa-${i}`} className="mb-1 block">
                     Nilai Akhir
                   </Label>
-                  <Input
-                    id="gpa"
-                    value={exp.gpa}
-                    onChange={(e) => handleChange(e, "educations", i)}
-                    placeholder="XX.X / 4.0, XX.X / 5.0, atau XX.X / 100"
-                    className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0"
-                  />
+                  <div className="flex gap-2">
+                    <Input
+                      id="gpa"
+                      value={exp.gpa?.split(" / ")[0] || ""}
+                      onChange={(e) => {
+                        const numericValue = e.target.value;
+                        const currentScale = exp.gpa?.split(" / ")[1] || "4.0";
+                        const syntheticEvent = {
+                          target: {
+                            id: "gpa",
+                            value: numericValue ? `${numericValue} / ${currentScale}` : "",
+                          },
+                        } as ChangeEvent<HTMLInputElement>;
+                        handleChange(syntheticEvent, "educations", i);
+                      }}
+                      placeholder="3.5"
+                      className="flex-1 bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0"
+                    />
+                    <GpaScaleSelect
+                      id="gpa"
+                      value={exp.gpa?.split(" / ")[1] || ""}
+                      onChange={(e) => {
+                        const currentNumeric = exp.gpa?.split(" / ")[0] || "";
+                        const newScale = e.target.value;
+                        const syntheticEvent = {
+                          target: {
+                            id: "gpa",
+                            value: currentNumeric ? `${currentNumeric} / ${newScale}` : "",
+                          },
+                        } as ChangeEvent<HTMLInputElement>;
+                        handleChange(syntheticEvent, "educations", i);
+                      }}
+                      className="w-28"
+                    />
+                  </div>
                   {formErrors[`gpa-${i}`] && (
                     <p className="text-red-500 text-sm mt-1">
                       {formErrors[`gpa-${i}`]}
