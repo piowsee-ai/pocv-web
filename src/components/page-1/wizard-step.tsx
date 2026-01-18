@@ -328,16 +328,12 @@ export function WizardStep() {
         throw new Error(errorData.message || "Failed to generate CV");
       }
 
-      // Download the PDF
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `resume-${Date.now()}.pdf`;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
+      // Parse enhanced data from API
+      const result = await response.json();
+      console.log("=== Enhanced CV Data ===", result.data);
+      
+      // TODO: Navigate to CV editor with result.data
+      // Example: router.push(`/editor?data=${encodeURIComponent(JSON.stringify(result.data))}`)
     } catch (error) {
       console.error("Error generating CV:", error);
       setSubmitError(

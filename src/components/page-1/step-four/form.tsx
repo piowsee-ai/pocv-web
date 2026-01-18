@@ -6,7 +6,7 @@ import { TextArea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronUp, Trash } from "lucide-react";
-import type { OrganizationExperience } from "@/types/form-data";
+import type { WizardOrganizationExperience } from "@/types/form-data";
 import {
   Dialog,
   DialogContent,
@@ -18,13 +18,13 @@ import {
 
 interface StepFourFormProps {
   formData: {
-    organizationExperiences: OrganizationExperience[];
+    organizationExperiences: WizardOrganizationExperience[];
   };
   formErrors: Record<string, string>;
   handleChange: (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     section?:
-      | "root"
+      | "personalData"
       | "educations"
       | "workExperiences"
       | "organizationExperiences",
