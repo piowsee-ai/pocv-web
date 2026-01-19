@@ -6,6 +6,7 @@ import { TextArea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import type { WizardWorkExperience } from "@/types/form-data";
 import { Button } from "@/components/ui/button";
+import { MonthPickerInput } from "@/components/ui/month-picker-input";
 import { ChevronDown, ChevronUp, Trash } from "lucide-react";
 import {
   Dialog,
@@ -166,29 +167,25 @@ export function StepThreeForm({
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                 <div>
                   <Label htmlFor={`startDate-${i}`} className="mb-1 block">
-                    Tanggal Mulai
+                    Bulan Mulai
                   </Label>
-                  <Input
+                  <MonthPickerInput
                     id="startDate"
-                    type="date"
                     value={exp.startDate}
                     onChange={(e) => handleChange(e, "workExperiences", i)}
-                    placeholder="MM / YYYY"
-                    className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0"
+                    placeholder="Pilih Bulan"
                   />
                 </div>
 
                 <div>
                   <Label htmlFor={`endDate-${i}`} className="mb-1 block">
-                    Tanggal Akhir
+                    Bulan Akhir
                   </Label>
-                  <Input
+                  <MonthPickerInput
                     id="endDate"
-                    type="date"
                     value={exp.endDate}
                     onChange={(e) => handleChange(e, "workExperiences", i)}
-                    placeholder="MM / YYYY"
-                    className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0"
+                    placeholder="Pilih Bulan"
                   />
                 </div>
 
