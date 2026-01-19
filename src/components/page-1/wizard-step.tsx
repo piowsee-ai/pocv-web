@@ -193,6 +193,8 @@ export function WizardStep() {
           if (!exp.major) errors[`major-${i}`] = `Program Studi harus diisi.`;
           if (!exp.institution)
             errors[`institution-${i}`] = `Institusi harus diisi.`;
+          if (!exp.startDate) errors[`startDate-${i}`] = `Waktu Mulai harus diisi.`;
+          if (!exp.endDate) errors[`endDate-${i}`] = `Waktu Akhir harus diisi.`;
         }
         if (!exp.description)
           errors[`description-${i}`] = `Deskripsi harus diisi.`;
@@ -203,6 +205,8 @@ export function WizardStep() {
         if (useDefaultInputWork) {
           if (!exp.position) errors[`position-${i}`] = `Jabatan harus diisi.`;
           if (!exp.company) errors[`company-${i}`] = `Perusahaan harus diisi.`;
+          if (!exp.startDate) errors[`startDate-${i}`] = `Waktu Mulai harus diisi.`;
+          if (!exp.endDate) errors[`endDate-${i}`] = `Waktu Akhir harus diisi.`;
         }
 
         if (!exp.description)
@@ -216,6 +220,8 @@ export function WizardStep() {
           if (!exp.position) errors[`position-${i}`] = `Jabatan harus diisi.`;
           if (!exp.organization)
             errors[`organization-${i}`] = `Nama organisasi harus diisi.`;
+          if (!exp.startDate) errors[`startDate-${i}`] = `Waktu Mulai harus diisi.`;
+          if (!exp.endDate) errors[`endDate-${i}`] = `Waktu Akhir harus diisi.`;
         }
 
         if (!exp.description)
