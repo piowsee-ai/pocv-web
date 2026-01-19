@@ -66,7 +66,6 @@ export function WizardStep() {
         organization: "",
         startDate: "",
         endDate: "",
-        location: "",
         description: "",
       },
     ],
@@ -147,7 +146,6 @@ export function WizardStep() {
           organization: "",
           startDate: "",
           endDate: "",
-          location: "",
           description: "",
         };
       default:
@@ -288,7 +286,6 @@ export function WizardStep() {
             organization: exp.organization,
             startDate: exp.startDate,
             endDate: exp.endDate,
-            location: exp.location,
             description: exp.description,
           }))
         : formData.organizationExperiences.map((exp) => ({
@@ -296,7 +293,6 @@ export function WizardStep() {
             organization: "",
             startDate: "",
             endDate: "",
-            location: "",
             description: exp.description,
           }));
 

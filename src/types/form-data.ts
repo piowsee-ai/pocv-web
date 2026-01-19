@@ -113,7 +113,6 @@ export interface WizardOrganizationExperience {
   organization: string;
   startDate: string;
   endDate: string;
-  location: string;
   description: string;
 }
 

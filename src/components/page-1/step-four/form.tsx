@@ -195,21 +195,6 @@ export function StepFourForm({
                     placeholder="Pilih Bulan"
                   />
                 </div>
-
-                <div>
-                  <Label htmlFor={`location-${i}`} className="mb-1 block">
-                    Lokasi
-                  </Label>
-                  <Input
-                    id="location"
-                    value={exp.location}
-                    onChange={(e) =>
-                      handleChange(e, "organizationExperiences", i)
-                    }
-                    placeholder="Lokasi"
-                    className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0"
-                  />
-                </div>
               </div>
 
               <div>
