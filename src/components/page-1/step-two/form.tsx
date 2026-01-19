@@ -194,10 +194,20 @@ export function StepTwoForm({
                       onChange={(e) => {
                         const numericValue = e.target.value;
                         const currentScale = exp.gpa?.split(" / ")[1] || "4.0";
+                        
+                        // Validate that the input doesn't exceed the scale limit
+                        if (numericValue !== "") {
+                          const numVal = parseFloat(numericValue);
+                          const scaleLimit = parseFloat(currentScale);
+                          if (!isNaN(numVal) && !isNaN(scaleLimit) && numVal > scaleLimit) {
+                            return;
+                          }
+                        }
+                        
                         const syntheticEvent = {
                           target: {
                             id: "gpa",
-                            value: numericValue ? `${numericValue} / ${currentScale}` : "",
+                            value: numericValue ? `${numericValue} / ${currentScale}` : (exp.gpa?.split(" / ")[1] ? ` / ${currentScale}` : ""),
                           },
                         } as ChangeEvent<HTMLInputElement>;
                         handleChange(syntheticEvent, "educations", i);
@@ -209,12 +219,23 @@ export function StepTwoForm({
                       id="gpa"
                       value={exp.gpa?.split(" / ")[1] || ""}
                       onChange={(e) => {
-                        const currentNumeric = exp.gpa?.split(" / ")[0] || "";
+                        const currentNumeric = exp.gpa?.split(" / ")[0]?.trim() || "";
                         const newScale = e.target.value;
+                        
+                        // If current numeric value exceeds new scale, clear it
+                        let validNumeric = currentNumeric;
+                        if (currentNumeric !== "") {
+                          const numVal = parseFloat(currentNumeric);
+                          const scaleLimit = parseFloat(newScale);
+                          if (!isNaN(numVal) && !isNaN(scaleLimit) && numVal > scaleLimit) {
+                            validNumeric = "";
+                          }
+                        }
+                        
                         const syntheticEvent = {
                           target: {
                             id: "gpa",
-                            value: currentNumeric ? `${currentNumeric} / ${newScale}` : "",
+                            value: validNumeric ? `${validNumeric} / ${newScale}` : ` / ${newScale}`,
                           },
                         } as ChangeEvent<HTMLInputElement>;
                         handleChange(syntheticEvent, "educations", i);
