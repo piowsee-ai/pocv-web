@@ -38,6 +38,8 @@ interface StepFourFormProps {
     section: "educations" | "workExperiences" | "organizationExperiences",
     index: number
   ) => void;
+  openIndexes: number[];
+  setOpenIndexes: React.Dispatch<React.SetStateAction<number[]>>;
 }
 
 export function StepFourForm({
@@ -46,13 +48,13 @@ export function StepFourForm({
   handleChange,
   addSectionItem,
   removeSectionItem,
+  openIndexes,
+  setOpenIndexes,
 }: StepFourFormProps) {
   const { organizationExperiences } = formData;
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [targetIndex, setTargetIndex] = useState<number | null>(null);
-
-  const [openIndexes, setOpenIndexes] = useState<number[]>([]);
 
   useEffect(() => {
     const errorIndexes = organizationExperiences

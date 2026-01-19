@@ -74,6 +74,11 @@ export function WizardStep() {
 
   const [submitDialogOpen, setSubmitDialogOpen] = useState(false);
 
+  // State for open blocks in each step (lifted from form components)
+  const [openIndexesEdu, setOpenIndexesEdu] = useState<number[]>([0]);
+  const [openIndexesWork, setOpenIndexesWork] = useState<number[]>([0]);
+  const [openIndexesOrg, setOpenIndexesOrg] = useState<number[]>([0]);
+
   type SectionType =
     | "educations"
     | "workExperiences"
@@ -414,6 +419,8 @@ export function WizardStep() {
                       handleChange={handleChange}
                       addSectionItem={addSectionItem}
                       removeSectionItem={removeSectionItem}
+                      openIndexes={openIndexesEdu}
+                      setOpenIndexes={setOpenIndexesEdu}
                     />
                   ) : (
                     <StepTwoStory
@@ -422,6 +429,8 @@ export function WizardStep() {
                       handleChange={handleChange}
                       addSectionItem={addSectionItem}
                       removeSectionItem={removeSectionItem}
+                      openIndexes={openIndexesEdu}
+                      setOpenIndexes={setOpenIndexesEdu}
                     />
                   )}
                 </>
@@ -460,6 +469,8 @@ export function WizardStep() {
                       handleChange={handleChange}
                       addSectionItem={addSectionItem}
                       removeSectionItem={removeSectionItem}
+                      openIndexes={openIndexesWork}
+                      setOpenIndexes={setOpenIndexesWork}
                     />
                   ) : (
                     <StepThreeStory
@@ -468,6 +479,8 @@ export function WizardStep() {
                       handleChange={handleChange}
                       addSectionItem={addSectionItem}
                       removeSectionItem={removeSectionItem}
+                      openIndexes={openIndexesWork}
+                      setOpenIndexes={setOpenIndexesWork}
                     />
                   )}
                 </>
@@ -505,6 +518,8 @@ export function WizardStep() {
                       handleChange={handleChange}
                       addSectionItem={addSectionItem}
                       removeSectionItem={removeSectionItem}
+                      openIndexes={openIndexesOrg}
+                      setOpenIndexes={setOpenIndexesOrg}
                     />
                   ) : (
                     <StepFourStory
@@ -513,6 +528,8 @@ export function WizardStep() {
                       handleChange={handleChange}
                       addSectionItem={addSectionItem}
                       removeSectionItem={removeSectionItem}
+                      openIndexes={openIndexesOrg}
+                      setOpenIndexes={setOpenIndexesOrg}
                     />
                   )}
                 </>

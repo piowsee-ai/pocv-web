@@ -36,6 +36,8 @@ interface StepTwoStoryProps {
     section: "educations" | "workExperiences" | "organizationExperiences",
     index: number
   ) => void;
+  openIndexes: number[];
+  setOpenIndexes: React.Dispatch<React.SetStateAction<number[]>>;
 }
 
 export function StepTwoStory({
@@ -44,13 +46,13 @@ export function StepTwoStory({
   handleChange,
   addSectionItem,
   removeSectionItem,
+  openIndexes,
+  setOpenIndexes,
 }: StepTwoStoryProps) {
   const { educations } = formData;
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [targetIndex, setTargetIndex] = useState<number | null>(null);
-
-  const [openIndexes, setOpenIndexes] = useState<number[]>([]);
 
   useEffect(() => {
     const errorIndexes = educations

@@ -40,6 +40,8 @@ interface StepTwoFormProps {
     section: "educations" | "workExperiences" | "organizationExperiences",
     index: number
   ) => void;
+  openIndexes: number[];
+  setOpenIndexes: React.Dispatch<React.SetStateAction<number[]>>;
 }
 
 export function StepTwoForm({
@@ -48,13 +50,13 @@ export function StepTwoForm({
   handleChange,
   addSectionItem,
   removeSectionItem,
+  openIndexes,
+  setOpenIndexes,
 }: StepTwoFormProps) {
   const { educations } = formData;
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [targetIndex, setTargetIndex] = useState<number | null>(null);
-
-  const [openIndexes, setOpenIndexes] = useState<number[]>([]);
 
   useEffect(() => {
     const errorIndexes = educations

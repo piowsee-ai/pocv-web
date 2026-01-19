@@ -38,6 +38,8 @@ interface StepThreeFormProps {
     section: "educations" | "workExperiences" | "organizationExperiences",
     index: number
   ) => void;
+  openIndexes: number[];
+  setOpenIndexes: React.Dispatch<React.SetStateAction<number[]>>;
 }
 
 export function StepThreeForm({
@@ -46,13 +48,13 @@ export function StepThreeForm({
   handleChange,
   addSectionItem,
   removeSectionItem,
+  openIndexes,
+  setOpenIndexes,
 }: StepThreeFormProps) {
   const { workExperiences } = formData;
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [targetIndex, setTargetIndex] = useState<number | null>(null);
-
-  const [openIndexes, setOpenIndexes] = useState<number[]>([]);
 
   useEffect(() => {
     const errorIndexes = workExperiences
