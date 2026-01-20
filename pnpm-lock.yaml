@@ -71,6 +71,9 @@ importers:
       cmdk:
         specifier: ^1.1.1
         version: 1.1.1(@types/react-dom@19.2.3(@types/react@19.2.7))(@types/react@19.2.7)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      country-state-city:
+        specifier: ^3.2.1
+        version: 3.2.1
       disposable-email-domains:
         specifier: ^1.0.62
         version: 1.0.62
@@ -1913,6 +1916,9 @@ packages:
 
   country-flag-icons@1.6.4:
     resolution: {integrity: sha512-Z3Zi419FI889tlElMsVhCIS5eRkiLDWixr576J5DPiTe5RGxpbRi+enMpHdYVp5iK5WFjr8P/RgyIFAGhFsiFg==}
+
+  country-state-city@3.2.1:
+    resolution: {integrity: sha512-kxbanqMc6izjhc/EHkGPCTabSPZ2G6eG4/97akAYHJUN4stzzFEvQPZoF8oXDQ+10gM/O/yUmISCR1ZVxyb6EA==}
 
   cross-spawn@7.0.6:
     resolution: {integrity: sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA==}
@@ -5351,6 +5357,8 @@ snapshots:
   consola@3.4.2: {}
 
   country-flag-icons@1.6.4: {}
+
+  country-state-city@3.2.1: {}
 
   cross-spawn@7.0.6:
     dependencies:

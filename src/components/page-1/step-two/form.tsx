@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DegreeSelect } from "@/components/page-1/step-two/degree-select";
 import { GpaScaleSelect } from "@/components/page-1/step-two/gpa-scale-select";
+import { LocationInput } from "@/components/ui/location-input";
 import { MonthPickerInput } from "@/components/ui/month-picker-input";
 import { ChevronDown, ChevronUp, Trash } from "lucide-react";
 import type { WizardEducation } from "@/types/form-data";
@@ -316,12 +317,11 @@ export function StepTwoForm({
                   <Label htmlFor={`location-${i}`} className="mb-1 block">
                     Lokasi
                   </Label>
-                  <Input
+                  <LocationInput
                     id="location"
                     value={exp.location}
                     onChange={(e) => handleChange(e, "educations", i)}
-                    placeholder="Jakarta, Bandung, Surabaya, dll"
-                    className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0"
+                    placeholder="Pilih lokasi"
                   />
                 </div>
               </div>

@@ -8,6 +8,7 @@ import type { WizardWorkExperience } from "@/types/form-data";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { MonthPickerInput } from "@/components/ui/month-picker-input";
+import { LocationInput } from "@/components/ui/location-input";
 import { ChevronDown, ChevronUp, Trash } from "lucide-react";
 import {
   Dialog,
@@ -226,14 +227,13 @@ export function StepThreeForm({
 
                 <div>
                   <Label htmlFor={`city-${i}`} className="mb-1 block">
-                    Kota
+                    Lokasi
                   </Label>
-                  <Input
+                  <LocationInput
                     id="city"
                     value={exp.city}
                     onChange={(e) => handleChange(e, "workExperiences", i)}
-                    placeholder="Nama Kota"
-                    className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0"
+                    placeholder="Pilih lokasi"
                   />
                 </div>
               </div>
