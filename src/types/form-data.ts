@@ -104,7 +104,7 @@ export interface WizardWorkExperience {
   company: string;
   startDate: string;
   endDate: string;
-  city: string;
+  location: string;
   description: string;
 }
 

@@ -56,7 +56,7 @@ export function WizardStep() {
         company: "",
         startDate: "",
         endDate: "",
-        city: "",
+        location: "",
         description: "",
       },
     ],
@@ -137,7 +137,7 @@ export function WizardStep() {
           company: "",
           startDate: "",
           endDate: "",
-          city: "",
+          location: "",
           description: "",
         };
       case "organizationExperiences":
@@ -252,7 +252,7 @@ export function WizardStep() {
             company: exp.company,
             startDate: exp.startDate,
             endDate: exp.endDate,
-            city: exp.city,
+            location: exp.location,
             description: exp.description,
           }))
         : formData.workExperiences.map((exp) => ({
@@ -260,7 +260,7 @@ export function WizardStep() {
             company: "",
             startDate: "",
             endDate: "",
-            city: "",
+            location: "",
             description: exp.description,
           }));
 

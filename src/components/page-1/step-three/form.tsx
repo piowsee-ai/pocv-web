@@ -226,12 +226,12 @@ export function StepThreeForm({
                 </div>
 
                 <div>
-                  <Label htmlFor={`city-${i}`} className="mb-1 block">
+                  <Label htmlFor={`location-${i}`} className="mb-1 block">
                     Lokasi
                   </Label>
                   <LocationInput
-                    id="city"
-                    value={exp.city}
+                    id="location"
+                    value={exp.location}
                     onChange={(e) => handleChange(e, "workExperiences", i)}
                     placeholder="Pilih lokasi"
                   />

@@ -13,7 +13,7 @@ export const WorkExperienceSchema: z.ZodType<WizardWorkExperience> = z.object({
   company: z.string(),
   startDate: z.string(),
   endDate: z.string(),
-  city: z.string(),
+  location: z.string(),
   description: z.string(),
 });
 
