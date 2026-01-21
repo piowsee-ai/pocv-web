@@ -5,6 +5,8 @@ import { Input } from "@/components/ui/input";
 import { TextArea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { MonthPickerInput } from "@/components/ui/month-picker-input";
 import { ChevronDown, ChevronUp, Trash } from "lucide-react";
 import type { WizardOrganizationExperience } from "@/types/form-data";
 import {
@@ -37,6 +39,8 @@ interface StepFourFormProps {
     section: "educations" | "workExperiences" | "organizationExperiences",
     index: number
   ) => void;
+  openIndexes: number[];
+  setOpenIndexes: React.Dispatch<React.SetStateAction<number[]>>;
 }
 
 export function StepFourForm({
@@ -45,13 +49,13 @@ export function StepFourForm({
   handleChange,
   addSectionItem,
   removeSectionItem,
+  openIndexes,
+  setOpenIndexes,
 }: StepFourFormProps) {
   const { organizationExperiences } = formData;
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [targetIndex, setTargetIndex] = useState<number | null>(null);
-
-  const [openIndexes, setOpenIndexes] = useState<number[]>([]);
 
   useEffect(() => {
     const errorIndexes = organizationExperiences
@@ -171,49 +175,58 @@ export function StepFourForm({
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                 <div>
                   <Label htmlFor={`startDate-${i}`} className="mb-1 block">
-                    Tanggal Mulai
+                    Waktu Mulai <span className="text-red-500">*</span>
                   </Label>
-                  <Input
+                  <MonthPickerInput
                     id="startDate"
-                    type="date"
                     value={exp.startDate}
-                    onChange={(e) =>
-                      handleChange(e, "organizationExperiences", i)
-                    }
-                    placeholder="MM / YYYY"
-                    className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0"
+                    onChange={(e) => handleChange(e, "organizationExperiences", i)}
+                    placeholder="Pilih Bulan"
                   />
+                  {formErrors[`startDate-${i}`] && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {formErrors[`startDate-${i}`]}
+                    </p>
+                  )}
                 </div>
 
                 <div>
                   <Label htmlFor={`endDate-${i}`} className="mb-1 block">
-                    Tanggal Akhir
+                    Waktu Akhir <span className="text-red-500">*</span>
                   </Label>
-                  <Input
+                  <MonthPickerInput
                     id="endDate"
-                    type="date"
-                    value={exp.endDate}
-                    onChange={(e) =>
-                      handleChange(e, "organizationExperiences", i)
-                    }
-                    placeholder="MM / YYYY"
-                    className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0"
+                    value={exp.endDate === "Saat Ini" ? "" : exp.endDate}
+                    onChange={(e) => handleChange(e, "organizationExperiences", i)}
+                    placeholder="Pilih Bulan"
+                    disabled={exp.endDate === "Saat Ini"}
                   />
-                </div>
-
-                <div>
-                  <Label htmlFor={`location-${i}`} className="mb-1 block">
-                    Lokasi
-                  </Label>
-                  <Input
-                    id="location"
-                    value={exp.location}
-                    onChange={(e) =>
-                      handleChange(e, "organizationExperiences", i)
-                    }
-                    placeholder="Lokasi"
-                    className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0"
-                  />
+                  <div className="flex items-center gap-2 mt-2">
+                    <Checkbox
+                      id={`isOngoing-${i}`}
+                      checked={exp.endDate === "Saat Ini"}
+                      onCheckedChange={(checked) => {
+                        const syntheticEvent = {
+                          target: {
+                            id: "endDate",
+                            value: checked ? "Saat Ini" : "",
+                          },
+                        } as ChangeEvent<HTMLInputElement>;
+                        handleChange(syntheticEvent, "organizationExperiences", i);
+                      }}
+                    />
+                    <Label
+                      htmlFor={`isOngoing-${i}`}
+                      className="text-sm font-normal cursor-pointer"
+                    >
+                      Saat Ini
+                    </Label>
+                  </div>
+                  {formErrors[`endDate-${i}`] && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {formErrors[`endDate-${i}`]}
+                    </p>
+                  )}
                 </div>
               </div>
 

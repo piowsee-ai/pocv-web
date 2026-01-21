@@ -6,6 +6,9 @@ import { TextArea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import type { WizardWorkExperience } from "@/types/form-data";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { MonthPickerInput } from "@/components/ui/month-picker-input";
+import { LocationInput } from "@/components/ui/location-input";
 import { ChevronDown, ChevronUp, Trash } from "lucide-react";
 import {
   Dialog,
@@ -37,6 +40,8 @@ interface StepThreeFormProps {
     section: "educations" | "workExperiences" | "organizationExperiences",
     index: number
   ) => void;
+  openIndexes: number[];
+  setOpenIndexes: React.Dispatch<React.SetStateAction<number[]>>;
 }
 
 export function StepThreeForm({
@@ -45,13 +50,13 @@ export function StepThreeForm({
   handleChange,
   addSectionItem,
   removeSectionItem,
+  openIndexes,
+  setOpenIndexes,
 }: StepThreeFormProps) {
   const { workExperiences } = formData;
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [targetIndex, setTargetIndex] = useState<number | null>(null);
-
-  const [openIndexes, setOpenIndexes] = useState<number[]>([]);
 
   useEffect(() => {
     const errorIndexes = workExperiences
@@ -166,42 +171,69 @@ export function StepThreeForm({
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                 <div>
                   <Label htmlFor={`startDate-${i}`} className="mb-1 block">
-                    Tanggal Mulai
+                    Waktu Mulai <span className="text-red-500">*</span>
                   </Label>
-                  <Input
+                  <MonthPickerInput
                     id="startDate"
-                    type="date"
                     value={exp.startDate}
                     onChange={(e) => handleChange(e, "workExperiences", i)}
-                    placeholder="MM / YYYY"
-                    className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0"
+                    placeholder="Pilih Bulan"
                   />
+                  {formErrors[`startDate-${i}`] && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {formErrors[`startDate-${i}`]}
+                    </p>
+                  )}
                 </div>
 
                 <div>
                   <Label htmlFor={`endDate-${i}`} className="mb-1 block">
-                    Tanggal Akhir
+                    Waktu Akhir <span className="text-red-500">*</span>
                   </Label>
-                  <Input
+                  <MonthPickerInput
                     id="endDate"
-                    type="date"
-                    value={exp.endDate}
+                    value={exp.endDate === "Saat Ini" ? "" : exp.endDate}
                     onChange={(e) => handleChange(e, "workExperiences", i)}
-                    placeholder="MM / YYYY"
-                    className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0"
+                    placeholder="Pilih Bulan"
+                    disabled={exp.endDate === "Saat Ini"}
                   />
+                  <div className="flex items-center gap-2 mt-2">
+                    <Checkbox
+                      id={`isOngoing-${i}`}
+                      checked={exp.endDate === "Saat Ini"}
+                      onCheckedChange={(checked) => {
+                        const syntheticEvent = {
+                          target: {
+                            id: "endDate",
+                            value: checked ? "Saat Ini" : "",
+                          },
+                        } as ChangeEvent<HTMLInputElement>;
+                        handleChange(syntheticEvent, "workExperiences", i);
+                      }}
+                    />
+                    <Label
+                      htmlFor={`isOngoing-${i}`}
+                      className="text-sm font-normal cursor-pointer"
+                    >
+                      Saat Ini
+                    </Label>
+                  </div>
+                  {formErrors[`endDate-${i}`] && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {formErrors[`endDate-${i}`]}
+                    </p>
+                  )}
                 </div>
 
                 <div>
-                  <Label htmlFor={`city-${i}`} className="mb-1 block">
-                    Kota
+                  <Label htmlFor={`location-${i}`} className="mb-1 block">
+                    Lokasi
                   </Label>
-                  <Input
-                    id="city"
-                    value={exp.city}
+                  <LocationInput
+                    id="location"
+                    value={exp.location}
                     onChange={(e) => handleChange(e, "workExperiences", i)}
-                    placeholder="Nama Kota"
-                    className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0"
+                    placeholder="Pilih lokasi"
                   />
                 </div>
               </div>
