@@ -17,29 +17,35 @@
       <div class="header">
         <h1 class="header-name">{{ data.personalData.name }}</h1>
 
-        {% if data.personalData.phone or data.personalData.email or data.personalData.linkedin or data.personalData.github %}
+        {% if data.personalData.location or data.personalData.phone or data.personalData.email or data.personalData.linkedin or data.personalData.github or data.personalData.website %}
         <div class="header-contact">
+          {% set has_prev = false %}
           {% if data.personalData.location %}
           <span class="contact-item">{{ data.personalData.location }}</span>
-          <span class="separator">|</span>
+          {% set has_prev = true %}
           {% endif %}
           {% if data.personalData.phone %}
+          {% if has_prev %}<span class="separator">|</span>{% endif %}
           <a href="tel:{{ data.personalData.phone }}" class="contact-item">{{ data.personalData.phone }}</a>
-          <span class="separator">|</span>
+          {% set has_prev = true %}
           {% endif %}
           {% if data.personalData.email %}
+          {% if has_prev %}<span class="separator">|</span>{% endif %}
           <a href="mailto:{{ data.personalData.email }}" class="contact-item">{{ data.personalData.email }}</a>
+          {% set has_prev = true %}
           {% endif %}
           {% if data.personalData.linkedin %}
-          <span class="separator">|</span>
+          {% if has_prev %}<span class="separator">|</span>{% endif %}
           <a href="{{ data.personalData.linkedin }}" class="contact-item">{{ data.personalData.linkedin }}</a>
+          {% set has_prev = true %}
           {% endif %}
           {% if data.personalData.github %}
-          <span class="separator">|</span>
+          {% if has_prev %}<span class="separator">|</span>{% endif %}
           <a href="{{ data.personalData.github }}" class="contact-item">{{ data.personalData.github }}</a>
+          {% set has_prev = true %}
           {% endif %}
           {% if data.personalData.website %}
-          <span class="separator">|</span>
+          {% if has_prev %}<span class="separator">|</span>{% endif %}
           <a href="{{ data.personalData.website }}" class="contact-item">{{ data.personalData.website }}</a>
           {% endif %}
         </div>
@@ -49,17 +55,17 @@
       <!-- Summary Section -->
       {% if data.summary %}
       <div class="section">
-        <h2 class="section-title">Summary</h2>
-        <div class="entry">
-          <p>{{ data.summary }}</p>
+        <h2 class="section-title">{{ data.sectionTitles.summary if data.sectionTitles and data.sectionTitles.summary else 'Summary' }}</h2>
+        <div class="entry html-content">
+          {{ data.summary | safe }}
         </div>
       </div>
       {% endif %}
 
       <!-- Education Section -->
-      {% if data.educations %}
+      {% if data.educations and data.educations.length > 0 %}
       <div class="section">
-        <h2 class="section-title">Education</h2>
+        <h2 class="section-title">{{ data.sectionTitles.education if data.sectionTitles and data.sectionTitles.education else 'Education' }}</h2>
         {% for edu in data.educations %}
         <div class="entry">
           <div class="entry-header">
@@ -72,10 +78,14 @@
           </div>
           <div class="entry-subheader">
             <div class="entry-subtitle">
-              {{ edu.degree }} in {{ edu.major }}{% if edu.gpa %}, GPA: {{ edu.gpa }}{% endif %}
+              {{ edu.degree }} in {{ edu.major }}{% if edu.gpa %}, GPA: {{ edu.gpa }}{% if edu.maxGpa %}/{{ edu.maxGpa }}{% endif %}{% endif %}
             </div>
           </div>
-          {% if edu.description %}
+          {% if edu.descriptionHtml %}
+          <div class="html-content">
+            {{ edu.descriptionHtml | safe }}
+          </div>
+          {% elif edu.description and edu.description.length %}
           <ul class="entry-details">
             {% for item in edu.description %}
             <li>{{ item }}</li>
@@ -88,21 +98,25 @@
       {% endif %}
 
       <!-- Work Experience Section -->
-      {% if data.workExperiences %}
+      {% if data.workExperiences and data.workExperiences.length > 0 %}
       <div class="section">
-        <h2 class="section-title">Work Experience</h2>
+        <h2 class="section-title">{{ data.sectionTitles.workExperience if data.sectionTitles and data.sectionTitles.workExperience else 'Work Experience' }}</h2>
         {% for exp in data.workExperiences %}
         <div class="entry">
           <div class="entry-header">
             <div class="entry-title">
-              {{ exp.company }}{% if exp.location %} - {{ exp.location }}{% endif %}
+              {{ exp.company }}{% if exp.location %}<span class="location-text"> - {{ exp.location }}</span>{% endif %}
             </div>
             <div class="entry-date">
               {{ exp.startDate }} - {{ exp.endDate }}
             </div>
           </div>
           <div class="entry-subtitle">{{ exp.position }}</div>
-          {% if exp.description %}
+          {% if exp.descriptionHtml %}
+          <div class="html-content">
+            {{ exp.descriptionHtml | safe }}
+          </div>
+          {% elif exp.description and exp.description.length %}
           <ul class="entry-details">
             {% for item in exp.description %}
             <li>{{ item }}</li>
@@ -115,9 +129,9 @@
       {% endif %}
 
       <!-- Organizations Section -->
-      {% if data.organizationExperiences %}
+      {% if data.organizationExperiences and data.organizationExperiences.length > 0 %}
       <div class="section">
-        <h2 class="section-title">Organisational Experience</h2>
+        <h2 class="section-title">{{ data.sectionTitles.organization if data.sectionTitles and data.sectionTitles.organization else 'Organisational Experience' }}</h2>
         {% for org in data.organizationExperiences %}
         <div class="entry">
           <div class="entry-header">
@@ -127,7 +141,11 @@
             </div>
           </div>
           <div class="entry-subtitle">{{ org.position }}</div>
-          {% if org.description %}
+          {% if org.descriptionHtml %}
+          <div class="html-content">
+            {{ org.descriptionHtml | safe }}
+          </div>
+          {% elif org.description and org.description.length %}
           <ul class="entry-details">
             {% for item in org.description %}
             <li>{{ item }}</li>
@@ -140,15 +158,27 @@
       {% endif %}
 
       <!-- Personal Projects Section -->
-      {% if data.personalProjects %}
+      {% if data.personalProjects and data.personalProjects.length > 0 %}
       <div class="section">
-        <h2 class="section-title">Projects</h2>
+        <h2 class="section-title">{{ data.sectionTitles.projects if data.sectionTitles and data.sectionTitles.projects else 'Projects' }}</h2>
         {% for project in data.personalProjects %}
         <div class="entry">
           <div class="entry-header">
             <div class="entry-title">{{ project.name }}</div>
+            {% if project.startDate or project.endDate %}
+            <div class="entry-date">
+              {{ project.startDate }} - {{ project.endDate }}
+            </div>
+            {% endif %}
           </div>
-          {% if project.description %}
+          {% if project.role %}
+          <div class="entry-subtitle">{{ project.role }}</div>
+          {% endif %}
+          {% if project.descriptionHtml %}
+          <div class="html-content">
+            {{ project.descriptionHtml | safe }}
+          </div>
+          {% elif project.description and project.description.length %}
           <ul class="entry-details">
             {% for item in project.description %}
             <li>{{ item }}</li>
@@ -160,52 +190,45 @@
       </div>
       {% endif %}
 
-      <!-- Skills Section -->
-      {% if data.additional and data.additional.skills %}
+      <!-- Custom Sections -->
+      {% if data.customSections and data.customSections.length > 0 %}
+      {% for section in data.customSections %}
+      {% if section.items and section.items.length > 0 %}
       <div class="section">
-        <h2 class="section-title">Skills</h2>
+        <h2 class="section-title">{{ section.sectionTitle or 'Untitled' }}</h2>
+        {% for item in section.items %}
+        {% if item.title %}
         <div class="entry">
-          <p>{{ data.additional.skills | join(', ') }}</p>
-        </div>
-      </div>
-      {% endif %}
-
-      <!-- Languages Section -->
-      {% if data.additional and data.additional.languages %}
-      <div class="section">
-        <h2 class="section-title">Languages</h2>
-        <div class="entry">
-          <p>{{ data.additional.languages | join(', ') }}</p>
-        </div>
-      </div>
-      {% endif %}
-
-      <!-- Certifications Section -->
-      {% if data.additional and data.additional.certifications %}
-      <div class="section">
-        <h2 class="section-title">Certifications</h2>
-        <div class="entry">
+          <div class="entry-header">
+            <div class="entry-title">
+              {{ item.title }}{% if item.location %}<span class="location-text"> - {{ item.location }}</span>{% endif %}
+            </div>
+            {% if item.startDate or item.endDate %}
+            <div class="entry-date">
+              {{ item.startDate }} - {{ item.endDate }}
+            </div>
+            {% endif %}
+          </div>
+          {% if item.subtitle %}
+          <div class="entry-subtitle">{{ item.subtitle }}</div>
+          {% endif %}
+          {% if item.descriptionHtml %}
+          <div class="html-content">
+            {{ item.descriptionHtml | safe }}
+          </div>
+          {% elif item.description and item.description.length %}
           <ul class="entry-details">
-            {% for cert in data.additional.certifications %}
-            <li>{{ cert }}</li>
+            {% for desc in item.description %}
+            <li>{{ desc }}</li>
             {% endfor %}
           </ul>
+          {% endif %}
         </div>
+        {% endif %}
+        {% endfor %}
       </div>
       {% endif %}
-
-      <!-- Achievements Section -->
-      {% if data.additional and data.additional.achievements %}
-      <div class="section">
-        <h2 class="section-title">Achievements</h2>
-        <div class="entry">
-          <ul class="entry-details">
-            {% for achievement in data.additional.achievements %}
-            <li>{{ achievement }}</li>
-            {% endfor %}
-          </ul>
-        </div>
-      </div>
+      {% endfor %}
       {% endif %}
     </div>
 
