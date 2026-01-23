@@ -1,13 +1,12 @@
 "use client";
 
 import * as React from "react";
-import { CheckIcon, ChevronsUpDown } from "lucide-react";
+import { CheckIcon, ChevronsUpDown, X } from "lucide-react";
 import { City, State } from "country-state-city";
 
 import { Button } from "@/components/ui/button";
 import {
   Command,
-  CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
@@ -45,7 +44,7 @@ export function LocationInput({
   placeholder = "Pilih lokasi",
 }: LocationInputProps) {
   const [isOpen, setIsOpen] = React.useState(false);
-  const scrollAreaRef = React.useRef<HTMLDivElement>(null);
+  const [searchQuery, setSearchQuery] = React.useState("");
 
   // Get all Indonesian cities and states
   const locationOptions = React.useMemo(() => {
@@ -79,7 +78,45 @@ export function LocationInput({
     } as React.ChangeEvent<HTMLInputElement>;
     onChange?.(syntheticEvent);
     setIsOpen(false);
+    setSearchQuery("");
   };
+
+  const handleSelectCustom = (customValue: string) => {
+    const syntheticEvent = {
+      target: {
+        id,
+        value: customValue,
+      },
+    } as React.ChangeEvent<HTMLInputElement>;
+    onChange?.(syntheticEvent);
+    setIsOpen(false);
+    setSearchQuery("");
+  };
+
+  const handleClear = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const syntheticEvent = {
+      target: {
+        id,
+        value: "",
+      },
+    } as React.ChangeEvent<HTMLInputElement>;
+    onChange?.(syntheticEvent);
+  };
+
+  // Filter options based on search
+  const filteredOptions = React.useMemo(() => {
+    if (!searchQuery.trim()) return locationOptions;
+    const query = searchQuery.toLowerCase();
+    return locationOptions.filter(
+      (option) =>
+        option.city.toLowerCase().includes(query) ||
+        option.state.toLowerCase().includes(query)
+    );
+  }, [locationOptions, searchQuery]);
+
+  // Check if search query matches any option exactly
+  const hasExactMatch = filteredOptions.length > 0;
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
@@ -91,46 +128,85 @@ export function LocationInput({
           aria-expanded={isOpen}
           disabled={disabled}
           className={cn(
-            "w-full justify-between bg-neutral-200 font-normal hover:bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0",
+            "w-full justify-between bg-neutral-200 font-normal hover:bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0 cursor-pointer",
             !value && "text-muted-foreground",
             className,
           )}
         >
           <span className="truncate">
-            {selectedLocation?.displayValue || placeholder}
+            {selectedLocation?.displayValue || value || placeholder}
           </span>
-          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          <div className="flex items-center gap-1 ml-2">
+            {value && (
+              <span
+                onClick={handleClear}
+                className="p-0.5 rounded hover:bg-neutral-300 cursor-pointer"
+              >
+                <X className="h-3.5 w-3.5 text-neutral-500 hover:text-neutral-700" />
+              </span>
+            )}
+            <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
+          </div>
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
-        <Command>
-          <CommandInput placeholder="Cari lokasi..." />
+        <Command shouldFilter={false}>
+          <CommandInput 
+            placeholder="Cari lokasi..." 
+            value={searchQuery}
+            onValueChange={setSearchQuery}
+          />
           <CommandList>
             <ScrollArea className="h-72">
-              <CommandEmpty>Lokasi tidak ditemukan.</CommandEmpty>
-              <CommandGroup>
-                {locationOptions.map((option, index) => (
+              {/* Show custom option if user typed something and no exact match or few results */}
+              {searchQuery.trim() && (
+                <CommandGroup>
                   <CommandItem
-                    key={index}
-                    value={option.displayValue}
-                    onSelect={() => handleSelect(option)}
+                    value={`custom-${searchQuery}`}
+                    onSelect={() => handleSelectCustom(searchQuery)}
                     className="cursor-pointer"
                   >
-                    <span className="flex-1">{option.city}</span>
-                    <span className="text-sm text-muted-foreground mr-2">
-                      {option.state}
-                    </span>
+                    <span className="flex-1">Gunakan lokasi: &quot;{searchQuery}&quot;</span>
                     <CheckIcon
                       className={cn(
                         "ml-auto h-4 w-4",
-                        value === option.displayValue
-                          ? "opacity-100"
-                          : "opacity-0",
+                        value === searchQuery ? "opacity-100" : "opacity-0",
                       )}
                     />
                   </CommandItem>
-                ))}
-              </CommandGroup>
+                </CommandGroup>
+              )}
+              {filteredOptions.length > 0 ? (
+                <CommandGroup heading={searchQuery ? "Hasil Pencarian" : undefined}>
+                  {filteredOptions.slice(0, 100).map((option, index) => (
+                    <CommandItem
+                      key={index}
+                      value={option.displayValue}
+                      onSelect={() => handleSelect(option)}
+                      className="cursor-pointer"
+                    >
+                      <span className="flex-1">{option.city}</span>
+                      <span className="text-sm text-muted-foreground mr-2">
+                        {option.state}
+                      </span>
+                      <CheckIcon
+                        className={cn(
+                          "ml-auto h-4 w-4",
+                          value === option.displayValue
+                            ? "opacity-100"
+                            : "opacity-0",
+                        )}
+                      />
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              ) : (
+                !searchQuery.trim() && (
+                  <div className="py-6 text-center text-sm text-muted-foreground">
+                    Ketik untuk mencari lokasi.
+                  </div>
+                )
+              )}
             </ScrollArea>
           </CommandList>
         </Command>
