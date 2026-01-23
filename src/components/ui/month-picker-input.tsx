@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Popover,
@@ -18,6 +18,7 @@ interface MonthPickerInputProps {
   placeholder?: string;
   disabled?: boolean;
   className?: string;
+  clearable?: boolean; // Allow clearing the date
 }
 
 const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
@@ -29,6 +30,7 @@ export function MonthPickerInput({
   placeholder = "Pilih Bulan",
   disabled,
   className,
+  clearable = true,
 }: MonthPickerInputProps) {
   const [isOpen, setIsOpen] = React.useState(false);
 
@@ -42,9 +44,12 @@ export function MonthPickerInput({
   }, [value]);
 
   const displayValue = React.useMemo(() => {
-    if (!selectedDate) return "";
+    if (!selectedDate) {
+      // If value exists but couldn't be parsed, show it as-is
+      return value || "";
+    }
     return `${MONTH_NAMES[selectedDate.getMonth()]} ${selectedDate.getFullYear()}`;
-  }, [selectedDate]);
+  }, [selectedDate, value]);
 
   const handleMonthSelect = (date: Date) => {
     const year = date.getFullYear();
@@ -62,29 +67,54 @@ export function MonthPickerInput({
     setIsOpen(false);
   };
 
+  const handleClear = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const syntheticEvent = {
+      target: {
+        id: id || "",
+        value: "",
+      },
+    } as React.ChangeEvent<HTMLInputElement>;
+    onChange?.(syntheticEvent);
+  };
+
   return (
-    <Popover open={isOpen} onOpenChange={setIsOpen}>
-      <PopoverTrigger asChild>
-        <Button
+    <div className="relative flex items-center">
+      <Popover open={isOpen} onOpenChange={setIsOpen}>
+        <PopoverTrigger asChild>
+          <Button
+            type="button"
+            variant="outline"
+            disabled={disabled}
+            className={cn(
+              "w-full justify-start text-left font-normal bg-neutral-200 hover:bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0",
+              !value && "text-muted-foreground",
+              value && clearable && "pr-8", // Extra padding for clear button
+              className
+            )}
+          >
+            <CalendarIcon className="mr-2 h-4 w-4" />
+            {displayValue || placeholder}
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto p-0" align="start">
+          <MonthPicker
+            selectedMonth={selectedDate}
+            onMonthSelect={handleMonthSelect}
+          />
+        </PopoverContent>
+      </Popover>
+      {/* Clear button */}
+      {value && clearable && !disabled && (
+        <button
           type="button"
-          variant="outline"
-          disabled={disabled}
-          className={cn(
-            "w-full justify-start text-left font-normal bg-neutral-200 hover:bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0",
-            !value && "text-muted-foreground",
-            className
-          )}
+          onClick={handleClear}
+          className="absolute right-2 p-1 rounded-full hover:bg-neutral-300 transition-colors"
+          aria-label="Hapus tanggal"
         >
-          <CalendarIcon className="mr-2 h-4 w-4" />
-          {displayValue || placeholder}
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-auto p-0" align="start">
-        <MonthPicker
-          selectedMonth={selectedDate}
-          onMonthSelect={handleMonthSelect}
-        />
-      </PopoverContent>
-    </Popover>
+          <X className="h-3.5 w-3.5 text-neutral-500" />
+        </button>
+      )}
+    </div>
   );
 }
