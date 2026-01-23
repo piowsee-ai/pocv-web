@@ -4,7 +4,7 @@
 
 import { chat, LLMProvider, LLMConfig } from "@/lib/llm";
 import { RESUME_ENHANCEMENT_PROMPT, ResumeLanguage } from "@/lib/llm/prompts";
-import type { FormData } from "@/types/form-data";
+import type { FormData } from "@/types/editor-form-data";
 
 export type EnhancedFormData = FormData;
 

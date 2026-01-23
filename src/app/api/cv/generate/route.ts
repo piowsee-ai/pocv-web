@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { FormDataSchema } from "@/lib/dto/cv.schema";
 import { enhanceResume } from "@/lib/services/enhance.service";
-import { generatePDF } from "@/lib/services/generate.service";
 import { logger, logError } from "@/lib/log/logger";
 import { LLMProvider, getDefaultProvider } from "@/lib/llm";
-import type { FormData } from "@/types/form-data";
+import type { FormData } from "@/types/editor-form-data";
 import { v4 as uuidv4 } from "uuid";
 import { requireUser } from "@/lib/auth/auth-server-helper";
 import { CVService } from "@/lib/services/cv.service";
@@ -73,7 +72,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, errors }, { status: 400 });
     }
 
-    const formData = result.data;
+    const formData = result.data as unknown as FormData;
 
     logger.info("Starting CV generation", {
       userId,

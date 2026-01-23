@@ -1,6 +1,6 @@
 import { prisma } from "../db/prisma-client";
 import type { Cv } from "@/generated/prisma";
-import type { FormData } from "@/types/form-data";
+import type { FormData } from "@/types/editor-form-data";
 
 export const CVRepository = {
   async findAllCVByUserId(userId: string): Promise<Cv[]> {

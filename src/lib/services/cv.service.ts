@@ -4,7 +4,7 @@
  */
 
 import { CVRepository } from "../repositories/cv.repo";
-import type { FormData } from "@/types/form-data";
+import type { FormData } from "@/types/editor-form-data";
 import type { CVList } from "@/types/cv";
 import { v4 as uuidv4 } from "uuid";
 
