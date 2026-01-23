@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, errors }, { status: 400 });
     }
 
-    const formData: FormData = result.data;
+    const formData = result.data as unknown as FormData;
     await CVService.createCV(userId, formData);
 
     logger.info("CV created successfully", {
