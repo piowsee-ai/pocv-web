@@ -189,6 +189,14 @@ export function WizardStep() {
         errors.email = "Format email tidak valid.";
       }
 
+      if (formData.personalData.linkedin && !/^(https?:\/\/)?(www\.)?linkedin\.com\/.+$/i.test(formData.personalData.linkedin)) {
+        errors.linkedin = "Format LinkedIn URL tidak valid. Contoh: linkedin.com/in/username";
+      }
+
+      if (formData.personalData.github && !/^(https?:\/\/)?(www\.)?github\.com\/.+$/i.test(formData.personalData.github)) {
+        errors.github = "Format GitHub URL tidak valid. Contoh: github.com/username";
+      }
+
       if (!formData.educations) errors.education = "Pendidikan harus diisi.";
     }
     if (step === 2) {

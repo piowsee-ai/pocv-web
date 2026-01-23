@@ -43,9 +43,21 @@ export const PersonalDataSchema: z.ZodType<WizardPersonalData> = z.object({
   name: z.string(),
   phone: z.string(),
   email: z.email(),
-  linkedin: z.union([z.url(), z.string().startsWith("linkedin.com"), z.literal("")]),
-  github: z.union([z.url(), z.string().startsWith("github.com"), z.literal("")]),
-});
+  linkedin: z.union([
+    z.literal(""),
+    z.string().regex(
+      /^(https?:\/\/)?(www\.)?linkedin\.com\/.+$/i,
+      "Invalid LinkedIn URL"
+    )
+  ]),
+  github: z.union([
+    z.literal(""),
+    z.string().regex(
+      /^(https?:\/\/)?(www\.)?github\.com\/.+$/i,
+      "Invalid GitHub URL"
+    )
+  ]),
+}); 
 
 export const FormDataSchema: z.ZodType<WizardFormData> = z.object({
   personalData: PersonalDataSchema,
