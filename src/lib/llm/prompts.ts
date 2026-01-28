@@ -60,35 +60,166 @@ ${resumeData}
 `;
 
 /**
- * CURATE_RESUME_PROMPT
- * Used to curate resume based on specific job description
+ * EXTRACT_KEYWORDS_PROMPT
+ * Used to extract keywords from job description
  * 
- * @param resumeData - Current resume data as JSON string
- * @param jobDescription - Target job description to tailor for
- * @param lang - Target language for output ("en" | "id")
- * @param schema - JSON schema example for output structure (use RESUME_SCHEMA_EXAMPLE)
+ * @param jobDescription - Job description to extract keywords from
  * 
- * Input: JSON (FormData structure), plain text (job description)
- * Output: JSON (same FormData structure with optimized content)
+ * Input: plain text (job description)
+ * Output: JSON (extracted keywords)
  */
-export const CURATE_RESUME_PROMPT = (resumeData: string, jobDescription: string, lang: ResumeLanguage = "en") => 
-`Tailor this resume for the job. Output ONLY the JSON object, no other text.
+export const EXTRACT_KEYWORDS_PROMPT = (jobDescription: string) => `Extract job requirements as JSON. Output ONLY the JSON object, no other text.
 
-IMPORTANT: Write the output in ${LANGUAGE_LABELS[lang]}.
+Example format:
+{{
+  "required_skills": ["Python", "AWS"],
+  "preferred_skills": ["Kubernetes"],
+  "experience_requirements": ["5+ years"],
+  "education_requirements": ["Bachelor's in CS"],
+  "key_responsibilities": ["Lead team"],
+  "keywords": ["microservices", "agile"],
+  "experience_years": 5,
+  "seniority_level": "senior"
+}}
+
+Extract numeric years (e.g., "5+ years" → 5) and infer seniority level.
+
+Job description:
+${jobDescription}
+`;
+
+/**
+ * CRITICAL_TRUTHFULNESS_RULES & CRITICAL_TRUTHFULNESS_RULES_TEMPLATE
+ * Used to generate truthfulness rules for curating resume
+ * 
+ * @param rule_7 - Rule 7 to be added to the template
+ * 
+ * Input: plain text (rule 7)
+ * Output: plain text (truthfulness rules)
+ */
+export const TRUTHFUL_TEMPLATE = (rule_7: string) => `CRITICAL TRUTHFULNESS RULES - NEVER VIOLATE:
+1. DO NOT add any skill, tool, technology, or certification that is not explicitly mentioned in the original resume
+2. DO NOT invent numeric achievements (e.g., "increased by 30%") unless they exist in original
+3. DO NOT add company names, product names, or technical terms not in the original
+4. DO NOT upgrade experience level (e.g., "Junior" -> "Senior")
+5. DO NOT add languages, frameworks, or platforms the candidate hasn't used
+6. DO NOT extend employment dates or change timelines (start/end years)
+7. ${rule_7}
+8. Preserve factual accuracy - only use information provided by the candidate
+
+Violation of these rules could cause serious problems for the candidate in job interviews.
+`;
+
+export const TRUTHFUL_RULES = {
+    "nudge": TRUTHFUL_TEMPLATE(
+        "DO NOT add new bullet points or content - only rephrase existing content"
+    ),
+    "keywords": TRUTHFUL_TEMPLATE(
+        "You may rephrase existing bullet points to include keywords, but do NOT add new bullet points"
+    ),
+    "full": TRUTHFUL_TEMPLATE(
+        "You may expand existing bullet points or add new ones that elaborate on existing work, but DO NOT invent entirely new responsibilities"
+    ),
+};
+
+export const IMPROVE_RESUME_PROMPT_NUDGE = (truth_rules: string, lang: ResumeLanguage, schema: string = RESUME_SCHEMA, resumeData: string, jobDescription: string, jobKeywords: string) => `Lightly nudge this resume toward the job description. Output ONLY the JSON object, no other text.
+
+${truth_rules}
+
+IMPORTANT: Generate ALL text content (summary, descriptions, skills) in ${LANGUAGE_LABELS[lang]}.
+
+Rules:
+- Make minimal, conservative edits only where there is a clear existing match
+- Do NOT change the candidate's role, industry, or seniority level
+- Do NOT introduce new tools, technologies, or certifications not already present
+- Do NOT add new bullet points or sections
+- Preserve original bullet count and ordering within each section
+- Keep proper nouns (names, company names, locations) unchanged
+- Preserve the structure of any customSections from the original resume
+- Preserve original date ranges exactly - do not modify years
+- If the resume is non-technical, do NOT add technical jargon
+- Do NOT use em dash ("—") anywhere in the writing/output, even if it exists, remove it
 
 Job Description:
 ${jobDescription}
 
-Current Resume:
+Keywords to emphasize (only if already supported by resume content):
+${jobKeywords}
+
+Original Resume:
 ${resumeData}
 
-Instructions:
-- Reorder and emphasize relevant skills and experiences
-- DO NOT invent new information
-- Adjust language to match job requirements
-- Keep all information truthful
-- Return the same JSON structure with optimized content
+Output in this JSON format:
+${schema}
 `;
+
+
+export const IMPROVE_RESUME_PROMPT_KEYWORDS = (truth_rules: string, lang: ResumeLanguage, schema: string = RESUME_SCHEMA, resumeData: string, jobDescription: string, jobKeywords: string) => `Enhance this resume with relevant keywords from the job description. Output ONLY the JSON object, no other text.
+
+${truth_rules}
+
+IMPORTANT: Generate ALL text content (summary, descriptions, skills) in ${LANGUAGE_LABELS[lang]}.
+
+Rules:
+- Strengthen alignment by weaving in relevant keywords where evidence already exists
+- You may rephrase bullet points to include keyword phrasing
+- Do NOT introduce new skills, tools, or certifications not in the resume
+- Do NOT change role, industry, or seniority level
+- Preserve the structure of any customSections from the original resume
+- Preserve original date ranges exactly - do not modify years
+- If resume is non-technical, keep language non-technical while still aligning keywords
+- Do NOT use em dash ("—") anywhere in the writing/output, even if it exists, remove it
+
+Job Description:
+${jobDescription}
+
+Keywords to emphasize:
+${jobKeywords}
+
+Original Resume:
+${resumeData}
+
+Output in this JSON format:
+${schema}
+`;
+
+
+export const IMPROVE_RESUME_PROMPT_FULL = (truth_rules: string, lang: ResumeLanguage, schema: string = RESUME_SCHEMA, resumeData: string, jobDescription: string, jobKeywords: string) => `Tailor this resume for the job. Output ONLY the JSON object, no other text.
+
+${truth_rules}
+
+IMPORTANT: Generate ALL text content (summary, descriptions, skills) in ${LANGUAGE_LABELS[lang]}.
+
+Rules:
+- Rephrase content to highlight relevant experience
+- DO NOT invent new information
+- Use action verbs and quantifiable achievements
+- Keep proper nouns (names, company names, locations) unchanged
+- Translate job titles, descriptions, and skills to {output_language}
+- Preserve the structure of any customSections from the original resume
+- Improve custom section content the same way as standard sections
+- Preserve original date ranges exactly - do not modify years
+- Calculate and emphasize total relevant experience duration when it matches requirements
+- Do NOT use em dash ("—") anywhere in the writing/output, even if it exists, remove it
+
+Job Description:
+${jobDescription}
+
+Keywords to emphasize:
+${jobKeywords}
+
+Original Resume:
+${resumeData}
+
+Output in this JSON format:
+${schema}
+`;
+
+export const IMPROVE_RESUME_PROMPTS = {
+    "nudge": IMPROVE_RESUME_PROMPT_NUDGE,
+    "keywords": IMPROVE_RESUME_PROMPT_KEYWORDS,
+    "full": IMPROVE_RESUME_PROMPT_FULL,
+};
 
 /**
  * PARSE_RESUME_PROMPT (currently not being used - no pdf upload)

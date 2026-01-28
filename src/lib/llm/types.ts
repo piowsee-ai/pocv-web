@@ -4,11 +4,14 @@
 
 export type LLMProvider = "openai" | "gemini";
 
+export type ResponseSchemaType = "resume" | "keywords" | "none";
+
 export interface LLMConfig {
   provider: LLMProvider;
   model?: string;
   temperature?: number;
   maxTokens?: number;
+  responseSchema?: ResponseSchemaType;
 }
 
 export interface LLMMessage {
