@@ -46,7 +46,7 @@
     "disposable-email-domains": "^1.0.62",
     "lucide-react": "^0.541.0",
     "motion": "^12.29.2",
-    "next": "15.5.9",
+    "next": "15.5.10",
     "nunjucks": "^3.2.4",
     "openai": "^6.16.0",
     "puppeteer-core": "^24.36.1",
