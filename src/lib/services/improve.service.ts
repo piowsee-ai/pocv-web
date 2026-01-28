@@ -44,7 +44,13 @@ export async function extractKeywords(
 ): Promise<ExtractedKeywords> {
   const prompt = EXTRACT_KEYWORDS_PROMPT(jobDescription);
 
-  const response = await chat([{ role: "user", content: prompt }], config);
+  // Use keywords schema for structured output
+  const keywordsConfig: Partial<LLMConfig> = {
+    ...config,
+    responseSchema: "keywords",
+  };
+
+  const response = await chat([{ role: "user", content: prompt }], keywordsConfig);
 
   return JSON.parse(response.content.trim());
 }

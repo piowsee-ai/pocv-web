@@ -5,6 +5,7 @@ import {
   LLMResponse,
   LLMConfig,
   DEFAULT_CONFIGS,
+  ResponseSchemaType,
 } from "./types";
 
 const RESUME_JSON_SCHEMA = {
@@ -143,6 +144,48 @@ const RESUME_JSON_SCHEMA = {
   },
 };
 
+const KEYWORDS_JSON_SCHEMA = {
+  name: "keywords",
+  strict: true,
+  schema: {
+    type: "object",
+    properties: {
+      required_skills: { type: "array", items: { type: "string" } },
+      preferred_skills: { type: "array", items: { type: "string" } },
+      experience_requirements: { type: "array", items: { type: "string" } },
+      education_requirements: { type: "array", items: { type: "string" } },
+      key_responsibilities: { type: "array", items: { type: "string" } },
+      keywords: { type: "array", items: { type: "string" } },
+      experience_years: { type: "number" },
+      seniority_level: { type: "string" },
+    },
+    required: [
+      "required_skills",
+      "preferred_skills",
+      "experience_requirements",
+      "education_requirements",
+      "key_responsibilities",
+      "keywords",
+      "experience_years",
+      "seniority_level",
+    ],
+    additionalProperties: false,
+  },
+};
+
+// Map schema type to schema object
+function getSchemaConfig(schemaType?: ResponseSchemaType) {
+  switch (schemaType) {
+    case "keywords":
+      return KEYWORDS_JSON_SCHEMA;
+    case "none":
+      return null;
+    case "resume":
+    default:
+      return RESUME_JSON_SCHEMA;
+  }
+}
+
 export class OpenAIProvider implements LLMProviderClient {
   private client: OpenAI;
 
@@ -159,6 +202,7 @@ export class OpenAIProvider implements LLMProviderClient {
     const model = config?.model ?? defaults.model;
     const temperature = config?.temperature ?? defaults.temperature;
     const maxTokens = config?.maxTokens ?? defaults.maxTokens;
+    const schemaConfig = getSchemaConfig(config?.responseSchema);
 
     // Build input string from messages
     const systemMessage = messages.find((m) => m.role === "system");
@@ -167,16 +211,21 @@ export class OpenAIProvider implements LLMProviderClient {
     // Combine messages into input
     const input = userMessages.map((m) => m.content).join("\n\n");
 
+    // Build text format options based on schema
+    const textFormat = schemaConfig
+      ? {
+          format: {
+            type: "json_schema" as const,
+            ...schemaConfig,
+          },
+        }
+      : { format: { type: "json_object" as const } };
+
     const response = await this.client.responses.create({
       model,
       instructions: systemMessage?.content,
       input,
-      text: {
-        format: {
-          type: "json_schema",
-          ...RESUME_JSON_SCHEMA,
-        },
-      },
+      text: textFormat,
     });
 
     // Extract text from response
