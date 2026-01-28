@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Switch } from "@/components/ui/switch";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 
 import { StepOneForm } from "@/components/page-1/step-one/form";
 import { StepTwoForm } from "@/components/page-1/step-two/form";
@@ -29,6 +31,7 @@ export function WizardStep() {
   const [useDefaultInputEdu, setUseDefaultInputEdu] = useState(true);
   const [useDefaultInputWork, setUseDefaultInputWork] = useState(true);
   const [useDefaultInputOrg, setUseDefaultInputOrg] = useState(true);
+  const [skipOrganizationExperience, setSkipOrganizationExperience] = useState(false);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -186,6 +189,14 @@ export function WizardStep() {
         errors.email = "Format email tidak valid.";
       }
 
+      if (formData.personalData.linkedin && !/^(https?:\/\/)?(www\.)?linkedin\.com\/.+$/i.test(formData.personalData.linkedin)) {
+        errors.linkedin = "Format LinkedIn URL tidak valid. Contoh: linkedin.com/in/username";
+      }
+
+      if (formData.personalData.github && !/^(https?:\/\/)?(www\.)?github\.com\/.+$/i.test(formData.personalData.github)) {
+        errors.github = "Format GitHub URL tidak valid. Contoh: github.com/username";
+      }
+
       if (!formData.educations) errors.education = "Pendidikan harus diisi.";
     }
     if (step === 2) {
@@ -216,7 +227,7 @@ export function WizardStep() {
       });
     }
 
-    if (step === 4) {
+    if (step === 4 && !skipOrganizationExperience) {
       formData.organizationExperiences.forEach((exp, i) => {
         if (useDefaultInputOrg) {
           if (!exp.position) errors[`position-${i}`] = `Jabatan harus diisi.`;
@@ -288,21 +299,23 @@ export function WizardStep() {
             description: exp.description,
           }));
 
-      const finalOrganizationExperiences = useDefaultInputOrg
-        ? formData.organizationExperiences.map((exp) => ({
-            position: exp.position,
-            organization: exp.organization,
-            startDate: exp.startDate,
-            endDate: exp.endDate,
-            description: exp.description,
-          }))
-        : formData.organizationExperiences.map((exp) => ({
-            position: "",
-            organization: "",
-            startDate: "",
-            endDate: "",
-            description: exp.description,
-          }));
+      const finalOrganizationExperiences = skipOrganizationExperience
+        ? []
+        : useDefaultInputOrg
+          ? formData.organizationExperiences.map((exp) => ({
+              position: exp.position,
+              organization: exp.organization,
+              startDate: exp.startDate,
+              endDate: exp.endDate,
+              description: exp.description,
+            }))
+          : formData.organizationExperiences.map((exp) => ({
+              position: "",
+              organization: "",
+              startDate: "",
+              endDate: "",
+              description: exp.description,
+            }));
 
       const finalData = {
         personalData: {
@@ -494,7 +507,8 @@ export function WizardStep() {
                   <div className="flex items-center justify-between mb-4">
                     <div>
                       <h2 className="text-2xl font-bold text-neutral-900 dark:text-white mb-1">
-                        Pengalaman Organisasi
+                        Pengalaman Organisasi{" "}
+                        <span className="text-sm font-normal text-neutral-500">(Opsional)</span>
                       </h2>
                       <p className="text-sm text-neutral-600 dark:text-neutral-300 pr-10">
                         Bagikan pengalaman organisasimu. Kamu bisa menulis
@@ -502,38 +516,58 @@ export function WizardStep() {
                       </p>
                     </div>
 
-                    <div className="flex flex-col items-center">
-                      <Switch
-                        checked={useDefaultInputOrg}
-                        onCheckedChange={setUseDefaultInputOrg}
-                        className="cursor-pointer"
-                      />
-                      <span className="text-[10px] text-neutral-600 dark:text-neutral-300 mt-1 whitespace-nowrap w-17.5 text-center">
-                        {useDefaultInputOrg ? "Input Default" : "Input Bebas"}
-                      </span>
-                    </div>
+                    {!skipOrganizationExperience && (
+                      <div className="flex flex-col items-center">
+                        <Switch
+                          checked={useDefaultInputOrg}
+                          onCheckedChange={setUseDefaultInputOrg}
+                          className="cursor-pointer"
+                        />
+                        <span className="text-[10px] text-neutral-600 dark:text-neutral-300 mt-1 whitespace-nowrap w-17.5 text-center">
+                          {useDefaultInputOrg ? "Input Default" : "Input Bebas"}
+                        </span>
+                      </div>
+                    )}
                   </div>
 
-                  {useDefaultInputOrg ? (
-                    <StepFourForm
-                      formData={formData}
-                      formErrors={formErrors}
-                      handleChange={handleChange}
-                      addSectionItem={addSectionItem}
-                      removeSectionItem={removeSectionItem}
-                      openIndexes={openIndexesOrg}
-                      setOpenIndexes={setOpenIndexesOrg}
+                  <div className="flex items-center gap-2 mb-4">
+                    <Checkbox
+                      id="skipOrganization"
+                      checked={skipOrganizationExperience}
+                      onCheckedChange={(checked) => setSkipOrganizationExperience(checked === true)}
                     />
-                  ) : (
-                    <StepFourStory
-                      formData={formData}
-                      formErrors={formErrors}
-                      handleChange={handleChange}
-                      addSectionItem={addSectionItem}
-                      removeSectionItem={removeSectionItem}
-                      openIndexes={openIndexesOrg}
-                      setOpenIndexes={setOpenIndexesOrg}
-                    />
+                    <Label
+                      htmlFor="skipOrganization"
+                      className="text-sm font-normal text-neutral-600 dark:text-neutral-300 cursor-pointer"
+                    >
+                      Lewati bagian ini
+                    </Label>
+                  </div>
+
+                  {!skipOrganizationExperience && (
+                    <>
+                      {useDefaultInputOrg ? (
+                        <StepFourForm
+                          formData={formData}
+                          formErrors={formErrors}
+                          handleChange={handleChange}
+                          addSectionItem={addSectionItem}
+                          removeSectionItem={removeSectionItem}
+                          openIndexes={openIndexesOrg}
+                          setOpenIndexes={setOpenIndexesOrg}
+                        />
+                      ) : (
+                        <StepFourStory
+                          formData={formData}
+                          formErrors={formErrors}
+                          handleChange={handleChange}
+                          addSectionItem={addSectionItem}
+                          removeSectionItem={removeSectionItem}
+                          openIndexes={openIndexesOrg}
+                          setOpenIndexes={setOpenIndexesOrg}
+                        />
+                      )}
+                    </>
                   )}
                 </>
               );

@@ -14,7 +14,7 @@ export const WorkExperienceSchema: z.ZodType<WizardWorkExperience> = z.object({
   startDate: z.string(),
   endDate: z.string(),
   location: z.string(),
-  description: z.string(),
+  description: z.string().min(1, "Description must be filled"),
 });
 
 export const OrganizationExperienceSchema: z.ZodType<WizardOrganizationExperience> = z.object({
@@ -23,7 +23,7 @@ export const OrganizationExperienceSchema: z.ZodType<WizardOrganizationExperienc
   organization: z.string(),
   startDate: z.string(),
   endDate: z.string(),
-  description: z.string(),
+  description: z.string().min(1, "Description must be filled"),
 });
 
 export const EducationSchema: z.ZodType<WizardEducation> = z.object({
@@ -35,16 +35,28 @@ export const EducationSchema: z.ZodType<WizardEducation> = z.object({
   endDate: z.string(),
   location: z.string(),
   gpa: z.string(),
-  description: z.string(),
+  description: z.string().min(1, "Description must be filled"),
 });
 
 export const PersonalDataSchema: z.ZodType<WizardPersonalData> = z.object({
   id: z.uuid().optional(),
-  name: z.string(),
-  phone: z.string(),
-  email: z.email(),
-  linkedin: z.union([z.url(), z.string().startsWith("linkedin.com"), z.literal("")]),
-  github: z.union([z.url(), z.string().startsWith("github.com"), z.literal("")]),
+  name: z.string().min(1, "Name must be filled"),
+  phone: z.string().min(1, "Phone number must be filled"),
+  email: z.email("Invalid email format"),
+  linkedin: z.union([
+    z.literal(""),
+    z.string().regex(
+      /^(https?:\/\/)?(www\.)?linkedin\.com\/.+$/i,
+      "Invalid LinkedIn URL",
+    ),
+  ]),
+  github: z.union([
+    z.literal(""),
+    z.string().regex(
+      /^(https?:\/\/)?(www\.)?github\.com\/.+$/i,
+      "Invalid GitHub URL"
+    ),
+  ]),
 });
 
 export const FormDataSchema: z.ZodType<WizardFormData> = z.object({

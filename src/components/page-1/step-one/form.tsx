@@ -94,6 +94,11 @@ export function StepOneForm({
           placeholder="Tautan LinkedIn"
           className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0"
         />
+        {formErrors.linkedin && (
+          <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+            {formErrors.linkedin}
+          </p>
+        )}
       </div>
 
       <div className="mb-4">
@@ -107,6 +112,11 @@ export function StepOneForm({
           placeholder="Tautan Github"
           className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0"
         />
+        {formErrors.github && (
+          <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+            {formErrors.github}
+          </p>
+        )}
       </div>
     </>
   );
