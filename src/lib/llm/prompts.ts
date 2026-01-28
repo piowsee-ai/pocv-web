@@ -91,6 +91,70 @@ Instructions:
 `;
 
 /**
+ * EXTRACT_KEYWORDS_PROMPT
+ * Used to extract keywords from job description
+ * 
+ * @param jobDescription - Job description to extract keywords from
+ * 
+ * Input: plain text (job description)
+ * Output: JSON (extracted keywords)
+ */
+export const EXTRACT_KEYWORDS_PROMPT = (jobDescription: string) => `Extract job requirements as JSON. Output ONLY the JSON object, no other text.
+
+Example format:
+{{
+  "required_skills": ["Python", "AWS"],
+  "preferred_skills": ["Kubernetes"],
+  "experience_requirements": ["5+ years"],
+  "education_requirements": ["Bachelor's in CS"],
+  "key_responsibilities": ["Lead team"],
+  "keywords": ["microservices", "agile"],
+  "experience_years": 5,
+  "seniority_level": "senior"
+}}
+
+Extract numeric years (e.g., "5+ years" → 5) and infer seniority level.
+
+Job description:
+${jobDescription}
+`;
+
+/**
+ * CRITICAL_TRUTHFULNESS_RULES & CRITICAL_TRUTHFULNESS_RULES_TEMPLATE
+ * Used to generate truthfulness rules for curating resume
+ * 
+ * @param rule_7 - Rule 7 to be added to the template
+ * 
+ * Input: plain text (rule 7)
+ * Output: plain text (truthfulness rules)
+ */
+export const CRITICAL_TRUTHFULNESS_RULES_TEMPLATE = (rule_7: string) => `CRITICAL TRUTHFULNESS RULES - NEVER VIOLATE:
+1. DO NOT add any skill, tool, technology, or certification that is not explicitly mentioned in the original resume
+2. DO NOT invent numeric achievements (e.g., "increased by 30%") unless they exist in original
+3. DO NOT add company names, product names, or technical terms not in the original
+4. DO NOT upgrade experience level (e.g., "Junior" -> "Senior")
+5. DO NOT add languages, frameworks, or platforms the candidate hasn't used
+6. DO NOT extend employment dates or change timelines (start/end years)
+7. ${rule_7}
+8. Preserve factual accuracy - only use information provided by the candidate
+
+Violation of these rules could cause serious problems for the candidate in job interviews.
+`;
+
+export const CRITICAL_TRUTHFULNESS_RULES = {
+    "nudge": CRITICAL_TRUTHFULNESS_RULES_TEMPLATE(
+        "DO NOT add new bullet points or content - only rephrase existing content"
+    ),
+    "keywords": CRITICAL_TRUTHFULNESS_RULES_TEMPLATE(
+        "You may rephrase existing bullet points to include keywords, but do NOT add new bullet points"
+    ),
+    "full": CRITICAL_TRUTHFULNESS_RULES_TEMPLATE(
+        "You may expand existing bullet points or add new ones that elaborate on existing work, but DO NOT invent entirely new responsibilities"
+    ),
+};
+
+
+/**
  * PARSE_RESUME_PROMPT (currently not being used - no pdf upload)
  * Used to parse raw resume text (from PDF/document upload) into structured JSON
  * 
