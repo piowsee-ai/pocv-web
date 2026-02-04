@@ -54,7 +54,6 @@ export interface PersonalProject extends BasePersonalProject {
 // Override 'years' to be optional since editor uses startDate/endDate separately
 export interface CustomSectionItem extends Omit<BaseCustomSectionItem, "years"> {
   years?: string;
-  location?: string;
   startDate?: string;
   endDate?: string;
   isCurrent?: boolean;
@@ -66,6 +65,13 @@ export interface CustomSection extends Omit<BaseCustomSection, "items"> {
   items: CustomSectionItem[];
 }
 
+// Item for Others section (dynamic, no fixed categories)
+export interface OthersItem {
+  id: string;
+  title: string;
+  descriptionHtml: string;
+}
+
 // Section titles for customizable headers
 export interface SectionTitles {
   summary?: string;
@@ -74,6 +80,7 @@ export interface SectionTitles {
   organization?: string;
   projects?: string;
   additional?: string;
+  others?: string;
   [key: string]: string | undefined;
 }
 
@@ -86,6 +93,8 @@ export interface EditorFormData extends Omit<BaseFormData, "educations" | "workE
   customSections: CustomSection[];
   sectionTitles?: SectionTitles;
   sectionOrder?: string[];
+  // Editor-only: Dynamic items for Others section (unlimited, no fixed categories)
+  othersItems?: OthersItem[];
 }
 
 // Alias for backward compatibility

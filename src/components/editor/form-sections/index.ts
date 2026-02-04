@@ -6,6 +6,7 @@ export { WorkExperienceSection } from "./work/WorkExperienceSection";
 export { OrganizationSection } from "./organization/OrganizationSection";
 export { ProjectsSection } from "./project/ProjectsSection";
 export { AdditionalSection } from "./custom/AdditionalSection";
+export { OthersSection } from "./others/OthersSection";
 
 // Export common types and helpers
 export type { FormSectionProps } from "./common/types";
@@ -20,6 +21,7 @@ import { WorkExperienceSection } from "./work/WorkExperienceSection";
 import { OrganizationSection } from "./organization/OrganizationSection";
 import { ProjectsSection } from "./project/ProjectsSection";
 import { AdditionalSection } from "./custom/AdditionalSection";
+import { OthersSection } from "./others/OthersSection";
 import { FormSectionProps } from "./common/types";
 
 export const STEP_COMPONENTS: Record<EditorStep, React.FC<FormSectionProps>> = {
@@ -30,4 +32,6 @@ export const STEP_COMPONENTS: Record<EditorStep, React.FC<FormSectionProps>> = {
   organization: OrganizationSection,
   projects: ProjectsSection,
   additional: AdditionalSection,
+  others: OthersSection,
 };
+
