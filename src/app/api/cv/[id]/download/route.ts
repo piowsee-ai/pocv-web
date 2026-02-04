@@ -5,7 +5,7 @@ import { requireUser } from "@/lib/auth/auth-server-helper";
 import { CVService } from "@/lib/services/cv.service";
 import type { FormData } from "@/types/editor-form-data";
 
-export const maxDuration = 300;
+export const maxDuration = 60;
 
 export async function GET(
   req: NextRequest,
@@ -16,7 +16,7 @@ export async function GET(
 
   try {
     userId = await requireUser();
-    
+
     // Get CV data from database
     const cvData: FormData | null = await CVService.getCVDetail(id, userId);
 
@@ -53,7 +53,7 @@ export async function GET(
     });
 
     // Return PDF as downloadable file
-    const fileName = cvData.personalData?.name 
+    const fileName = cvData.personalData?.name
       ? `CV-${cvData.personalData.name.replace(/[^a-zA-Z0-9]/g, "_")}.pdf`
       : `CV-${Date.now()}.pdf`;
 
@@ -72,14 +72,14 @@ export async function GET(
       method: req.method,
       route: req.url,
     });
-    
+
     if (error.status) {
       return NextResponse.json(
         { success: false, message: error.message },
         { status: error.status }
       );
     }
-    
+
     return NextResponse.json(
       {
         success: false,

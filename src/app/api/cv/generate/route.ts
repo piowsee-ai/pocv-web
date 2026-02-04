@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from "uuid";
 import { requireUser } from "@/lib/auth/auth-server-helper";
 import { CVService } from "@/lib/services/cv.service";
 
-export const maxDuration = 300;
+export const maxDuration = 60;
 
 function addIdsToFormData(data: FormData): FormData {
   return {

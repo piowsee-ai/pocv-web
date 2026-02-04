@@ -1,10 +1,13 @@
 /**
  * PDF Generation Service
  * Uses Puppeteer to render HTML templates to PDF
+ * 
+ * Browser Strategy:
+ * - Development: Uses 'puppeteer' package which bundles Chromium (no hardcoded paths)
+ * - Production: Uses 'puppeteer-core' + '@sparticuz/chromium' for serverless environments
  */
 
-import puppeteer, { Browser, PDFOptions } from "puppeteer-core";
-import chromium from "@sparticuz/chromium";
+import type { Browser, PDFOptions } from "puppeteer-core";
 import nunjucks from "nunjucks";
 import { readFileSync } from "fs";
 import { join } from "path";
@@ -58,35 +61,39 @@ interface PDFGenerationOptions {
 // Browser singleton for reuse (important for serverless)
 let browserInstance: Browser | null = null;
 
+/**
+ * Get browser instance based on environment
+ * - Development: Uses full 'puppeteer' package with bundled Chromium
+ * - Production: Uses 'puppeteer-core' + '@sparticuz/chromium' for serverless
+ * 
+ * This approach eliminates hardcoded paths and works consistently across environments.
+ */
 async function getBrowser(): Promise<Browser> {
   if (browserInstance) {
     return browserInstance;
   }
 
-  const isLocal = process.env.NODE_ENV === "development";
+  const isProduction = process.env.NODE_ENV === "production";
 
-  if (isLocal) {
-    // For local development, find Chrome/Chromium based on OS
-    const isWindows = process.platform === "win32";
-    const executablePath =
-      process.env.CHROME_PATH ||
-      (isWindows
-        ? "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
-        : "/usr/bin/chromium-browser");
+  if (isProduction) {
+    // Production: Use puppeteer-core with @sparticuz/chromium for serverless
+    const puppeteerCore = await import("puppeteer-core");
+    const chromium = await import("@sparticuz/chromium");
 
-    browserInstance = await puppeteer.launch({
-      executablePath,
+    browserInstance = await puppeteerCore.default.launch({
+      args: chromium.default.args,
+      defaultViewport: { width: 1920, height: 1080 },
+      executablePath: await chromium.default.executablePath(),
       headless: true,
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
   } else {
-    // For production (serverless), use @sparticuz/chromium
-    browserInstance = await puppeteer.launch({
-      args: chromium.args,
-      defaultViewport: { width: 1920, height: 1080 },
-      executablePath: await chromium.executablePath(),
+    // Development: Use full puppeteer package with bundled Chromium (no hardcoded paths!)
+    const puppeteer = await import("puppeteer");
+
+    browserInstance = await puppeteer.default.launch({
       headless: true,
-    });
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    }) as unknown as Browser;
   }
 
   return browserInstance;
@@ -113,7 +120,7 @@ function normalizeDescription(description: string | string[] | undefined): strin
 function formatDate(dateStr: string, isCurrent?: boolean): string {
   if (isCurrent) return "Present";
   if (!dateStr) return "";
-  
+
   // Handle YYYY-MM format
   const yyyyMmMatch = dateStr.match(/^(\d{4})-(\d{2})$/);
   if (yyyyMmMatch) {
@@ -125,7 +132,7 @@ function formatDate(dateStr: string, isCurrent?: boolean): string {
       year: "numeric",
     });
   }
-  
+
   // Handle MM/YYYY format (legacy)
   const mmYyyyMatch = dateStr.match(/^(\d{1,2})\/(\d{4})$/);
   if (mmYyyyMatch) {
@@ -137,7 +144,7 @@ function formatDate(dateStr: string, isCurrent?: boolean): string {
       year: "numeric",
     });
   }
-  
+
   return dateStr;
 }
 
@@ -155,7 +162,7 @@ function filterEmptyEntries(data: FormData): FormData & { formattedDates: Record
       ...edu,
       description: normalizeDescription(edu.description),
       startDate: formatDate(edu.startDate),
-      endDate: edu.isCurrent ? "Present" : formatDate(edu.endDate) || "Present",
+      endDate: edu.isCurrent ? "Present" : formatDate(edu.endDate),
     })) || [],
     // Filter work experiences - only include if company or position is present
     workExperiences: data.workExperiences?.filter(
@@ -164,7 +171,7 @@ function filterEmptyEntries(data: FormData): FormData & { formattedDates: Record
       ...exp,
       description: normalizeDescription(exp.description),
       startDate: formatDate(exp.startDate),
-      endDate: exp.isCurrent ? "Present" : formatDate(exp.endDate) || "Present",
+      endDate: exp.isCurrent ? "Present" : formatDate(exp.endDate),
     })) || [],
     // Filter organization experiences - only include if organization or position is present
     organizationExperiences: data.organizationExperiences?.filter(
@@ -173,7 +180,7 @@ function filterEmptyEntries(data: FormData): FormData & { formattedDates: Record
       ...org,
       description: normalizeDescription(org.description),
       startDate: formatDate(org.startDate),
-      endDate: org.isCurrent ? "Present" : formatDate(org.endDate) || "Present",
+      endDate: org.isCurrent ? "Present" : formatDate(org.endDate),
     })) || [],
     // Filter personal projects - only include if name is present
     personalProjects: data.personalProjects?.filter(
@@ -216,7 +223,7 @@ export function renderHTML(
 ): string {
   const template = getTemplate();
   const css = getCSS();
-  
+
   // Filter out empty entries before rendering
   const filteredData = filterEmptyEntries(data);
 
