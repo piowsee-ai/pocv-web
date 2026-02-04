@@ -5,7 +5,7 @@ import { TextArea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronUp, Trash } from "lucide-react";
-import type { WizardOrganizationExperience } from "@/types/form-data";
+import type { OrganizationExperience } from "@/types/form-data";
 import {
   Dialog,
   DialogContent,
@@ -17,7 +17,7 @@ import {
 
 interface StepFourStoryProps {
   formData: {
-    organizationExperiences: WizardOrganizationExperience[];
+    organizationExperiences: OrganizationExperience[];
   };
   formErrors: Record<string, string>;
   handleChange: (
@@ -126,7 +126,7 @@ export function StepFourStory({
                 </Label>
                 <TextArea
                   id="description"
-                  value={exp.description}
+                  value={exp.description[0] || ""}
                   onChange={(e) =>
                     handleChange(e, "organizationExperiences", i)
                   }

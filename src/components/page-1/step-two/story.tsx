@@ -5,7 +5,7 @@ import { TextArea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronUp, Trash } from "lucide-react";
-import type { WizardEducation } from "@/types/form-data";
+import type { Education } from "@/types/form-data";
 import {
   Dialog,
   DialogContent,
@@ -17,7 +17,7 @@ import {
 
 interface StepTwoStoryProps {
   formData: {
-    educations: WizardEducation[];
+    educations: Education[];
   };
   formErrors: Record<string, string>;
   handleChange: (
@@ -125,7 +125,7 @@ export function StepTwoStory({
                 </Label>
                 <TextArea
                   id="description"
-                  value={exp.description}
+                  value={exp.description[0] || ""}
                   onChange={(e) => handleChange(e, "educations", i)}
                   placeholder="Tulis riwayat pendidikanmu secara bebas, misalnya: Saya menyelesaikan studi di Universitas Indonesia jurusan Ekonomi, dengan fokus pada analisis data dan manajemen bisnis."
                   className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0 min-h-[100px]"

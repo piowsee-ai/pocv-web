@@ -7,6 +7,14 @@ import { Progress } from "@/components/ui/progress";
 import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogFooter,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
 import { StepOneForm } from "@/components/page-1/step-one/form";
 import { StepTwoForm } from "@/components/page-1/step-two/form";
@@ -16,14 +24,7 @@ import { StepThreeStory } from "@/components/page-1/step-three/story";
 import { StepFourForm } from "@/components/page-1/step-four/form";
 import { StepFourStory } from "@/components/page-1/step-four/story";
 
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogFooter,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
+import type { FormData } from "@/types/form-data";
 
 export function WizardStep() {
   const router = useRouter();
@@ -35,14 +36,17 @@ export function WizardStep() {
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     personalData: {
       name: "",
       phone: "",
       linkedin: "",
       email: "",
       github: "",
+      location: "",
+      website: "",
     },
+    summary: "",
     educations: [
       {
         degree: "",
@@ -52,7 +56,7 @@ export function WizardStep() {
         endDate: "",
         location: "",
         gpa: "",
-        description: "",
+        description: [],
       },
     ],
     workExperiences: [
@@ -62,7 +66,7 @@ export function WizardStep() {
         startDate: "",
         endDate: "",
         location: "",
-        description: "",
+        description: [],
       },
     ],
     organizationExperiences: [
@@ -71,9 +75,17 @@ export function WizardStep() {
         organization: "",
         startDate: "",
         endDate: "",
-        description: "",
+        description: [],
       },
     ],
+    personalProjects: [],
+    additional: {
+      skills: [],
+      languages: [],
+      certifications: [],
+      achievements: [],
+    },
+    customSections: [],
   });
 
   const [submitDialogOpen, setSubmitDialogOpen] = useState(false);
@@ -92,7 +104,7 @@ export function WizardStep() {
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     section: SectionType = "personalData",
-    index?: number
+    index?: number,
   ) => {
     const { id, value } = e.target;
 
@@ -109,7 +121,12 @@ export function WizardStep() {
 
       const updatedArray = [...prev[section]];
       if (index !== undefined) {
-        updatedArray[index] = { ...updatedArray[index], [id]: value };
+        // Special handling for description to ensure it remains an array
+        if (id === "description") {
+          updatedArray[index] = { ...updatedArray[index], [id]: [value] };
+        } else {
+          updatedArray[index] = { ...updatedArray[index], [id]: value };
+        }
       }
 
       return { ...prev, [section]: updatedArray };
@@ -134,7 +151,7 @@ export function WizardStep() {
           endDate: "",
           location: "",
           gpa: "",
-          description: "",
+          description: [],
         };
       case "workExperiences":
         return {
@@ -143,7 +160,7 @@ export function WizardStep() {
           startDate: "",
           endDate: "",
           location: "",
-          description: "",
+          description: [],
         };
       case "organizationExperiences":
         return {
@@ -151,7 +168,7 @@ export function WizardStep() {
           organization: "",
           startDate: "",
           endDate: "",
-          description: "",
+          description: [],
         };
       default:
         throw new Error("Invalid section type");
@@ -204,12 +221,11 @@ export function WizardStep() {
         if (useDefaultInputEdu) {
           if (!exp.degree) errors[`degree-${i}`] = `Gelar harus diisi.`;
           if (!exp.major) errors[`major-${i}`] = `Program Studi harus diisi.`;
-          if (!exp.institution)
-            errors[`institution-${i}`] = `Institusi harus diisi.`;
+          if (!exp.institution) errors[`institution-${i}`] = `Institusi harus diisi.`;
           if (!exp.startDate) errors[`startDate-${i}`] = `Waktu Mulai harus diisi.`;
           if (!exp.endDate) errors[`endDate-${i}`] = `Waktu Akhir harus diisi.`;
         }
-        if (!exp.description)
+        if (!exp.description?.[0])
           errors[`description-${i}`] = `Deskripsi harus diisi.`;
       });
     }
@@ -218,11 +234,12 @@ export function WizardStep() {
         if (useDefaultInputWork) {
           if (!exp.position) errors[`position-${i}`] = `Jabatan harus diisi.`;
           if (!exp.company) errors[`company-${i}`] = `Perusahaan harus diisi.`;
-          if (!exp.startDate) errors[`startDate-${i}`] = `Waktu Mulai harus diisi.`;
+          if (!exp.startDate)
+            errors[`startDate-${i}`] = `Waktu Mulai harus diisi.`;
           if (!exp.endDate) errors[`endDate-${i}`] = `Waktu Akhir harus diisi.`;
         }
 
-        if (!exp.description)
+        if (!exp.description?.[0])
           errors[`description-${i}`] = `Deskripsi harus diisi.`;
       });
     }
@@ -233,11 +250,12 @@ export function WizardStep() {
           if (!exp.position) errors[`position-${i}`] = `Jabatan harus diisi.`;
           if (!exp.organization)
             errors[`organization-${i}`] = `Nama organisasi harus diisi.`;
-          if (!exp.startDate) errors[`startDate-${i}`] = `Waktu Mulai harus diisi.`;
+          if (!exp.startDate)
+            errors[`startDate-${i}`] = `Waktu Mulai harus diisi.`;
           if (!exp.endDate) errors[`endDate-${i}`] = `Waktu Akhir harus diisi.`;
         }
 
-        if (!exp.description)
+        if (!exp.description?.[0])
           errors[`description-${i}`] = `Deskripsi harus diisi.`;
       });
     }
@@ -259,75 +277,11 @@ export function WizardStep() {
     setSubmitError(null);
 
     try {
-      const finalWorkExperiences = useDefaultInputWork
-        ? formData.workExperiences.map((exp) => ({
-            position: exp.position,
-            company: exp.company,
-            startDate: exp.startDate,
-            endDate: exp.endDate,
-            location: exp.location,
-            description: exp.description,
-          }))
-        : formData.workExperiences.map((exp) => ({
-            position: "",
-            company: "",
-            startDate: "",
-            endDate: "",
-            location: "",
-            description: exp.description,
-          }));
-
-      const finalEducations = useDefaultInputEdu
-        ? formData.educations.map((exp) => ({
-            degree: exp.degree,
-            major: exp.major,
-            institution: exp.institution,
-            startDate: exp.startDate,
-            endDate: exp.endDate,
-            location: exp.location,
-            gpa: exp.gpa,
-            description: exp.description,
-          }))
-        : formData.educations.map((exp) => ({
-            degree: "",
-            major: "",
-            institution: "",
-            startDate: "",
-            endDate: "",
-            location: "",
-            gpa: "",
-            description: exp.description,
-          }));
-
-      const finalOrganizationExperiences = skipOrganizationExperience
-        ? []
-        : useDefaultInputOrg
-          ? formData.organizationExperiences.map((exp) => ({
-              position: exp.position,
-              organization: exp.organization,
-              startDate: exp.startDate,
-              endDate: exp.endDate,
-              description: exp.description,
-            }))
-          : formData.organizationExperiences.map((exp) => ({
-              position: "",
-              organization: "",
-              startDate: "",
-              endDate: "",
-              description: exp.description,
-            }));
-
       const finalData = {
-        personalData: {
-          name: formData.personalData.name,
-          phone: formData.personalData.phone,
-          email: formData.personalData.email,
-          linkedin: formData.personalData.linkedin,
-          github: formData.personalData.github,
-        },
-        workExperiences: finalWorkExperiences,
-        educations: finalEducations,
-        organizationExperiences: finalOrganizationExperiences,
+        ...formData,
+        organizationExperiences: skipOrganizationExperience
+          ? []
+          : formData.organizationExperiences,
       };
 
       // Call the generate API
@@ -358,7 +312,9 @@ export function WizardStep() {
     } catch (error) {
       console.error("Error generating CV:", error);
       setSubmitError(
-        error instanceof Error ? error.message : "Terjadi kesalahan saat membuat CV"
+        error instanceof Error
+          ? error.message
+          : "Terjadi kesalahan saat membuat CV",
       );
     } finally {
       setIsSubmitting(false);
@@ -508,7 +464,9 @@ export function WizardStep() {
                     <div>
                       <h2 className="text-2xl font-bold text-neutral-900 dark:text-white mb-1">
                         Pengalaman Organisasi{" "}
-                        <span className="text-sm font-normal text-neutral-500">(Opsional)</span>
+                        <span className="text-sm font-normal text-neutral-500">
+                          (Opsional)
+                        </span>
                       </h2>
                       <p className="text-sm text-neutral-600 dark:text-neutral-300 pr-10">
                         Bagikan pengalaman organisasimu. Kamu bisa menulis
@@ -534,7 +492,9 @@ export function WizardStep() {
                     <Checkbox
                       id="skipOrganization"
                       checked={skipOrganizationExperience}
-                      onCheckedChange={(checked) => setSkipOrganizationExperience(checked === true)}
+                      onCheckedChange={(checked) =>
+                        setSkipOrganizationExperience(checked === true)
+                      }
                     />
                     <Label
                       htmlFor="skipOrganization"
@@ -596,11 +556,7 @@ export function WizardStep() {
               </Button>
             )}
             {step === 4 && (
-              <Button
-                type="submit"
-                variant="green"
-                className="ml-auto w-24"
-              >
+              <Button type="submit" variant="green" className="ml-auto w-24">
                 Kirim
               </Button>
             )}

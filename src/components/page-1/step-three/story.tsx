@@ -3,7 +3,7 @@
 import { useState, useEffect, ChangeEvent } from "react";
 import { TextArea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import type { WizardWorkExperience } from "@/types/form-data";
+import type { WorkExperience } from "@/types/form-data";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronUp, Trash } from "lucide-react";
 import {
@@ -17,7 +17,7 @@ import {
 
 interface StepThreeStoryProps {
   formData: {
-    workExperiences: WizardWorkExperience[];
+    workExperiences: WorkExperience[];
   };
   formErrors: Record<string, string>;
   handleChange: (
@@ -125,7 +125,7 @@ export function StepThreeStory({
                 </Label>
                 <TextArea
                   id="description"
-                  value={exp.description}
+                  value={exp.description[0] || ""}
                   onChange={(e) => handleChange(e, "workExperiences", i)}
                   placeholder="Tulis pengalaman kerja atau proyekmu secara bebas, misalnya: Saya memiliki pengalaman 5 tahun di PT Teknologi Maju sebagai UI/UX Designer, di mana saya mengerjakan..."
                   className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0 min-h-[100px]"

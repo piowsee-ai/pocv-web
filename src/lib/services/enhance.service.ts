@@ -4,9 +4,7 @@
 
 import { chat, LLMProvider, LLMConfig } from "@/lib/llm";
 import { RESUME_ENHANCEMENT_PROMPT, ResumeLanguage } from "@/lib/llm/prompts";
-import type { FormData } from "@/types/editor-form-data";
-
-export type EnhancedFormData = FormData;
+import type { FormData } from "@/types/form-data";
 
 interface EnhanceOptions {
   provider?: LLMProvider;
@@ -17,7 +15,7 @@ interface EnhanceOptions {
 /**
  * Enhance all descriptions in a resume form data
  */
-export async function enhanceResume(formData: FormData, options?: EnhanceOptions): Promise<EnhancedFormData> {
+export async function enhanceResume(formData: FormData, options?: EnhanceOptions): Promise<FormData> {
   const config: Partial<LLMConfig> = {
     provider: options?.provider,
     model: options?.model,
