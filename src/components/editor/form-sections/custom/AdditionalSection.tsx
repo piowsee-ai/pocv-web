@@ -41,10 +41,10 @@ import { FormSectionProps } from "../common/types";
 import { getDescriptionHtml, updateDescription } from "../common/helpers";
 import { CustomSection, CustomSectionItem, FormData } from "@/types/editor-form-data";
 import { MonthPickerInput } from "@/components/ui/month-picker-input";
-import { LocationInput } from "@/components/ui/location-input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import { cn } from "@/lib/utils";
+import { MAX_LENGTH, truncateToMaxLength } from "@/lib/validation/editor-validation";
 
 // Custom Section - Tips
 const CUSTOM_SECTION_TIPS = [
@@ -125,9 +125,9 @@ function CustomSectionItemCard({
           <button
             type="button"
             onClick={() => setIsExpanded(!isExpanded)}
-            className="flex-1 text-left cursor-pointer"
+            className="flex-1 text-left cursor-pointer min-w-0"
           >
-            <span className="text-sm font-semibold text-emerald-700 truncate hover:text-emerald-800">
+            <span className="text-sm font-semibold text-emerald-700 truncate block max-w-full hover:text-emerald-800">
               {getCustomItemHeader(item)}
             </span>
           </button>
@@ -164,18 +164,21 @@ function CustomSectionItemCard({
                   <Label>Nama / Judul</Label>
                   <Input
                     value={item.title || ""}
-                    onChange={(e) => onUpdate("title", e.target.value)}
+                    onChange={(e) => onUpdate("title", truncateToMaxLength(e.target.value, MAX_LENGTH.TITLE))}
                     placeholder="Nama kegiatan, skill, dll"
+                    maxLength={MAX_LENGTH.TITLE}
                     className="text-neutral-900"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Lokasi</Label>
-                  <LocationInput
-                    value={item.location || ""}
-                    onChange={(e) => onUpdate("location", e.target.value)}
-                    placeholder="Kota, Negara"
+                  <Label>Sub Judul</Label>
+                  <Input
+                    value={item.subtitle || ""}
+                    onChange={(e) => onUpdate("subtitle", truncateToMaxLength(e.target.value, MAX_LENGTH.TITLE))}
+                    placeholder="Posisi, peran, dll"
+                    maxLength={MAX_LENGTH.TITLE}
+                    className="text-neutral-900"
                   />
                 </div>
               </div>
@@ -222,6 +225,7 @@ function CustomSectionItemCard({
                     onUpdateMultiple(updateDescription(value));
                   }}
                   placeholder="Deskripsi detail..."
+                  maxLength={MAX_LENGTH.DESCRIPTION}
                 />
               </div>
             </div>
@@ -310,17 +314,17 @@ function CustomSectionCard({
   const updateItem = (itemIndex: number, field: string, value: string | string[] | boolean) => {
     const updatedItems = [...section.items];
     updatedItems[itemIndex] = { ...updatedItems[itemIndex], [field]: value };
-    
+
     // If "Saat Ini" is checked, clear endDate
     if (field === "isCurrent" && value === true) {
       updatedItems[itemIndex] = { ...updatedItems[itemIndex], endDate: "" };
     }
-    
+
     // If startDate is cleared, also clear endDate and isCurrent
     if (field === "startDate" && !value) {
       updatedItems[itemIndex] = { ...updatedItems[itemIndex], endDate: "", isCurrent: false };
     }
-    
+
     updateSection({ items: updatedItems });
   };
 
@@ -339,7 +343,6 @@ function CustomSectionCard({
           id: `item-${Date.now()}`,
           title: "",
           subtitle: "",
-          location: "",
           startDate: "",
           endDate: "",
           isCurrent: false,
@@ -410,7 +413,10 @@ function CustomSectionCard({
                 ref={titleInputRef}
                 type="text"
                 value={editedTitle}
-                onChange={(e) => setEditedTitle(e.target.value)}
+                onChange={(e) => {
+                  const truncated = truncateToMaxLength(e.target.value, MAX_LENGTH.SECTION_TITLE);
+                  setEditedTitle(truncated);
+                }}
                 onBlur={handleTitleSave}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") handleTitleSave();
@@ -419,6 +425,7 @@ function CustomSectionCard({
                     setIsEditingTitle(false);
                   }
                 }}
+                maxLength={MAX_LENGTH.SECTION_TITLE}
                 className="flex-1 text-sm font-semibold text-emerald-700 bg-transparent border-b-2 border-emerald-500 outline-none"
               />
             </div>
@@ -426,9 +433,9 @@ function CustomSectionCard({
             <button
               type="button"
               onClick={() => setIsExpanded(!isExpanded)}
-              className="flex-1 text-left cursor-pointer"
+              className="flex-1 text-left cursor-pointer min-w-0"
             >
-              <span className="text-sm font-semibold text-emerald-700 truncate hover:text-emerald-800">
+              <span className="text-sm font-semibold text-emerald-700 truncate block max-w-full hover:text-emerald-800">
                 {section.sectionTitle || "Untitled"}
               </span>
             </button>

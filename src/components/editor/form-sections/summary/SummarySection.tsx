@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import { EditableSectionHeader } from "../../ui/editable-section-header";
 import type { FormSectionProps } from "../common/types";
+import { MAX_LENGTH } from "@/lib/validation/editor-validation";
 
 // Summary Section - Tips
 const SUMMARY_TIPS = [
@@ -39,6 +40,7 @@ export function SummarySection({ data, setData }: FormSectionProps) {
           placeholder="Contoh: Saya adalah seorang software engineer dengan pengalaman 3 tahun di bidang web development..."
           showListButtons={false}
           minHeight={120}
+          maxLength={MAX_LENGTH.DESCRIPTION}
         />
       </div>
     </div>

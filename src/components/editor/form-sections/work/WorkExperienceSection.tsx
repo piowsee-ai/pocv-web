@@ -30,6 +30,7 @@ import { CollapsibleCard } from "../../ui/collapsible-card";
 import type { FormSectionProps } from "../common/types";
 import type { WorkExperience } from "@/types/editor-form-data";
 import { getDescriptionHtml, updateDescription } from "../common/helpers";
+import { MAX_LENGTH, truncateToMaxLength } from "@/lib/validation/editor-validation";
 
 // Helper to generate dynamic card header for work experience
 function getWorkHeader(work: WorkExperience): string {
@@ -65,18 +66,35 @@ export function WorkExperienceSection({ data, setData }: FormSectionProps) {
 
   const updateWorkExperience = (index: number, field: string, value: string | string[] | boolean) => {
     const updated = [...data.workExperiences];
-    updated[index] = { ...updated[index], [field]: value };
-    
+
+    // Apply maxLength truncation for string fields
+    let processedValue = value;
+    if (typeof value === "string") {
+      switch (field) {
+        case "position":
+          processedValue = truncateToMaxLength(value, MAX_LENGTH.POSITION);
+          break;
+        case "company":
+          processedValue = truncateToMaxLength(value, MAX_LENGTH.COMPANY);
+          break;
+        case "location":
+          processedValue = truncateToMaxLength(value, MAX_LENGTH.LOCATION);
+          break;
+      }
+    }
+
+    updated[index] = { ...updated[index], [field]: processedValue };
+
     // If "Saat Ini" is checked, clear endDate
     if (field === "isCurrent" && value === true) {
       updated[index] = { ...updated[index], endDate: "" };
     }
-    
+
     // If startDate is cleared, also clear endDate and isCurrent
     if (field === "startDate" && !value) {
       updated[index] = { ...updated[index], endDate: "", isCurrent: false };
     }
-    
+
     setData((prev) => ({ ...prev, workExperiences: updated }));
   };
 
@@ -158,6 +176,7 @@ export function WorkExperienceSection({ data, setData }: FormSectionProps) {
                       value={work.position}
                       onChange={(e) => updateWorkExperience(index, "position", e.target.value)}
                       placeholder="Software Engineer"
+                      maxLength={MAX_LENGTH.POSITION}
                       className="text-neutral-900"
                     />
                   </div>
@@ -168,6 +187,7 @@ export function WorkExperienceSection({ data, setData }: FormSectionProps) {
                       value={work.company}
                       onChange={(e) => updateWorkExperience(index, "company", e.target.value)}
                       placeholder="PT Teknologi Indonesia"
+                      maxLength={MAX_LENGTH.COMPANY}
                       className="text-neutral-900"
                     />
                   </div>
@@ -201,8 +221,8 @@ export function WorkExperienceSection({ data, setData }: FormSectionProps) {
                           disabled={!work.startDate}
                           className="cursor-pointer"
                         />
-                        <label 
-                          htmlFor={`work-current-${index}`} 
+                        <label
+                          htmlFor={`work-current-${index}`}
                           className={cn(
                             "text-xs cursor-pointer",
                             work.startDate ? "text-neutral-500" : "text-neutral-300 cursor-not-allowed"
@@ -231,6 +251,7 @@ export function WorkExperienceSection({ data, setData }: FormSectionProps) {
                         setData((prev) => ({ ...prev, workExperiences: updated }));
                       }}
                       placeholder="Contoh: Mengembangkan fitur A yang meningkatkan X..."
+                      maxLength={MAX_LENGTH.DESCRIPTION}
                     />
                   </div>
                 </div>

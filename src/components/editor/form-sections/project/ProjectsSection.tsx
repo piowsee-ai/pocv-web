@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { Plus, GripVertical, Trash2, ChevronDown } from "lucide-react";
+import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -29,6 +28,7 @@ import { CollapsibleCard } from "@/components/editor/ui/collapsible-card";
 import { MonthPickerInput } from "@/components/ui/month-picker-input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
+import { MAX_LENGTH, truncateToMaxLength } from "@/lib/validation/editor-validation";
 
 // Projects Section - Tips
 const PROJECT_TIPS = [
@@ -63,18 +63,32 @@ export function ProjectsSection({ data, setData }: FormSectionProps) {
 
   const updateProject = (index: number, field: string, value: string | string[] | boolean) => {
     const updated = [...(data.personalProjects || [])];
-    updated[index] = { ...updated[index], [field]: value };
-    
+
+    // Apply maxLength truncation for string fields
+    let processedValue = value;
+    if (typeof value === "string") {
+      switch (field) {
+        case "name":
+          processedValue = truncateToMaxLength(value, MAX_LENGTH.NAME);
+          break;
+        case "role":
+          processedValue = truncateToMaxLength(value, MAX_LENGTH.ROLE);
+          break;
+      }
+    }
+
+    updated[index] = { ...updated[index], [field]: processedValue };
+
     // If "Saat Ini" is checked, clear endDate
     if (field === "isCurrent" && value === true) {
       updated[index] = { ...updated[index], endDate: "" };
     }
-    
+
     // If startDate is cleared, also clear endDate and isCurrent
     if (field === "startDate" && !value) {
       updated[index] = { ...updated[index], endDate: "", isCurrent: false };
     }
-    
+
     setData((prev) => ({ ...prev, personalProjects: updated }));
   };
 
@@ -158,6 +172,7 @@ export function ProjectsSection({ data, setData }: FormSectionProps) {
                       value={project.name}
                       onChange={(e) => updateProject(index, "name", e.target.value)}
                       placeholder="Nama proyek atau produk"
+                      maxLength={MAX_LENGTH.NAME}
                       className="text-neutral-900"
                     />
                   </div>
@@ -168,6 +183,7 @@ export function ProjectsSection({ data, setData }: FormSectionProps) {
                       value={project.role || ""}
                       onChange={(e) => updateProject(index, "role", e.target.value)}
                       placeholder="Lead Developer, etc."
+                      maxLength={MAX_LENGTH.ROLE}
                       className="text-neutral-900"
                     />
                   </div>
@@ -215,6 +231,7 @@ export function ProjectsSection({ data, setData }: FormSectionProps) {
                         setData((prev) => ({ ...prev, personalProjects: updated }));
                       }}
                       placeholder="Tech stack, fitur utama, hasil yang dicapai..."
+                      maxLength={MAX_LENGTH.DESCRIPTION}
                     />
                   </div>
                 </div>

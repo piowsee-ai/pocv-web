@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { CVService } from "@/lib/services/cv.service";
 import { CVEditor } from "@/components/editor/cv-editor";
+import { ValidationToastProvider } from "@/components/ui/validation-toast";
 
 interface EditorPageProps {
   params: Promise<{ id: string }>;
@@ -12,7 +13,7 @@ export default async function EditorPage({ params }: EditorPageProps) {
   const session = await auth.api.getSession({ headers: await headers() });
 
   if (!session?.user?.id) {
-    redirect("/sign-in");
+    redirect("/login");
   }
 
   const { id } = await params;
@@ -22,5 +23,9 @@ export default async function EditorPage({ params }: EditorPageProps) {
     redirect("/page-1");
   }
 
-  return <CVEditor cvId={id} initialData={cvData} />;
+  return (
+    <ValidationToastProvider>
+      <CVEditor cvId={id} initialData={cvData} />
+    </ValidationToastProvider>
+  );
 }

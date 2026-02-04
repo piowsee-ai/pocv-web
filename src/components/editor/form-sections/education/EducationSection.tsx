@@ -31,6 +31,7 @@ import type { FormSectionProps } from "../common/types";
 import type { Education } from "@/types/editor-form-data";
 import { GPAInput } from "./GPAInput";
 import { getDescriptionHtml, updateDescription } from "../common/helpers";
+import { MAX_LENGTH, truncateToMaxLength } from "@/lib/validation/editor-validation";
 
 // Helper to generate dynamic card header
 function getEducationHeader(edu: Education): string {
@@ -65,18 +66,35 @@ export function EducationSection({ data, setData }: FormSectionProps) {
 
   const updateEducation = (index: number, field: string, value: string | string[] | boolean) => {
     const updated = [...data.educations];
-    updated[index] = { ...updated[index], [field]: value };
-    
+
+    // Apply maxLength truncation for string fields
+    let processedValue = value;
+    if (typeof value === "string") {
+      switch (field) {
+        case "institution":
+          processedValue = truncateToMaxLength(value, MAX_LENGTH.INSTITUTION);
+          break;
+        case "major":
+          processedValue = truncateToMaxLength(value, MAX_LENGTH.MAJOR);
+          break;
+        case "location":
+          processedValue = truncateToMaxLength(value, MAX_LENGTH.LOCATION);
+          break;
+      }
+    }
+
+    updated[index] = { ...updated[index], [field]: processedValue };
+
     // If "Saat Ini" is checked, clear endDate
     if (field === "isCurrent" && value === true) {
       updated[index] = { ...updated[index], endDate: "" };
     }
-    
+
     // If startDate is cleared, also clear endDate and isCurrent
     if (field === "startDate" && !value) {
       updated[index] = { ...updated[index], endDate: "", isCurrent: false };
     }
-    
+
     setData((prev) => ({ ...prev, educations: updated }));
   };
 
@@ -161,6 +179,7 @@ export function EducationSection({ data, setData }: FormSectionProps) {
                       value={edu.institution}
                       onChange={(e) => updateEducation(index, "institution", e.target.value)}
                       placeholder="Universitas Indonesia"
+                      maxLength={MAX_LENGTH.INSTITUTION}
                       className="text-neutral-900"
                     />
                   </div>
@@ -179,6 +198,7 @@ export function EducationSection({ data, setData }: FormSectionProps) {
                       value={edu.major}
                       onChange={(e) => updateEducation(index, "major", e.target.value)}
                       placeholder="Teknik Informatika"
+                      maxLength={MAX_LENGTH.MAJOR}
                       className="text-neutral-900"
                     />
                   </div>
@@ -246,6 +266,7 @@ export function EducationSection({ data, setData }: FormSectionProps) {
                         setData((prev) => ({ ...prev, educations: updated }));
                       }}
                       placeholder="Deskripsi pencapaian akademik, organisasi kampus, dll..."
+                      maxLength={MAX_LENGTH.DESCRIPTION}
                     />
                   </div>
                 </div>

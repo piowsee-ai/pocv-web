@@ -28,6 +28,7 @@ import { CollapsibleCard } from "@/components/editor/ui/collapsible-card";
 import { MonthPickerInput } from "@/components/ui/month-picker-input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
+import { MAX_LENGTH, truncateToMaxLength } from "@/lib/validation/editor-validation";
 
 // Helper to generate dynamic card header for organization
 function getOrgHeader(org: OrganizationExperience): string {
@@ -63,18 +64,32 @@ export function OrganizationSection({ data, setData }: FormSectionProps) {
 
   const updateOrganization = (index: number, field: string, value: string | string[] | boolean) => {
     const updated = [...data.organizationExperiences];
-    updated[index] = { ...updated[index], [field]: value };
-    
+
+    // Apply maxLength truncation for string fields
+    let processedValue = value;
+    if (typeof value === "string") {
+      switch (field) {
+        case "position":
+          processedValue = truncateToMaxLength(value, MAX_LENGTH.POSITION);
+          break;
+        case "organization":
+          processedValue = truncateToMaxLength(value, MAX_LENGTH.ORGANIZATION);
+          break;
+      }
+    }
+
+    updated[index] = { ...updated[index], [field]: processedValue };
+
     // If "Saat Ini" is checked, clear endDate
     if (field === "isCurrent" && value === true) {
       updated[index] = { ...updated[index], endDate: "" };
     }
-    
+
     // If startDate is cleared, also clear endDate and isCurrent
     if (field === "startDate" && !value) {
       updated[index] = { ...updated[index], endDate: "", isCurrent: false };
     }
-    
+
     setData((prev) => ({ ...prev, organizationExperiences: updated }));
   };
 
@@ -155,6 +170,7 @@ export function OrganizationSection({ data, setData }: FormSectionProps) {
                       value={org.position}
                       onChange={(e) => updateOrganization(index, "position", e.target.value)}
                       placeholder="Ketua Divisi"
+                      maxLength={MAX_LENGTH.POSITION}
                       className="text-neutral-900"
                     />
                   </div>
@@ -165,6 +181,7 @@ export function OrganizationSection({ data, setData }: FormSectionProps) {
                       value={org.organization}
                       onChange={(e) => updateOrganization(index, "organization", e.target.value)}
                       placeholder="Himpunan Mahasiswa Informatika"
+                      maxLength={MAX_LENGTH.ORGANIZATION}
                       className="text-neutral-900"
                     />
                   </div>
@@ -213,6 +230,7 @@ export function OrganizationSection({ data, setData }: FormSectionProps) {
                         setData((prev) => ({ ...prev, organizationExperiences: updated }));
                       }}
                       placeholder="Contoh: Memimpin tim 10 orang untuk event X..."
+                      maxLength={MAX_LENGTH.DESCRIPTION}
                     />
                   </div>
                 </div>
