@@ -77,7 +77,7 @@ const InputComponent = React.forwardRef<
   React.ComponentProps<"input">
 >(({ className, ...props }, ref) => (
   <Input
-    className={cn("focus-visible:ring-0 focus-visible:ring-offset-0 rounded-s-none bg-neutral-200", className)}
+    className={cn("focus-visible:ring-0 focus-visible:ring-offset-0 rounded-s-none bg-white", className)}
     {...props}
     ref={ref}
   />

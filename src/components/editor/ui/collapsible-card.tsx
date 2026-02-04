@@ -32,7 +32,7 @@ export function CollapsibleCard({
 }: CollapsibleCardProps) {
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  
+
   const {
     attributes,
     listeners,
@@ -78,9 +78,11 @@ export function CollapsibleCard({
           <button
             type="button"
             onClick={() => setIsExpanded(!isExpanded)}
-            className="flex-1 text-left text-sm font-semibold text-emerald-700 truncate hover:text-emerald-800 transition-colors cursor-pointer"
+            className="flex-1 text-left cursor-pointer min-w-0"
           >
-            {title}
+            <span className="text-sm font-semibold text-emerald-700 truncate block max-w-full hover:text-emerald-800 transition-colors">
+              {title}
+            </span>
           </button>
 
           {/* Delete Button */}

@@ -5,7 +5,7 @@ import StarterKit from "@tiptap/starter-kit";
 import Placeholder from "@tiptap/extension-placeholder";
 import { Bold, Italic, List, ListOrdered, Undo, Redo } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface RichTextEditorProps {
   /** HTML content string */
@@ -18,6 +18,8 @@ interface RichTextEditorProps {
   showListButtons?: boolean;
   /** Minimum height in pixels. Default: 100 */
   minHeight?: number;
+  /** Maximum character length (plain text, not HTML). If set, content will be truncated. */
+  maxLength?: number;
 }
 
 export function RichTextEditor({
@@ -27,9 +29,12 @@ export function RichTextEditor({
   className,
   showListButtons = true,
   minHeight = 100,
+  maxLength,
 }: RichTextEditorProps) {
   const isInternalUpdate = useRef(false);
-  
+  const [charCount, setCharCount] = useState(0);
+  const isAtLimit = maxLength !== undefined && charCount >= maxLength;
+
   const editor = useEditor({
     immediatelyRender: false,
     extensions: [
@@ -54,14 +59,59 @@ export function RichTextEditor({
         class: `prose prose-sm max-w-none focus:outline-none px-3 py-2`,
         style: `min-height: ${minHeight}px`,
       },
+      // Prevent input if at maxLength
+      handleTextInput: maxLength ? (view, from, to, text) => {
+        const currentLength = view.state.doc.textContent.length;
+        const selectionLength = to - from;
+        const newLength = currentLength - selectionLength + text.length;
+
+        if (newLength > maxLength) {
+          // Calculate how many chars we can still add
+          const allowedChars = maxLength - (currentLength - selectionLength);
+          if (allowedChars <= 0) {
+            return true; // Block entire input
+          }
+          // Insert only the allowed portion
+          const truncatedText = text.slice(0, allowedChars);
+          const tr = view.state.tr.insertText(truncatedText, from, to);
+          view.dispatch(tr);
+          return true; // We handled it
+        }
+        return false; // Let default handling proceed
+      } : undefined,
+      // Handle paste with truncation
+      handlePaste: maxLength ? (view, event) => {
+        const clipboardText = event.clipboardData?.getData('text/plain') || '';
+        if (!clipboardText) return false;
+
+        const { from, to } = view.state.selection;
+        const currentLength = view.state.doc.textContent.length;
+        const selectionLength = to - from;
+        const availableSpace = maxLength - (currentLength - selectionLength);
+
+        if (clipboardText.length > availableSpace) {
+          // Truncate pasted text
+          const truncatedText = clipboardText.slice(0, Math.max(0, availableSpace));
+          if (truncatedText) {
+            const tr = view.state.tr.insertText(truncatedText, from, to);
+            view.dispatch(tr);
+          }
+          return true; // We handled it
+        }
+        return false; // Let default handling proceed
+      } : undefined,
     },
     onUpdate: ({ editor }) => {
       isInternalUpdate.current = true;
+
       const html = editor.getHTML();
+      const plainTextLength = editor.getText().length;
+      setCharCount(plainTextLength);
+
       // Only return empty string if truly empty
       const isEmpty = editor.isEmpty;
       onChange(isEmpty ? "" : html);
-      
+
       setTimeout(() => {
         isInternalUpdate.current = false;
       }, 0);
@@ -75,10 +125,13 @@ export function RichTextEditor({
       // Normalize comparison - treat empty p tags as empty
       const normalizedCurrent = currentHtml === "<p></p>" ? "" : currentHtml;
       const normalizedValue = value === "<p></p>" ? "" : (value || "");
-      
+
       if (normalizedCurrent !== normalizedValue) {
         editor.commands.setContent(normalizedValue);
       }
+
+      // Always sync charCount with current editor content
+      setCharCount(editor.getText().length);
     }
   }, [value, editor]);
 
@@ -89,7 +142,10 @@ export function RichTextEditor({
   return (
     <div
       className={cn(
-        "border border-neutral-200 rounded-md overflow-hidden focus-within:ring-2 focus-within:ring-emerald-500 focus-within:border-emerald-500",
+        "border rounded-md overflow-hidden focus-within:ring-2",
+        isAtLimit
+          ? "border-red-500 focus-within:ring-red-500 focus-within:border-red-500"
+          : "border-neutral-200 focus-within:ring-emerald-500 focus-within:border-emerald-500",
         className
       )}
     >
@@ -109,7 +165,7 @@ export function RichTextEditor({
         >
           <Italic className="w-4 h-4" />
         </ToolbarButton>
-        
+
         {showListButtons && (
           <>
             <div className="w-px h-5 bg-neutral-300 mx-1" />
@@ -129,7 +185,7 @@ export function RichTextEditor({
             </ToolbarButton>
           </>
         )}
-        
+
         <div className="w-px h-5 bg-neutral-300 mx-1" />
         <ToolbarButton
           onClick={() => editor.chain().focus().undo().run()}
@@ -149,6 +205,18 @@ export function RichTextEditor({
 
       {/* Editor Content */}
       <EditorContent editor={editor} />
+
+      {/* Character Counter - only show when maxLength is set */}
+      {maxLength !== undefined && (
+        <div className={cn(
+          "px-3 py-1.5 text-xs text-right border-t",
+          isAtLimit
+            ? "text-red-500 bg-red-50 border-red-200"
+            : "text-neutral-500 bg-neutral-50 border-neutral-200"
+        )}>
+          {charCount} / {maxLength}
+        </div>
+      )}
 
       <style jsx global>{`
         .ProseMirror {
@@ -230,18 +298,18 @@ function ToolbarButton({
  */
 export function htmlToLines(html: string): string[] {
   if (!html || typeof window === "undefined") return [];
-  
+
   const tempDiv = document.createElement("div");
   tempDiv.innerHTML = html;
-  
+
   const lines: string[] = [];
-  
+
   // Process list items
   tempDiv.querySelectorAll("li").forEach((li) => {
     const text = li.textContent?.trim();
     if (text) lines.push(text);
   });
-  
+
   // If no list items, get paragraph text
   if (lines.length === 0) {
     tempDiv.querySelectorAll("p").forEach((p) => {
@@ -249,13 +317,13 @@ export function htmlToLines(html: string): string[] {
       if (text) lines.push(text);
     });
   }
-  
+
   // Fallback to raw text
   if (lines.length === 0) {
     const text = tempDiv.textContent?.trim();
     if (text) lines.push(text);
   }
-  
+
   return lines;
 }
 

@@ -62,7 +62,7 @@ export function MonthPickerInput({
         value: newValue,
       },
     } as React.ChangeEvent<HTMLInputElement>;
-    
+
     onChange?.(syntheticEvent);
     setIsOpen(false);
   };
@@ -87,7 +87,7 @@ export function MonthPickerInput({
             variant="outline"
             disabled={disabled}
             className={cn(
-              "w-full justify-start text-left font-normal bg-neutral-200 hover:bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0",
+              "w-full justify-start text-left font-normal bg-white hover:bg-neutral-50 focus-visible:ring-0 focus-visible:ring-offset-0",
               !value && "text-muted-foreground",
               value && clearable && "pr-8", // Extra padding for clear button
               className

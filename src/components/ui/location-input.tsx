@@ -128,7 +128,7 @@ export function LocationInput({
           aria-expanded={isOpen}
           disabled={disabled}
           className={cn(
-            "w-full justify-between bg-neutral-200 font-normal hover:bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0 cursor-pointer",
+            "w-full justify-between bg-white font-normal hover:bg-neutral-50 focus-visible:ring-0 focus-visible:ring-offset-0 cursor-pointer",
             !value && "text-muted-foreground",
             className,
           )}
@@ -151,8 +151,8 @@ export function LocationInput({
       </PopoverTrigger>
       <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
         <Command shouldFilter={false}>
-          <CommandInput 
-            placeholder="Cari lokasi..." 
+          <CommandInput
+            placeholder="Cari lokasi..."
             value={searchQuery}
             onValueChange={setSearchQuery}
           />
