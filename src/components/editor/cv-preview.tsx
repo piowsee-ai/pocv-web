@@ -79,7 +79,7 @@ export function CVPreview({ data, containerWidth }: CVPreviewProps) {
   // Otherwise, use scale = 1 (A4 actual size)
   const padding = 32; // 16px padding on each side
   const availableWidth = containerWidth ? containerWidth - padding : A4_WIDTH_PX;
-  
+
   // Scale is always <= 1 (never larger than A4)
   const scale = Math.max(Math.min(availableWidth / A4_WIDTH_PX, 1), 0.2);
 
@@ -89,12 +89,12 @@ export function CVPreview({ data, containerWidth }: CVPreviewProps) {
       const height = contentRef.current.scrollHeight;
       setContentHeight(height * scale);
     }
-  }, [scale]);
-  
+  }, [scale, data]);
+
   const formatDate = (dateStr: string, isCurrent?: boolean): string => {
     if (isCurrent) return "Present";
     if (!dateStr) return "";
-    
+
     // Handle YYYY-MM format (from MonthPickerInput)
     const yyyyMmMatch = dateStr.match(/^(\d{4})-(\d{2})$/);
     if (yyyyMmMatch) {
@@ -106,7 +106,7 @@ export function CVPreview({ data, containerWidth }: CVPreviewProps) {
         year: "numeric",
       });
     }
-    
+
     // Handle MM/YYYY format (legacy)
     const mmYyyyMatch = dateStr.match(/^(\d{1,2})\/(\d{4})$/);
     if (mmYyyyMatch) {
@@ -118,7 +118,7 @@ export function CVPreview({ data, containerWidth }: CVPreviewProps) {
         year: "numeric",
       });
     }
-    
+
     return dateStr;
   };
 
@@ -130,14 +130,14 @@ export function CVPreview({ data, containerWidth }: CVPreviewProps) {
   const getDateRange = (startDate: string, endDate: string, isCurrent?: boolean): string => {
     const start = formatDate(startDate);
     const end = formatDate(endDate);
-    
+
     // If isCurrent is checked
     if (isCurrent) {
       // Must have a start date for "Present" to make sense
       if (!start) return "";
       return `${start} - Present`;
     }
-    
+
     // Normal date range
     if (!start && !end) return "";
     if (!start) return end; // Only end date
@@ -147,6 +147,14 @@ export function CVPreview({ data, containerWidth }: CVPreviewProps) {
 
   // CSS for the HTML content rendering
   const htmlContentStyles = `
+    .cv-preview-container {
+      word-break: break-word;
+      overflow-wrap: break-word;
+    }
+    .html-content {
+      word-break: break-word;
+      overflow-wrap: break-word;
+    }
     .html-content ul {
       list-style-type: disc;
       list-style-position: outside;
@@ -190,7 +198,7 @@ export function CVPreview({ data, containerWidth }: CVPreviewProps) {
   // Container style - width is fixed, height is min A4 but grows with content
   const minHeightScaled = A4_HEIGHT_PX * scale;
   const actualHeight = contentHeight > 0 ? Math.max(contentHeight, minHeightScaled) : minHeightScaled;
-  
+
   const containerStyle: React.CSSProperties = {
     width: `${A4_WIDTH_PX * scale}px`,
     height: `${actualHeight}px`,
@@ -207,7 +215,7 @@ export function CVPreview({ data, containerWidth }: CVPreviewProps) {
   return (
     <div className="cv-preview-container" style={containerStyle}>
       <style dangerouslySetInnerHTML={{ __html: htmlContentStyles }} />
-      
+
       <div
         ref={contentRef}
         className="bg-white"
@@ -290,8 +298,8 @@ export function CVPreview({ data, containerWidth }: CVPreviewProps) {
               >
                 {data.sectionTitles?.summary || "Summary"}
               </h2>
-              <div 
-                className="pl-3 html-content" 
+              <div
+                className="pl-3 html-content"
                 style={{ fontSize: fontSize.body }}
                 dangerouslySetInnerHTML={{ __html: data.summary }}
               />
@@ -331,7 +339,7 @@ export function CVPreview({ data, containerWidth }: CVPreviewProps) {
                     {edu.gpa && `, GPA: ${edu.gpa}${edu.maxGpa ? `/${edu.maxGpa}` : ""}`}
                   </div>
                   {hasDescription(edu) && (
-                    <div 
+                    <div
                       className="html-content mt-1"
                       style={{ fontSize: fontSize.body }}
                       dangerouslySetInnerHTML={{ __html: getDescriptionHtml(edu) }}
@@ -372,7 +380,7 @@ export function CVPreview({ data, containerWidth }: CVPreviewProps) {
                     {exp.position}
                   </div>
                   {hasDescription(exp) && (
-                    <div 
+                    <div
                       className="html-content mt-1"
                       style={{ fontSize: fontSize.body }}
                       dangerouslySetInnerHTML={{ __html: getDescriptionHtml(exp) }}
@@ -411,7 +419,7 @@ export function CVPreview({ data, containerWidth }: CVPreviewProps) {
                       {org.position}
                     </div>
                     {hasDescription(org) && (
-                      <div 
+                      <div
                         className="html-content mt-1"
                         style={{ fontSize: fontSize.body }}
                         dangerouslySetInnerHTML={{ __html: getDescriptionHtml(org) }}
@@ -453,7 +461,7 @@ export function CVPreview({ data, containerWidth }: CVPreviewProps) {
                     </div>
                   )}
                   {hasDescription(project) && (
-                    <div 
+                    <div
                       className="html-content mt-1"
                       style={{ fontSize: fontSize.body }}
                       dangerouslySetInnerHTML={{ __html: getDescriptionHtml(project) }}
@@ -468,7 +476,7 @@ export function CVPreview({ data, containerWidth }: CVPreviewProps) {
           {data.customSections && data.customSections.length > 0 && data.customSections.map((section) => {
             const hasContent = section.items && section.items.some(item => item.title?.trim());
             if (!hasContent) return null;
-            
+
             return (
               <div key={section.sectionKey} className="mb-3">
                 <h2
@@ -485,7 +493,6 @@ export function CVPreview({ data, containerWidth }: CVPreviewProps) {
                     >
                       <div className="font-bold">
                         {item.title}
-                        {item.location && <span className="text-gray-500"> - {item.location}</span>}
                       </div>
                       {(item.startDate || item.endDate) && (
                         <div
@@ -502,7 +509,7 @@ export function CVPreview({ data, containerWidth }: CVPreviewProps) {
                       </div>
                     )}
                     {hasDescription(item) && (
-                      <div 
+                      <div
                         className="html-content mt-1"
                         style={{ fontSize: fontSize.body }}
                         dangerouslySetInnerHTML={{ __html: getDescriptionHtml(item) }}
@@ -513,6 +520,33 @@ export function CVPreview({ data, containerWidth }: CVPreviewProps) {
               </div>
             );
           })}
+
+          {/* Others Section - Dynamic items with free titles */}
+          {data.othersItems && data.othersItems.length > 0 && data.othersItems.some(item => item.title || item.descriptionHtml) && (
+            <div className="mb-3">
+              <h2
+                className="font-bold border-b-2 border-black pb-0.5 pl-1 mb-2"
+                style={{ fontSize: fontSize.sectionTitle }}
+              >
+                {data.sectionTitles?.others || "Skills, Achievements & Other Experience"}
+              </h2>
+              <ul className="pl-6 space-y-0.5" style={{ fontSize: fontSize.body, listStyleType: "disc" }}>
+                {data.othersItems.filter(item => item.title || item.descriptionHtml).map((item) => {
+                  return (
+                    <li key={item.id}>
+                      {item.title && <span className="font-bold">{item.title}:</span>}{" "}
+                      <span
+                        className="[&_p]:inline [&_p]:m-0"
+                        dangerouslySetInnerHTML={{ __html: item.descriptionHtml || "" }}
+                      />
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          )}
+
+
         </div>
       </div>
     </div>

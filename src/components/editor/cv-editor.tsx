@@ -28,17 +28,17 @@ function descriptionToHtml(description: string | string[] | undefined): string {
 // Helper: Normalize date format from various LLM formats to YYYY-MM
 function normalizeDateFormat(dateStr: string | undefined): string {
   if (!dateStr) return "";
-  
+
   // Check for "Present" or "Sekarang" - keep as empty to use isCurrent flag
   if (/present|sekarang|current|now/i.test(dateStr)) {
     return "";
   }
-  
+
   // Already in YYYY-MM format
   if (/^\d{4}-\d{2}$/.test(dateStr)) {
     return dateStr;
   }
-  
+
   // Format: MM/YYYY or M/YYYY
   const mmYyyyMatch = dateStr.match(/^(\d{1,2})\/(\d{4})/);
   if (mmYyyyMatch) {
@@ -46,13 +46,13 @@ function normalizeDateFormat(dateStr: string | undefined): string {
     const year = mmYyyyMatch[2];
     return `${year}-${month}`;
   }
-  
+
   // Format: YYYY-MM-DD
   const isoMatch = dateStr.match(/^(\d{4})-(\d{2})-\d{2}$/);
   if (isoMatch) {
     return `${isoMatch[1]}-${isoMatch[2]}`;
   }
-  
+
   // Format with text like "08/2027 (Expected)" - extract date part
   const withTextMatch = dateStr.match(/(\d{1,2})\/(\d{4})/);
   if (withTextMatch) {
@@ -60,7 +60,7 @@ function normalizeDateFormat(dateStr: string | undefined): string {
     const year = withTextMatch[2];
     return `${year}-${month}`;
   }
-  
+
   // Try to parse month name format like "August 2027" or "Aug 2027"
   const monthNames: { [key: string]: string } = {
     january: "01", jan: "01", februari: "02", february: "02", feb: "02",
@@ -74,7 +74,7 @@ function normalizeDateFormat(dateStr: string | undefined): string {
   if (monthYearMatch && monthNames[monthYearMatch[1]]) {
     return `${monthYearMatch[2]}-${monthNames[monthYearMatch[1]]}`;
   }
-  
+
   // Return original if can't parse
   return dateStr;
 }
@@ -82,9 +82,9 @@ function normalizeDateFormat(dateStr: string | undefined): string {
 // Helper: Normalize degree value to match DEGREE_OPTIONS values
 function normalizeDegree(degree: string | undefined): string {
   if (!degree) return "";
-  
+
   const d = degree.toLowerCase();
-  
+
   // Map common variations to standard values
   if (d.includes("bachelor") || d.includes("sarjana") || d === "s1") return "S1";
   if (d.includes("master") || d.includes("magister") || d === "s2") return "S2";
@@ -96,7 +96,7 @@ function normalizeDegree(degree: string | undefined): string {
   if (d.includes("sma") || d.includes("smk") || d.includes("high school")) return "SMA/SMK";
   if (d.includes("smp") || d.includes("junior high")) return "SMP";
   if (d.includes("sd") || d.includes("elementary")) return "SD";
-  
+
   // Return original if can't normalize (allows freeform input)
   return degree;
 }
@@ -105,7 +105,7 @@ function normalizeDegree(degree: string | undefined): string {
 function normalizeMaxGpa(maxGpa: string): string {
   const num = parseFloat(maxGpa);
   if (isNaN(num)) return "4.0";
-  
+
   // Match to available options
   if (num >= 100) return "100";
   if (num >= 5) return "5.0";
@@ -115,13 +115,13 @@ function normalizeMaxGpa(maxGpa: string): string {
 // Helper: Parse GPA format "3.80/4.00" to { gpa, maxGpa }
 function parseGpaFormat(gpaStr: string | undefined): { gpa: string; maxGpa: string } {
   if (!gpaStr) return { gpa: "", maxGpa: "4.0" };
-  
+
   // Format: "3.80/4.00"
   const match = gpaStr.match(/^([\d.]+)\s*\/\s*([\d.]+)$/);
   if (match) {
     return { gpa: match[1], maxGpa: normalizeMaxGpa(match[2]) };
   }
-  
+
   // Just a number
   return { gpa: gpaStr, maxGpa: "4.0" };
 }
@@ -129,16 +129,15 @@ function parseGpaFormat(gpaStr: string | undefined): { gpa: string; maxGpa: stri
 // Helper: Convert additional fields (skills, languages, etc.) to custom section items
 function additionalToCustomSectionItems(additional: FormData["additional"]) {
   if (!additional) return [];
-  
-  const items: { id: string; title: string; subtitle: string; location: string; startDate: string; endDate: string; isCurrent: boolean; description: string[]; descriptionHtml: string; }[] = [];
-  
+
+  const items: { id: string; title: string; subtitle: string; startDate: string; endDate: string; isCurrent: boolean; description: string[]; descriptionHtml: string; }[] = [];
+
   if (additional.skills && additional.skills.length > 0) {
     const content = additional.skills.join(", ");
     items.push({
       id: `item-skills-${Date.now()}`,
       title: "Skills",
       subtitle: "",
-      location: "",
       startDate: "",
       endDate: "",
       isCurrent: false,
@@ -152,7 +151,6 @@ function additionalToCustomSectionItems(additional: FormData["additional"]) {
       id: `item-languages-${Date.now()}`,
       title: "Languages",
       subtitle: "",
-      location: "",
       startDate: "",
       endDate: "",
       isCurrent: false,
@@ -166,7 +164,6 @@ function additionalToCustomSectionItems(additional: FormData["additional"]) {
       id: `item-certifications-${Date.now()}`,
       title: "Certifications",
       subtitle: "",
-      location: "",
       startDate: "",
       endDate: "",
       isCurrent: false,
@@ -180,7 +177,6 @@ function additionalToCustomSectionItems(additional: FormData["additional"]) {
       id: `item-achievements-${Date.now()}`,
       title: "Achievements",
       subtitle: "",
-      location: "",
       startDate: "",
       endDate: "",
       isCurrent: false,
@@ -188,35 +184,34 @@ function additionalToCustomSectionItems(additional: FormData["additional"]) {
       descriptionHtml: `<p>${content}</p>`,
     });
   }
-  
+
   return items;
 }
 
 // Helper: Parse text from customSection (legacy format) into items
-function parseTextToItems(text: string): { id: string; title: string; subtitle: string; location: string; startDate: string; endDate: string; isCurrent: boolean; description: string[]; descriptionHtml: string; }[] {
+function parseTextToItems(text: string): { id: string; title: string; subtitle: string; startDate: string; endDate: string; isCurrent: boolean; description: string[]; descriptionHtml: string; }[] {
   if (!text || !text.trim()) return [];
-  
-  const items: { id: string; title: string; subtitle: string; location: string; startDate: string; endDate: string; isCurrent: boolean; description: string[]; descriptionHtml: string; }[] = [];
-  
+
+  const items: { id: string; title: string; subtitle: string; startDate: string; endDate: string; isCurrent: boolean; description: string[]; descriptionHtml: string; }[] = [];
+
   // Parse lines like "• Skills: Java, Python, ..." or "Skills: Java, Python, ..."
   const lines = text.split("\n").filter(line => line.trim());
-  
+
   for (const line of lines) {
     // Remove bullet point if exists
     const cleanLine = line.replace(/^[•\-\*]\s*/, "").trim();
-    
+
     // Try to parse "Title: Content" format
     const colonIndex = cleanLine.indexOf(":");
     if (colonIndex > 0) {
       const title = cleanLine.substring(0, colonIndex).trim();
       const content = cleanLine.substring(colonIndex + 1).trim();
-      
+
       if (title && content) {
         items.push({
           id: `item-${title.toLowerCase()}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
           title: title,
           subtitle: "",
-          location: "",
           startDate: "",
           endDate: "",
           isCurrent: false,
@@ -226,7 +221,7 @@ function parseTextToItems(text: string): { id: string; title: string; subtitle: 
       }
     }
   }
-  
+
   return items;
 }
 
@@ -306,10 +301,10 @@ function normalizeFormData(data: FormData): FormData {
       };
     }),
     additional: {
-      skills: [],
-      languages: [],
-      certifications: [],
-      achievements: [],
+      skills: data.additional?.skills || [],
+      languages: data.additional?.languages || [],
+      certifications: data.additional?.certifications || [],
+      achievements: data.additional?.achievements || [],
     },
     customSections: (() => {
       // Parse existing customSections from LLM
@@ -321,7 +316,6 @@ function normalizeFormData(data: FormData): FormData {
             id: item.id || `item-${itemIdx}`,
             title: item.title || "",
             subtitle: item.subtitle || "",
-            location: item.location || "",
             startDate: normalizeDateFormat(item.startDate),
             endDate: normalizeDateFormat(item.endDate),
             isCurrent: item.isCurrent || item.endDate?.toLowerCase().includes("present") || false,
@@ -329,17 +323,17 @@ function normalizeFormData(data: FormData): FormData {
             descriptionHtml: item.descriptionHtml || descriptionToHtml(descArr),
           };
         });
-        
+
         // If section has text but no/few items, parse text into items
         const textItems = parseTextToItems(section.text || "");
-        
+
         // Merge: existing items first, then text items (avoid duplicates by title)
         const existingTitles = new Set(existingItems.map(i => i.title.toLowerCase()));
         const mergedItems = [
           ...existingItems,
           ...textItems.filter(ti => !existingTitles.has(ti.title.toLowerCase())),
         ];
-        
+
         return {
           sectionKey: section.sectionKey || `section-${idx}`,
           sectionTitle: section.sectionTitle || "Untitled",
@@ -348,7 +342,7 @@ function normalizeFormData(data: FormData): FormData {
           items: mergedItems,
         };
       });
-      
+
       // Convert additional fields to items and add to "Additional" section
       const additionalItems = additionalToCustomSectionItems(data.additional);
       if (additionalItems.length > 0) {
@@ -373,11 +367,13 @@ function normalizeFormData(data: FormData): FormData {
           });
         }
       }
-      
+
       return existingCustomSections;
     })(),
     sectionTitles: data.sectionTitles || {},
     sectionOrder: data.sectionOrder || undefined,
+    // Preserve othersItems for the Others section (unlimited dynamic items)
+    othersItems: data.othersItems || [],
   };
 }
 
@@ -398,14 +394,13 @@ export function CVEditor({ cvId, initialData }: CVEditorProps) {
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const isInitialMount = useRef(true);
   const lastSavedDataRef = useRef<string>(JSON.stringify(normalizedInitialData));
-  
+
   // Resizable panel state (desktop only)
   const [leftPanelWidth, setLeftPanelWidth] = useState(50); // percentage
   const isDraggingRef = useRef(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  
+
   // Min and max width constraints for left panel (in percentage)
-  // 1/3 minimum, 2/3 maximum to prevent text truncation in input boxes
   const MIN_LEFT_WIDTH = 35;
   const MAX_LEFT_WIDTH = 65;
 
@@ -414,7 +409,7 @@ export function CVEditor({ cvId, initialData }: CVEditorProps) {
     const checkDesktop = () => {
       setIsDesktop(window.innerWidth >= 768);
     };
-    
+
     checkDesktop();
     window.addEventListener('resize', checkDesktop);
     return () => window.removeEventListener('resize', checkDesktop);
@@ -432,10 +427,10 @@ export function CVEditor({ cvId, initialData }: CVEditorProps) {
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (!isDraggingRef.current || !containerRef.current || !isDesktop) return;
-      
+
       const containerRect = containerRef.current.getBoundingClientRect();
       const newWidth = ((e.clientX - containerRect.left) / containerRect.width) * 100;
-      
+
       // Clamp to min/max
       const clampedWidth = Math.min(Math.max(newWidth, MIN_LEFT_WIDTH), MAX_LEFT_WIDTH);
       setLeftPanelWidth(clampedWidth);
@@ -512,6 +507,8 @@ export function CVEditor({ cvId, initialData }: CVEditorProps) {
             : item.description || "",
         })),
       })),
+      // Preserve othersItems for the Others section
+      othersItems: formData.othersItems || [],
     };
   }, []);
 
@@ -561,7 +558,7 @@ export function CVEditor({ cvId, initialData }: CVEditorProps) {
     }
   }, [currentStep, handleSave]);
 
-  // Debounced auto-save when data changes (1.5 second delay)
+  // Debounced auto-save when data changes (15 second delay)
   useEffect(() => {
     // Skip initial mount to avoid saving on load
     if (isInitialMount.current) {
@@ -579,10 +576,10 @@ export function CVEditor({ cvId, initialData }: CVEditorProps) {
       clearTimeout(saveTimeoutRef.current);
     }
 
-    // Set new timeout for debounced save
+    // Set new timeout for debounced save (15 second delay)
     saveTimeoutRef.current = setTimeout(() => {
       handleSave();
-    }, 1500);
+    }, 15000);
 
     // Cleanup on unmount or when data changes again
     return () => {
@@ -592,23 +589,53 @@ export function CVEditor({ cvId, initialData }: CVEditorProps) {
     };
   }, [data, handleSave, hasDataChanged]);
 
-  // Save before page unload
+  // Save before page unload or tab hidden
   useEffect(() => {
+    // Use sendBeacon to save data (works reliably even when page is closing)
+    const saveWithBeacon = () => {
+      if (hasDataChanged()) {
+        const transformedData = transformDataForAPI(data);
+        const blob = new Blob([JSON.stringify(transformedData)], { type: 'application/json' });
+        navigator.sendBeacon(`/api/cv/${cvId}`, blob);
+      }
+    };
+
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      // Try to save on page unload
+      saveWithBeacon();
+
+      // Show warning if still saving
       if (saveStatus === "saving") {
         e.preventDefault();
         e.returnValue = "";
       }
     };
 
+    // Also save when tab becomes hidden (more reliable than beforeunload)
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "hidden") {
+        saveWithBeacon();
+      }
+    };
+
     window.addEventListener("beforeunload", handleBeforeUnload);
-    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
-  }, [saveStatus]);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [saveStatus, data, cvId, hasDataChanged, transformDataForAPI]);
 
   // Download PDF
   const handleDownload = async () => {
     setIsDownloading(true);
     try {
+      // Auto-save before download to ensure latest changes are saved
+      if (hasDataChanged()) {
+        await handleSave(true);
+      }
+
       const response = await fetch(`/api/cv/${cvId}/download`, {
         method: "GET",
       });
@@ -663,6 +690,7 @@ export function CVEditor({ cvId, initialData }: CVEditorProps) {
         isDownloading={isDownloading}
         saveStatus={saveStatus}
         onSave={() => handleSave(true)}
+        hasUnsavedChanges={hasDataChanged()}
       />
 
       {/* Main Content */}
@@ -672,9 +700,9 @@ export function CVEditor({ cvId, initialData }: CVEditorProps) {
             {/* Left Panel - Form */}
             {/* Mobile: Full width */}
             {/* Desktop: Resizable width with percentage */}
-            <div 
+            <div
               className={`flex flex-col bg-white ${mobilePanel === "preview" ? "hidden md:flex" : "flex"}`}
-              style={isDesktop ? { 
+              style={isDesktop ? {
                 width: `${leftPanelWidth}%`,
                 minWidth: `${MIN_LEFT_WIDTH}%`,
                 maxWidth: `${MAX_LEFT_WIDTH}%`,
@@ -746,8 +774,8 @@ export function CVEditor({ cvId, initialData }: CVEditorProps) {
                   </div>
 
                   {currentStepIndex < STEPS.length - 1 ? (
-                    <Button 
-                      onClick={goToNextStep} 
+                    <Button
+                      onClick={goToNextStep}
                       className="gap-1 sm:gap-2 px-2 sm:px-4 bg-emerald-600 hover:bg-emerald-700"
                       size="sm"
                     >
@@ -802,7 +830,7 @@ export function CVEditor({ cvId, initialData }: CVEditorProps) {
                 </Button>
                 <span className="text-sm text-neutral-500">Live Preview</span>
               </div>
-              
+
               {/* Auto-scaling Preview */}
               <div className="flex-1 min-h-0">
                 <AutoScalePreview data={data} />
