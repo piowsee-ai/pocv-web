@@ -550,45 +550,6 @@ export function CVEditor({ cvId, initialData }: CVEditorProps) {
     }
   }, [cvId, data, transformDataForAPI, hasDataChanged]);
 
-  // Auto-save when step changes
-  useEffect(() => {
-    if (previousStepRef.current !== currentStep) {
-      handleSave();
-      previousStepRef.current = currentStep;
-    }
-  }, [currentStep, handleSave]);
-
-  // Debounced auto-save when data changes (15 second delay)
-  useEffect(() => {
-    // Skip initial mount to avoid saving on load
-    if (isInitialMount.current) {
-      isInitialMount.current = false;
-      return;
-    }
-
-    // Skip if no changes
-    if (!hasDataChanged()) {
-      return;
-    }
-
-    // Clear previous timeout
-    if (saveTimeoutRef.current) {
-      clearTimeout(saveTimeoutRef.current);
-    }
-
-    // Set new timeout for debounced save (15 second delay)
-    saveTimeoutRef.current = setTimeout(() => {
-      handleSave();
-    }, 15000);
-
-    // Cleanup on unmount or when data changes again
-    return () => {
-      if (saveTimeoutRef.current) {
-        clearTimeout(saveTimeoutRef.current);
-      }
-    };
-  }, [data, handleSave, hasDataChanged]);
-
   // Save before page unload or tab hidden
   useEffect(() => {
     // Use sendBeacon to save data (works reliably even when page is closing)
