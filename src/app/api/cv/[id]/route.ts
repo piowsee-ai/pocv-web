@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import type { FormData } from "@/types/form-data";
 import { CVService } from "@/services/cv.service";
 import { logger, logError } from "@/lib/log/logger";
-import { requireUser } from "@/lib/auth/auth-server-helper";
+import { requireUser } from "@/lib/auth/auth-api-helper";
 import { FormDataSchema } from "@/schemas/cv.schema";
 
 export async function GET(

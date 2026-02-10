@@ -16,7 +16,7 @@ export function GoogleButton() {
              * A URL to redirect after the user authenticates with the provider
              * @default "/"
              */
-            callbackURL: "/",
+            callbackURL: "/home",
             /**
              * A URL to redirect if an error occurs during the sign in process
              */

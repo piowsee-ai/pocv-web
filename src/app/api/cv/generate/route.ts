@@ -4,7 +4,7 @@ import { enhanceResume } from "@/services/enhance.service";
 import { logger, logError } from "@/lib/log/logger";
 import { LLMProvider, getDefaultProvider } from "@/lib/llm";
 import type { FormData } from "@/types/form-data";
-import { requireUser } from "@/lib/auth/auth-server-helper";
+import { requireUser } from "@/lib/auth/auth-api-helper";
 import { CVService } from "@/services/cv.service";
 
 export const maxDuration = 60;

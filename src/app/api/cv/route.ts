@@ -4,7 +4,7 @@ import { FormDataSchema } from "@/schemas/cv.schema";
 import type { FormData } from "@/types/form-data";
 import { CVService } from "@/services/cv.service";
 import { logger, logError } from "@/lib/log/logger";
-import { requireUser } from "@/lib/auth/auth-server-helper";
+import { requireUser } from "@/lib/auth/auth-api-helper";
 
 export async function POST(req: NextRequest) {
   let userId: string | undefined;
