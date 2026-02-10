@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { generatePDF } from "@/services/generate.service";
 import { logger, logError } from "@/lib/log/logger";
-import { requireUser } from "@/lib/auth/auth-server-helper";
+import { requireUser } from "@/lib/auth/auth-api-helper";
 import { CVService } from "@/services/cv.service";
 import type { FormData } from "@/types/editor-form-data";
 

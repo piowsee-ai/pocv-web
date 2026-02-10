@@ -1,5 +1,4 @@
-import { auth } from "@/lib/auth/auth";
-import { headers } from "next/headers";
+import { requireUser } from "@/lib/auth/auth-page-helper";
 import { redirect } from "next/navigation";
 import { CVService } from "@/services/cv.service";
 import { CVEditor } from "@/components/editor/cv-editor";
@@ -10,14 +9,10 @@ interface EditorPageProps {
 }
 
 export default async function EditorPage({ params }: EditorPageProps) {
-  const session = await auth.api.getSession({ headers: await headers() });
-
-  if (!session?.user?.id) {
-    redirect("/login");
-  }
+  const userId = await requireUser();
 
   const { id } = await params;
-  const cvData = await CVService.getCVDetail(id, session.user.id);
+  const cvData = await CVService.getCVDetail(id, userId);
 
   if (!cvData) {
     redirect("/create");

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { CVService } from "@/services/cv.service";
 import type { CVList } from "@/types/cv";
 import { logError } from "@/lib/log/logger";
-import { requireUser } from "@/lib/auth/auth-server-helper";
+import { requireUser } from "@/lib/auth/auth-api-helper";
 
 export async function GET(req: NextRequest) {
   let userId: string | undefined;

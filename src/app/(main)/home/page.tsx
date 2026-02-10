@@ -1,3 +1,4 @@
+import { requireUser } from "@/lib/auth/auth-page-helper";
 import { Header } from "@/components/home-page/header";
 import { Footer } from "@/components/footer";
 import { CVListSection } from "@/components/home-page/cv-list";
@@ -6,7 +7,9 @@ import { QuickActions } from "@/components/home-page/quick-actions";
 import { AITools } from "@/components/home-page/ai-tools";
 import { QueryProvider } from "@/components/providers/query-provider";
 
-export default function Home() {
+export default async function Home() {
+  await requireUser();
+
   return (
     <QueryProvider>
       <main className="relative min-h-screen pt-16 text-foreground">
