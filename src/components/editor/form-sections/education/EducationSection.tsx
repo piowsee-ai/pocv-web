@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { MonthPickerInput } from "@/components/ui/month-picker-input";
 import { LocationInput } from "@/components/ui/location-input";
-import { DegreeSelect } from "@/components/page-1/step-two/degree-select";
+import { DegreeSelect } from "@/components/create/step-two/degree-select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";

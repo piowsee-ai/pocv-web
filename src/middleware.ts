@@ -4,7 +4,7 @@ import { auth } from "@/lib/auth/auth";
 
 // Routes that don't require any session checks (allow all)
 const publicRoutes = ["/", "/privacy", "/terms"];
-// Routes that should redirect to /page-1 if user is already logged in
+// Routes that should redirect to /create if user is already logged in
 const authRoutes = ["/login", "/signup"];
 
 export async function middleware(request: NextRequest) {
@@ -19,10 +19,10 @@ export async function middleware(request: NextRequest) {
     headers: await headers(),
   });
 
-  // Auth routes (login/signup): redirect to /page-1 if session exists
+  // Auth routes (login/signup): redirect to /create if session exists
   if (authRoutes.includes(pathname)) {
     if (session) {
-      return NextResponse.redirect(new URL("/page-1", request.url));
+      return NextResponse.redirect(new URL("/create", request.url));
     }
     return NextResponse.next();
   }

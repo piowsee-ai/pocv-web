@@ -16,13 +16,13 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 
-import { StepOneForm } from "@/components/page-1/step-one/form";
-import { StepTwoForm } from "@/components/page-1/step-two/form";
-import { StepTwoStory } from "@/components/page-1/step-two/story";
-import { StepThreeForm } from "@/components/page-1/step-three/form";
-import { StepThreeStory } from "@/components/page-1/step-three/story";
-import { StepFourForm } from "@/components/page-1/step-four/form";
-import { StepFourStory } from "@/components/page-1/step-four/story";
+import { StepOneForm } from "@/components/create/step-one/form";
+import { StepTwoForm } from "@/components/create/step-two/form";
+import { StepTwoStory } from "@/components/create/step-two/story";
+import { StepThreeForm } from "@/components/create/step-three/form";
+import { StepThreeStory } from "@/components/create/step-three/story";
+import { StepFourForm } from "@/components/create/step-four/form";
+import { StepFourStory } from "@/components/create/step-four/story";
 
 import type { FormData } from "@/types/form-data";
 
