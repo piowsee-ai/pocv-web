@@ -4,7 +4,7 @@ import { ChangeEvent, useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { TextArea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import type { WizardWorkExperience } from "@/types/form-data";
+import type { WorkExperience } from "@/types/form-data";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { MonthPickerInput } from "@/components/ui/month-picker-input";
@@ -21,7 +21,7 @@ import {
 
 interface StepThreeFormProps {
   formData: {
-    workExperiences: WizardWorkExperience[];
+    workExperiences: WorkExperience[];
   };
   formErrors: Record<string, string>;
   handleChange: (
@@ -244,7 +244,7 @@ export function StepThreeForm({
                 </Label>
                 <TextArea
                   id="description"
-                  value={exp.description}
+                  value={exp.description[0] || ""}
                   onChange={(e) => handleChange(e, "workExperiences", i)}
                   placeholder="Ceritakan tanggung jawab dan pencapaianmu di posisi ini..."
                   className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0 min-h-[100px]"

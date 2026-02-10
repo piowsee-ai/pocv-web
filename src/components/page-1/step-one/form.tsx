@@ -2,11 +2,11 @@ import { ChangeEvent } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PhoneInput } from "@/components/ui/phone-input";
-import type { WizardFormData } from "@/types/form-data";
+import type { FormData } from "@/types/form-data";
 
 
 interface StepOneFormProps {
-  formData: WizardFormData;
+  formData: FormData;
   formErrors: Record<string, string>;
   handleChange: (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,

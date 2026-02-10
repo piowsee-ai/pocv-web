@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { MonthPickerInput } from "@/components/ui/month-picker-input";
 import { ChevronDown, ChevronUp, Trash } from "lucide-react";
-import type { WizardOrganizationExperience } from "@/types/form-data";
+import type { OrganizationExperience } from "@/types/form-data";
 import {
   Dialog,
   DialogContent,
@@ -20,7 +20,7 @@ import {
 
 interface StepFourFormProps {
   formData: {
-    organizationExperiences: WizardOrganizationExperience[];
+    organizationExperiences: OrganizationExperience[];
   };
   formErrors: Record<string, string>;
   handleChange: (
@@ -236,7 +236,7 @@ export function StepFourForm({
                 </Label>
                 <TextArea
                   id="description"
-                  value={exp.description}
+                  value={exp.description[0] || ""}
                   onChange={(e) =>
                     handleChange(e, "organizationExperiences", i)
                   }

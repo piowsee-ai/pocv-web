@@ -1,44 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { FormDataSchema } from "@/lib/dto/cv.schema";
+import { FormDataSchema } from "@/lib/schemas/cv.schema";
 import { enhanceResume } from "@/lib/services/enhance.service";
-import { generatePDF } from "@/lib/services/generate.service";
 import { logger, logError } from "@/lib/log/logger";
 import { LLMProvider, getDefaultProvider } from "@/lib/llm";
 import type { FormData } from "@/types/form-data";
-import { v4 as uuidv4 } from "uuid";
 import { requireUser } from "@/lib/auth/auth-server-helper";
 import { CVService } from "@/lib/services/cv.service";
 
-export const maxDuration = 300;
-
-function addIdsToFormData(data: FormData): FormData {
-  return {
-    ...data,
-    educations: data.educations.map((item) => ({
-      ...item,
-      id: item.id ?? uuidv4(),
-    })),
-    workExperiences: data.workExperiences.map((item) => ({
-      ...item,
-      id: item.id ?? uuidv4(),
-    })),
-    organizationExperiences: data.organizationExperiences.map((item) => ({
-      ...item,
-      id: item.id ?? uuidv4(),
-    })),
-    personalProjects: data.personalProjects.map((item) => ({
-      ...item,
-      id: item.id ?? uuidv4(),
-    })),
-    customSections: data.customSections.map((section) => ({
-      ...section,
-      items: section.items.map((item) => ({
-        ...item,
-        id: item.id ?? uuidv4(),
-      })),
-    })),
-  };
-}
+export const maxDuration = 60;
 
 export async function POST(req: NextRequest) {
   let userId: string | undefined;
@@ -49,7 +18,7 @@ export async function POST(req: NextRequest) {
 
     // Extract options from request
     const { formData: rawFormData, options } = body as {
-      formData: unknown;
+      formData: FormData;
       options?: {
         provider?: LLMProvider;
         isPreview?: boolean;
@@ -73,7 +42,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, errors }, { status: 400 });
     }
 
-    const formData = result.data;
+    const formData: FormData = result.data;
 
     logger.info("Starting CV generation", {
       userId,
@@ -86,11 +55,8 @@ export async function POST(req: NextRequest) {
       provider: options?.provider,
     });
 
-    // Step 2: add uuid
-    const dataWithIds = addIdsToFormData(enhancedData);
-
-    // Step 3: save to database
-    const saved = await CVService.createCV(userId, dataWithIds);
+    // Step 2: save to database
+    const saved = await CVService.createCV(userId, enhancedData);
 
     logger.info("CV saved to database", {
       userId,
@@ -99,7 +65,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      data: dataWithIds,
+      data: enhancedData,
       cvId: saved.id,
     });
 
@@ -132,7 +98,7 @@ export async function POST(req: NextRequest) {
     if (error.status) {
       return NextResponse.json(
         { success: false, message: error.message },
-        { status: error.status }
+        { status: error.status },
       );
     }
     return NextResponse.json(
@@ -140,7 +106,7 @@ export async function POST(req: NextRequest) {
         success: false,
         message: "Failed to generate CV. Please try again.",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

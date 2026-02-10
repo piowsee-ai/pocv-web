@@ -11,7 +11,7 @@ import { GpaScaleSelect } from "@/components/page-1/step-two/gpa-scale-select";
 import { LocationInput } from "@/components/ui/location-input";
 import { MonthPickerInput } from "@/components/ui/month-picker-input";
 import { ChevronDown, ChevronUp, Trash } from "lucide-react";
-import type { WizardEducation } from "@/types/form-data";
+import type { Education } from "@/types/form-data";
 import {
   Dialog,
   DialogContent,
@@ -23,7 +23,7 @@ import {
 
 interface StepTwoFormProps {
   formData: {
-    educations: WizardEducation[];
+    educations: Education[];
   };
   formErrors: Record<string, string>;
   handleChange: (
@@ -332,7 +332,7 @@ export function StepTwoForm({
                 </Label>
                 <TextArea
                   id="description"
-                  value={exp.description}
+                  value={exp.description[0]}
                   onChange={(e) => handleChange(e, "educations", i)}
                   placeholder="Tulis riwayat pendidikanmu secara bebas, misalnya: Saya menyelesaikan studi di Universitas Indonesia jurusan Ekonomi, dengan fokus pada analisis data dan manajemen bisnis."
                   className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0 min-h-[100px]"

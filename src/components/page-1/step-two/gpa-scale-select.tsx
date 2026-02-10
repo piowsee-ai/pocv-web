@@ -64,7 +64,7 @@ export function GpaScaleSelect({
           aria-expanded={isOpen}
           disabled={disabled}
           className={cn(
-            "w-full justify-between bg-neutral-200 font-normal hover:bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0",
+            "w-full justify-between bg-white font-normal hover:bg-neutral-50 focus-visible:ring-0 focus-visible:ring-offset-0",
             !value && "text-muted-foreground",
             className
           )}

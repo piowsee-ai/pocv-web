@@ -1,5 +1,6 @@
+// currently not being used (currently using /api/cv/generate)
 import { NextRequest, NextResponse } from "next/server";
-import { FormDataSchema } from "@/lib/dto/cv.schema";
+import { FormDataSchema } from "@/lib/schemas/cv.schema";
 import type { FormData } from "@/types/form-data";
 import { CVService } from "@/lib/services/cv.service";
 import { logger, logError } from "@/lib/log/logger";
@@ -40,7 +41,7 @@ export async function POST(req: NextRequest) {
         success: true,
         message: "CV created",
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (err: any) {
     logError(err, {
@@ -51,7 +52,7 @@ export async function POST(req: NextRequest) {
     if (err.status) {
       return NextResponse.json(
         { success: false, message: err.message },
-        { status: err.status }
+        { status: err.status },
       );
     }
     return NextResponse.json(
@@ -59,7 +60,7 @@ export async function POST(req: NextRequest) {
         success: false,
         message: "Internal Server Error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { FormDataSchema } from "@/lib/dto/cv.schema";
 import type { FormData } from "@/types/form-data";
 import { CVService } from "@/lib/services/cv.service";
 import { logger, logError } from "@/lib/log/logger";
 import { requireUser } from "@/lib/auth/auth-server-helper";
+import { FormDataSchema } from "@/lib/schemas/cv.schema";
 
 export async function GET(
   req: NextRequest,
@@ -65,18 +65,17 @@ export async function PATCH(
   try {
     userId = await requireUser();
     const body = await req.json();
-    const result = FormDataSchema.safeParse(body);
 
+    const result = FormDataSchema.safeParse(body);
     if (!result.success) {
       const errors = result.error.issues.map((e) => ({
-        path: e.path.join("."),
+        field: e.path.join("."),
         message: e.message,
       }));
-      logger.warn("CV update validation failed", {
+      logger.warn("Update CV validation failed", {
         userId,
-        cvId: id,
         errors,
-        method: req.method,
+        method: "PATCH",
         route: req.url,
       });
       return NextResponse.json({ success: false, errors }, { status: 400 });
@@ -84,13 +83,18 @@ export async function PATCH(
 
     const formData: FormData = result.data;
 
+    logger.info("CV update data check", {
+      userId,
+      cvId: id,
+    });
+
     // NOTE: Decide whether to return the updated CV (with sections) or keep it fire-and-forget
     const updatedCV = await CVService.updateCV(id, userId, formData);
 
     logger.info("CV updated successfully", {
       userId,
       cvId: id,
-      method: req.method,
+      method: "PATCH",
       route: req.url,
     });
     return NextResponse.json(
@@ -100,7 +104,7 @@ export async function PATCH(
   } catch (err: any) {
     logError(err, {
       userId,
-      method: req.method,
+      method: "PATCH",
       route: req.url,
     });
     if (err.status) {
@@ -115,3 +119,14 @@ export async function PATCH(
     );
   }
 }
+
+// POST handler for sendBeacon (browser leave save)
+// sendBeacon can only use POST, so we provide this endpoint
+export async function POST(
+  req: NextRequest,
+  ctx: { params: Promise<{ id: string }> }
+) {
+  // Reuse PATCH logic for consistency
+  return PATCH(req, ctx);
+}
+
