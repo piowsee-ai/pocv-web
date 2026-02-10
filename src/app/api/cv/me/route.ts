@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { CVService } from "@/lib/services/cv.service";
+import { CVService } from "@/services/cv.service";
 import type { CVList } from "@/types/cv";
 import { logError } from "@/lib/log/logger";
 import { requireUser } from "@/lib/auth/auth-server-helper";

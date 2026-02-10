@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import type { FormData } from "@/types/form-data";
-import { CVService } from "@/lib/services/cv.service";
+import { CVService } from "@/services/cv.service";
 import { logger, logError } from "@/lib/log/logger";
 import { requireUser } from "@/lib/auth/auth-server-helper";
-import { FormDataSchema } from "@/lib/schemas/cv.schema";
+import { FormDataSchema } from "@/schemas/cv.schema";
 
 export async function GET(
   req: NextRequest,

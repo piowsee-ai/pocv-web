@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { CVService } from "@/lib/services/cv.service";
+import { CVService } from "@/services/cv.service";
 import { CVEditor } from "@/components/editor/cv-editor";
 import { ValidationToastProvider } from "@/components/ui/validation-toast";
 

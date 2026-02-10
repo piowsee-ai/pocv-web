@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { generatePDF } from "@/lib/services/generate.service";
+import { generatePDF } from "@/services/generate.service";
 import { logger, logError } from "@/lib/log/logger";
 import { requireUser } from "@/lib/auth/auth-server-helper";
-import { CVService } from "@/lib/services/cv.service";
+import { CVService } from "@/services/cv.service";
 import type { FormData } from "@/types/editor-form-data";
 
 export const maxDuration = 60;

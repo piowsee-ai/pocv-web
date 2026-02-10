@@ -10,7 +10,7 @@ import type {
   PersonalProject,
   WorkExperience,
 } from "@/types/form-data";
-import { MAX_LENGTH } from "../validation/editor-validation";
+import { MAX_LENGTH } from "@/lib/validation/editor-validation";
 
 export const WorkExperienceSchema: z.ZodType<WorkExperience> = z.object({
   id: z.string().optional(),
