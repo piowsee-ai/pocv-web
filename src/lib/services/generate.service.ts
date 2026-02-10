@@ -188,8 +188,6 @@ function filterEmptyEntries(data: FormData): FormData & { formattedDates: Record
     ).map(project => ({
       ...project,
       description: normalizeDescription(project.description),
-      startDate: project.startDate ? formatDate(project.startDate) : "",
-      endDate: project.isCurrent ? "Present" : (project.endDate ? formatDate(project.endDate) : ""),
     })) || [],
     // Filter additional info - remove empty strings
     additional: {
@@ -205,8 +203,7 @@ function filterEmptyEntries(data: FormData): FormData & { formattedDates: Record
       ...section,
       items: section.items?.filter((item) => item.title?.trim()).map(item => ({
         ...item,
-        startDate: item.startDate ? formatDate(item.startDate) : "",
-        endDate: item.isCurrent ? "Present" : (item.endDate ? formatDate(item.endDate) : ""),
+        description: normalizeDescription(item.description),
       })) || [],
     })) || [],
     // Provide formatted dates helper

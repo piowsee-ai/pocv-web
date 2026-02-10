@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import type { FormData } from "@/types/editor-form-data";
+import type { FormData } from "@/types/form-data";
 import { CVService } from "@/lib/services/cv.service";
 import { logger, logError } from "@/lib/log/logger";
 import { requireUser } from "@/lib/auth/auth-server-helper";
@@ -72,10 +72,10 @@ export async function PATCH(
         field: e.path.join("."),
         message: e.message,
       }));
-      logger.warn("Create CV validation failed", {
+      logger.warn("Update CV validation failed", {
         userId,
         errors,
-        method: req.method,
+        method: "PATCH",
         route: req.url,
       });
       return NextResponse.json({ success: false, errors }, { status: 400 });
@@ -86,9 +86,6 @@ export async function PATCH(
     logger.info("CV update data check", {
       userId,
       cvId: id,
-      hasEducations: formData.educations?.length || 0,
-      firstEduDescHtml: formData.educations?.[0]?.descriptionHtml?.substring(0, 50) || "none",
-      firstEduDesc: typeof formData.educations?.[0]?.description,
     });
 
     // NOTE: Decide whether to return the updated CV (with sections) or keep it fire-and-forget
@@ -97,7 +94,7 @@ export async function PATCH(
     logger.info("CV updated successfully", {
       userId,
       cvId: id,
-      method: req.method,
+      method: "PATCH",
       route: req.url,
     });
     return NextResponse.json(
@@ -107,7 +104,7 @@ export async function PATCH(
   } catch (err: any) {
     logError(err, {
       userId,
-      method: req.method,
+      method: "PATCH",
       route: req.url,
     });
     if (err.status) {

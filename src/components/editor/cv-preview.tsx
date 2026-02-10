@@ -446,20 +446,7 @@ export function CVPreview({ data, containerWidth }: CVPreviewProps) {
                     style={{ fontSize: fontSize.body }}
                   >
                     <div className="font-bold">{project.name}</div>
-                    {(project.startDate || project.endDate) && (
-                      <div
-                        className="whitespace-nowrap"
-                        style={{ fontSize: fontSize.date }}
-                      >
-                        {getDateRange(project.startDate || "", project.endDate || "", project.isCurrent)}
-                      </div>
-                    )}
                   </div>
-                  {project.role && (
-                    <div className="italic mb-1" style={{ fontSize: fontSize.body }}>
-                      {project.role}
-                    </div>
-                  )}
                   {hasDescription(project) && (
                     <div
                       className="html-content mt-1"
@@ -494,12 +481,12 @@ export function CVPreview({ data, containerWidth }: CVPreviewProps) {
                       <div className="font-bold">
                         {item.title}
                       </div>
-                      {(item.startDate || item.endDate) && (
+                      {item.years && (
                         <div
                           className="whitespace-nowrap"
                           style={{ fontSize: fontSize.date }}
                         >
-                          {getDateRange(item.startDate || "", item.endDate || "", item.isCurrent)}
+                          {item.years}
                         </div>
                       )}
                     </div>

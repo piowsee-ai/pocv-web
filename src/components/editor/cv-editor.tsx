@@ -3,6 +3,8 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import type { FormData } from "@/types/editor-form-data";
+import type { FormData as APIFormData } from "@/types/form-data";
+import type { CustomSectionItem } from "@/types/editor-form-data";
 import { Button } from "@/components/ui/button";
 import { EditorHeader } from "./editor-header";
 import { EditorProgress, type EditorStep, STEPS } from "./editor-progress";
@@ -23,6 +25,33 @@ function descriptionToHtml(description: string | string[] | undefined): string {
   if (arr.length === 0) return "";
   // Convert to bullet list HTML
   return `<ul>${arr.filter(d => d.trim()).map(d => `<li>${d}</li>`).join("")}</ul>`;
+}
+
+// Helper: Parse HTML description back to array
+function htmlToDescription(html: string | undefined): string[] {
+  if (!html) return [];
+  
+  // Create a temporary element to parse HTML
+  // Note: This runs on client side, so DOMParser or document is available
+  
+  if (typeof window === 'undefined') {
+    // Simple regex fallback for server-side (unlikely to be used there for this purpose but safe)
+    return html.replace(/<[^>]*>/g, "\n").split("\n").map(s => s.trim()).filter(s => s);
+  }
+
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, 'text/html');
+  const listItems = doc.querySelectorAll('li');
+  
+  if (listItems.length > 0) {
+    return Array.from(listItems).map(li => li.textContent?.trim() || "").filter(s => s);
+  }
+  
+  // If no list items, parse paragraphs or just text
+  return (doc.body.textContent || "")
+    .split("\n")
+    .map(s => s.trim())
+    .filter(s => s);
 }
 
 // Helper: Normalize date format from various LLM formats to YYYY-MM
@@ -130,7 +159,7 @@ function parseGpaFormat(gpaStr: string | undefined): { gpa: string; maxGpa: stri
 function additionalToCustomSectionItems(additional: FormData["additional"]) {
   if (!additional) return [];
 
-  const items: { id: string; title: string; subtitle: string; startDate: string; endDate: string; isCurrent: boolean; description: string[]; descriptionHtml: string; }[] = [];
+  const items: CustomSectionItem[] = [];
 
   if (additional.skills && additional.skills.length > 0) {
     const content = additional.skills.join(", ");
@@ -138,9 +167,7 @@ function additionalToCustomSectionItems(additional: FormData["additional"]) {
       id: `item-skills-${Date.now()}`,
       title: "Skills",
       subtitle: "",
-      startDate: "",
-      endDate: "",
-      isCurrent: false,
+      years: "",
       description: [content],
       descriptionHtml: `<p>${content}</p>`,
     });
@@ -151,9 +178,7 @@ function additionalToCustomSectionItems(additional: FormData["additional"]) {
       id: `item-languages-${Date.now()}`,
       title: "Languages",
       subtitle: "",
-      startDate: "",
-      endDate: "",
-      isCurrent: false,
+      years: "",
       description: [content],
       descriptionHtml: `<p>${content}</p>`,
     });
@@ -164,9 +189,7 @@ function additionalToCustomSectionItems(additional: FormData["additional"]) {
       id: `item-certifications-${Date.now()}`,
       title: "Certifications",
       subtitle: "",
-      startDate: "",
-      endDate: "",
-      isCurrent: false,
+      years: "",
       description: [content],
       descriptionHtml: `<p>${content}</p>`,
     });
@@ -177,9 +200,7 @@ function additionalToCustomSectionItems(additional: FormData["additional"]) {
       id: `item-achievements-${Date.now()}`,
       title: "Achievements",
       subtitle: "",
-      startDate: "",
-      endDate: "",
-      isCurrent: false,
+      years: "",
       description: [content],
       descriptionHtml: `<p>${content}</p>`,
     });
@@ -189,10 +210,10 @@ function additionalToCustomSectionItems(additional: FormData["additional"]) {
 }
 
 // Helper: Parse text from customSection (legacy format) into items
-function parseTextToItems(text: string): { id: string; title: string; subtitle: string; startDate: string; endDate: string; isCurrent: boolean; description: string[]; descriptionHtml: string; }[] {
+function parseTextToItems(text: string): CustomSectionItem[] {
   if (!text || !text.trim()) return [];
 
-  const items: { id: string; title: string; subtitle: string; startDate: string; endDate: string; isCurrent: boolean; description: string[]; descriptionHtml: string; }[] = [];
+  const items: CustomSectionItem[] = [];
 
   // Parse lines like "• Skills: Java, Python, ..." or "Skills: Java, Python, ..."
   const lines = text.split("\n").filter(line => line.trim());
@@ -212,9 +233,7 @@ function parseTextToItems(text: string): { id: string; title: string; subtitle: 
           id: `item-${title.toLowerCase()}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
           title: title,
           subtitle: "",
-          startDate: "",
-          endDate: "",
-          isCurrent: false,
+          years: "",
           description: [content],
           descriptionHtml: `<p>${content}</p>`,
         });
@@ -291,11 +310,6 @@ function normalizeFormData(data: FormData): FormData {
       return {
         id: project.id || `project-${idx}`,
         name: project.name || "",
-        role: project.role || "",
-        location: project.location || "",
-        startDate: normalizeDateFormat(project.startDate),
-        endDate: normalizeDateFormat(project.endDate),
-        isCurrent: project.isCurrent || project.endDate?.toLowerCase().includes("present") || false,
         description: descArr,
         descriptionHtml: project.descriptionHtml || descriptionToHtml(descArr),
       };
@@ -316,9 +330,7 @@ function normalizeFormData(data: FormData): FormData {
             id: item.id || `item-${itemIdx}`,
             title: item.title || "",
             subtitle: item.subtitle || "",
-            startDate: normalizeDateFormat(item.startDate),
-            endDate: normalizeDateFormat(item.endDate),
-            isCurrent: item.isCurrent || item.endDate?.toLowerCase().includes("present") || false,
+            years: item.years || "",
             description: descArr,
             descriptionHtml: item.descriptionHtml || descriptionToHtml(descArr),
           };
@@ -463,52 +475,82 @@ export function CVEditor({ cvId, initialData }: CVEditorProps) {
   const currentStepIndex = STEPS.findIndex((s) => s.id === currentStep);
   const progress = Math.round(((currentStepIndex + 1) / STEPS.length) * 100);
 
-  // Transform data for API - preserve descriptionHtml for rich text formatting
-  const transformDataForAPI = useCallback((formData: FormData) => {
+  // Transform data for API - convert to strict APIFormData structure
+  const transformDataForAPI = useCallback((formData: FormData): APIFormData => {
+    console.log("Transforming data for API..."); // Debug log
     return {
-      ...formData,
+      personalData: {
+        name: formData.personalData?.name || "",
+        phone: formData.personalData?.phone || "",
+        email: formData.personalData?.email || "",
+        location: formData.personalData?.location || "",
+        website: formData.personalData?.website || "",
+        linkedin: formData.personalData?.linkedin || "",
+        github: formData.personalData?.github || "",
+      },
+      summary: formData.summary || "",
       educations: formData.educations.map((edu) => ({
-        ...edu,
-        descriptionHtml: edu.descriptionHtml || "",
-        description: Array.isArray(edu.description)
-          ? edu.description.join("\n")
-          : edu.description || "",
+        id: edu.id,
+        institution: edu.institution || "",
+        degree: edu.degree || "",
+        major: edu.major || "",
         location: edu.location || "",
+        gpa: edu.gpa || "",
+        startDate: edu.startDate || "",
+        endDate: edu.endDate || "",
+        description: edu.descriptionHtml 
+          ? htmlToDescription(edu.descriptionHtml)
+          : Array.isArray(edu.description) ? edu.description : [edu.description || ""].filter(Boolean),
       })),
       workExperiences: formData.workExperiences.map((work) => ({
-        ...work,
-        descriptionHtml: work.descriptionHtml || "",
-        description: Array.isArray(work.description)
-          ? work.description.join("\n")
-          : work.description || "",
+        id: work.id,
+        position: work.position || "",
+        company: work.company || "",
         location: work.location || "",
+        startDate: work.startDate || "",
+        endDate: work.endDate || "",
+        description: work.descriptionHtml 
+          ? htmlToDescription(work.descriptionHtml)
+          : Array.isArray(work.description) ? work.description : [work.description || ""].filter(Boolean),
       })),
       organizationExperiences: formData.organizationExperiences.map((org) => ({
-        ...org,
-        descriptionHtml: org.descriptionHtml || "",
-        description: Array.isArray(org.description)
-          ? org.description.join("\n")
-          : org.description || "",
+        id: org.id,
+        position: org.position || "",
+        organization: org.organization || "",
+        startDate: org.startDate || "",
+        endDate: org.endDate || "",
+        description: org.descriptionHtml
+          ? htmlToDescription(org.descriptionHtml)
+          : Array.isArray(org.description) ? org.description : [org.description || ""].filter(Boolean),
       })),
       personalProjects: (formData.personalProjects || []).map((project) => ({
-        ...project,
-        descriptionHtml: project.descriptionHtml || "",
-        description: Array.isArray(project.description)
-          ? project.description.join("\n")
-          : project.description || "",
+        id: project.id,
+        name: project.name || "",
+        description: project.descriptionHtml
+          ? htmlToDescription(project.descriptionHtml)
+          : Array.isArray(project.description) ? project.description : [project.description || ""].filter(Boolean),
       })),
+      additional: formData.additional || {
+        skills: [],
+        languages: [],
+        certifications: [],
+        achievements: [],
+      },
       customSections: (formData.customSections || []).map((section) => ({
-        ...section,
+        sectionKey: section.sectionKey,
+        sectionTitle: section.sectionTitle,
+        sectionType: section.sectionType,
+        text: section.text || "",
         items: section.items.map((item) => ({
-          ...item,
-          descriptionHtml: item.descriptionHtml || "",
-          description: Array.isArray(item.description)
-            ? item.description.join("\n")
-            : item.description || "",
+          id: item.id,
+          title: item.title || "",
+          subtitle: item.subtitle || "",
+          years: item.years || "",
+          description: item.descriptionHtml
+            ? htmlToDescription(item.descriptionHtml)
+            : Array.isArray(item.description) ? item.description : [item.description || ""].filter(Boolean),
         })),
       })),
-      // Preserve othersItems for the Others section
-      othersItems: formData.othersItems || [],
     };
   }, []);
 

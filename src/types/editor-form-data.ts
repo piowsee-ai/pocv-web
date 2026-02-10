@@ -42,24 +42,12 @@ export interface OrganizationExperience extends BaseOrganizationExperience {
 
 // Extended PersonalProject with editor-specific fields
 export interface PersonalProject extends BasePersonalProject {
-  role?: string;
-  location?: string;
-  startDate?: string;
-  endDate?: string;
-  isCurrent?: boolean;
   descriptionHtml?: string;
 }
 
-// Extended CustomSectionItem with editor-specific fields
-// Override 'years' to be optional since editor uses startDate/endDate separately
-export interface CustomSectionItem extends Omit<BaseCustomSectionItem, "years"> {
-  years?: string;
-  startDate?: string;
-  endDate?: string;
-  isCurrent?: boolean;
+export interface CustomSectionItem extends BaseCustomSectionItem {
   descriptionHtml?: string;
 }
-
 // Extended CustomSection using extended CustomSectionItem
 export interface CustomSection extends Omit<BaseCustomSection, "items"> {
   items: CustomSectionItem[];

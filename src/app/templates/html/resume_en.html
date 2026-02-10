@@ -184,16 +184,7 @@
       <div class="entry">
         <div class="entry-header">
           <div class="entry-title">{{ project.name }}</div>
-          {% if project.startDate or project.endDate %}
-          <div class="entry-date">
-            {% if project.startDate and project.endDate %}{{ project.startDate }} - {{ project.endDate }}{% elif
-            project.startDate %}{{ project.startDate }}{% elif project.endDate %}{{ project.endDate }}{% endif %}
-          </div>
-          {% endif %}
         </div>
-        {% if project.role %}
-        <div class="entry-subtitle">{{ project.role }}</div>
-        {% endif %}
         {% if project.descriptionHtml %}
         <div class="html-content">
           {{ project.descriptionHtml | safe }}
@@ -223,10 +214,9 @@
           <div class="entry-title">
             {{ item.title }}
           </div>
-          {% if item.startDate or item.endDate %}
+          {% if item.years %}
           <div class="entry-date">
-            {% if item.startDate and item.endDate %}{{ item.startDate }} - {{ item.endDate }}{% elif item.startDate %}{{
-            item.startDate }}{% elif item.endDate %}{{ item.endDate }}{% endif %}
+            {{ item.years }}
           </div>
           {% endif %}
         </div>

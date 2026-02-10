@@ -40,8 +40,6 @@ import {
 import { FormSectionProps } from "../common/types";
 import { getDescriptionHtml, updateDescription } from "../common/helpers";
 import { CustomSection, CustomSectionItem, FormData } from "@/types/editor-form-data";
-import { MonthPickerInput } from "@/components/ui/month-picker-input";
-import { Checkbox } from "@/components/ui/checkbox";
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import { cn } from "@/lib/utils";
 import { MAX_LENGTH, truncateToMaxLength } from "@/lib/validation/editor-validation";
@@ -183,38 +181,15 @@ function CustomSectionItemCard({
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 @md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>Tanggal Mulai</Label>
-                  <MonthPickerInput
-                    value={item.startDate || ""}
-                    onChange={(e) => onUpdate("startDate", e.target.value)}
-                    placeholder="Pilih bulan"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <Label>Tanggal Selesai</Label>
-                    <div className="flex items-center gap-2">
-                      <Checkbox
-                        id={`custom-${sectionIndex}-${index}-current`}
-                        checked={item.isCurrent || false}
-                        onCheckedChange={(checked) => onUpdate("isCurrent", checked === true)}
-                        disabled={!item.startDate}
-                      />
-                      <label htmlFor={`custom-${sectionIndex}-${index}-current`} className={`text-xs cursor-pointer ${!item.startDate ? 'text-neutral-300' : 'text-neutral-500'}`}>
-                        Saat Ini
-                      </label>
-                    </div>
-                  </div>
-                  <MonthPickerInput
-                    value={item.endDate || ""}
-                    onChange={(e) => onUpdate("endDate", e.target.value)}
-                    placeholder={!item.startDate ? "Isi tanggal mulai dulu" : "Pilih bulan"}
-                    disabled={item.isCurrent || !item.startDate}
-                  />
-                </div>
+              <div className="space-y-2">
+                <Label>Tahun / Periode</Label>
+                <Input
+                  value={item.years || ""}
+                  onChange={(e) => onUpdate("years", truncateToMaxLength(e.target.value, 100))}
+                  placeholder="Contoh: 2020-2023, 2023-Sekarang"
+                  maxLength={100}
+                  className="text-neutral-900"
+                />
               </div>
 
               <div className="space-y-2">
@@ -314,17 +289,6 @@ function CustomSectionCard({
   const updateItem = (itemIndex: number, field: string, value: string | string[] | boolean) => {
     const updatedItems = [...section.items];
     updatedItems[itemIndex] = { ...updatedItems[itemIndex], [field]: value };
-
-    // If "Saat Ini" is checked, clear endDate
-    if (field === "isCurrent" && value === true) {
-      updatedItems[itemIndex] = { ...updatedItems[itemIndex], endDate: "" };
-    }
-
-    // If startDate is cleared, also clear endDate and isCurrent
-    if (field === "startDate" && !value) {
-      updatedItems[itemIndex] = { ...updatedItems[itemIndex], endDate: "", isCurrent: false };
-    }
-
     updateSection({ items: updatedItems });
   };
 
@@ -343,9 +307,7 @@ function CustomSectionCard({
           id: `item-${Date.now()}`,
           title: "",
           subtitle: "",
-          startDate: "",
-          endDate: "",
-          isCurrent: false,
+          years: "",
           description: [],
           descriptionHtml: "",
         },

@@ -25,8 +25,6 @@ import { getDescriptionHtml, updateDescription } from "../common/helpers";
 import { PersonalProject } from "@/types/editor-form-data";
 import { EditableSectionHeader } from "@/components/editor/ui/editable-section-header";
 import { CollapsibleCard } from "@/components/editor/ui/collapsible-card";
-import { MonthPickerInput } from "@/components/ui/month-picker-input";
-import { Checkbox } from "@/components/ui/checkbox";
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import { MAX_LENGTH, truncateToMaxLength } from "@/lib/validation/editor-validation";
 
@@ -35,7 +33,6 @@ const PROJECT_TIPS = [
   "Sebutkan tech stack yang digunakan",
   "Jelaskan masalah yang diselesaikan",
   "Sertakan link demo/repo jika ada",
-  "Tanggal bersifat opsional",
   "Drag untuk mengubah urutan",
 ];
 
@@ -45,7 +42,7 @@ function getProjectHeader(project: PersonalProject): string {
   return "Proyek Baru";
 }
 
-// Projects Section - now with dates like Work/Org
+// Projects Section
 export function ProjectsSection({ data, setData }: FormSectionProps) {
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -71,24 +68,10 @@ export function ProjectsSection({ data, setData }: FormSectionProps) {
         case "name":
           processedValue = truncateToMaxLength(value, MAX_LENGTH.NAME);
           break;
-        case "role":
-          processedValue = truncateToMaxLength(value, MAX_LENGTH.ROLE);
-          break;
       }
     }
 
     updated[index] = { ...updated[index], [field]: processedValue };
-
-    // If "Saat Ini" is checked, clear endDate
-    if (field === "isCurrent" && value === true) {
-      updated[index] = { ...updated[index], endDate: "" };
-    }
-
-    // If startDate is cleared, also clear endDate and isCurrent
-    if (field === "startDate" && !value) {
-      updated[index] = { ...updated[index], endDate: "", isCurrent: false };
-    }
-
     setData((prev) => ({ ...prev, personalProjects: updated }));
   };
 
@@ -100,11 +83,6 @@ export function ProjectsSection({ data, setData }: FormSectionProps) {
         {
           id: `proj-${Date.now()}`,
           name: "",
-          role: "",
-          location: "",
-          startDate: "",
-          endDate: "",
-          isCurrent: false,
           description: [],
           descriptionHtml: "",
         },
@@ -165,7 +143,7 @@ export function ProjectsSection({ data, setData }: FormSectionProps) {
                 onRemove={() => removeProject(index)}
                 defaultExpanded={index === 0}
               >
-                <div className="grid grid-cols-1 @md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4">
                   <div className="space-y-2">
                     <Label>Nama Proyek</Label>
                     <Input
@@ -178,50 +156,6 @@ export function ProjectsSection({ data, setData }: FormSectionProps) {
                   </div>
 
                   <div className="space-y-2">
-                    <Label>Role / Posisi</Label>
-                    <Input
-                      value={project.role || ""}
-                      onChange={(e) => updateProject(index, "role", e.target.value)}
-                      placeholder="Lead Developer, etc."
-                      maxLength={MAX_LENGTH.ROLE}
-                      className="text-neutral-900"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Tanggal Mulai</Label>
-                    <MonthPickerInput
-                      value={project.startDate || ""}
-                      onChange={(e) => updateProject(index, "startDate", e.target.value)}
-                      placeholder="Pilih bulan"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <Label>Tanggal Selesai</Label>
-                      <div className="flex items-center gap-2">
-                        <Checkbox
-                          id={`proj-current-${index}`}
-                          checked={project.isCurrent || false}
-                          onCheckedChange={(checked) => updateProject(index, "isCurrent", checked === true)}
-                          disabled={!project.startDate}
-                          className="cursor-pointer"
-                        />
-                        <label htmlFor={`proj-current-${index}`} className={`text-xs cursor-pointer ${!project.startDate ? 'text-neutral-300' : 'text-neutral-500'}`}>
-                          Saat Ini
-                        </label>
-                      </div>
-                    </div>
-                    <MonthPickerInput
-                      value={project.endDate || ""}
-                      onChange={(e) => updateProject(index, "endDate", e.target.value)}
-                      placeholder={!project.startDate ? "Isi tanggal mulai dulu" : "Pilih bulan"}
-                      disabled={project.isCurrent || !project.startDate}
-                    />
-                  </div>
-
-                  <div className="space-y-2 @md:col-span-2">
                     <Label>Deskripsi</Label>
                     <RichTextEditor
                       value={getDescriptionHtml(project)}
