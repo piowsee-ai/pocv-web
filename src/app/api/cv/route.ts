@@ -1,8 +1,8 @@
 // currently not being used (currently using /api/cv/generate)
 import { NextRequest, NextResponse } from "next/server";
-import { FormDataSchema } from "@/lib/schemas/cv.schema";
+import { FormDataSchema } from "@/schemas/cv.schema";
 import type { FormData } from "@/types/form-data";
-import { CVService } from "@/lib/services/cv.service";
+import { CVService } from "@/services/cv.service";
 import { logger, logError } from "@/lib/log/logger";
 import { requireUser } from "@/lib/auth/auth-server-helper";
 

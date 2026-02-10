@@ -1,4 +1,4 @@
-import { prisma } from "../db/prisma-client";
+import { prisma } from "@/lib/db/prisma-client";
 import type { Cv } from "@/generated/prisma";
 import type { FormData } from "@/types/form-data";
 
