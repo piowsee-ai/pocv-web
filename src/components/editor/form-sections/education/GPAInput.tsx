@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { Input } from "@/components/ui/input";
-import { GpaScaleSelect } from "@/components/page-1/step-two/gpa-scale-select";
+import { GpaScaleSelect } from "@/components/create/step-two/gpa-scale-select";
 
 // GPA Input Component with scale selector
 export function GPAInput({

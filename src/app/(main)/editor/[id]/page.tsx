@@ -20,7 +20,7 @@ export default async function EditorPage({ params }: EditorPageProps) {
   const cvData = await CVService.getCVDetail(id, session.user.id);
 
   if (!cvData) {
-    redirect("/page-1");
+    redirect("/create");
   }
 
   return (

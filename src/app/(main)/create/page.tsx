@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth/auth";
 import { headers } from "next/headers";
 
-import { WizardStep } from "@/components/page-1/wizard-step";
+import { WizardStep } from "@/components/create/wizard-step";
 
 export default async function Page1() {
   const session = await auth.api.getSession({ headers: await headers() });
