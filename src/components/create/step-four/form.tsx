@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { MonthPickerInput } from "@/components/ui/month-picker-input";
-import { ChevronDown, ChevronUp, Trash } from "lucide-react";
+import { ChevronDown, Plus, Trash2 } from "lucide-react";
 import type { OrganizationExperience } from "@/types/form-data";
 import {
   Dialog,
@@ -94,163 +94,172 @@ export function StepFourForm({
   };
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-4">
       {organizationExperiences.map((exp, i) => (
         <div
           key={i}
-          className="relative space-y-6 rounded-lg border-2 bg-white px-6 pb-6 pt-2 shadow-sm"
+          className="rounded-xl bg-neutral-50 border border-neutral-200 overflow-hidden"
         >
           <div
-            className="-mx-6 px-6 pb-2 border-b border-gray-200 flex justify-between items-center cursor-pointer"
+            className="px-4 py-3 bg-white border-b border-neutral-100 flex justify-between items-center cursor-pointer"
             onClick={() => toggleDropdown(i)}
           >
-            <h2 className="text-lg font-semibold text-gray-800">
+            <h2 className="text-sm font-semibold text-emerald-700">
               Organisasi {i + 1}
             </h2>
 
             <div className="flex items-center gap-2">
               {organizationExperiences.length > 1 && (
-                <Trash
-                  size={15}
-                  className="text-red-500 hover:text-red-700 cursor-pointer"
+                <button
+                  type="button"
+                  className="p-1 rounded hover:bg-red-50 transition-colors"
                   onClick={(e) => {
                     e.stopPropagation();
                     handleDeleteClick(i);
                   }}
-                />
+                >
+                  <Trash2 className="w-4 h-4 text-red-500 hover:text-red-600" />
+                </button>
               )}
 
-              {openIndexes.includes(i) ? (
-                <ChevronUp size={20} />
-              ) : (
-                <ChevronDown size={20} />
-              )}
+              <ChevronDown
+                className={`w-4 h-4 text-neutral-400 transition-transform duration-200 ${
+                  openIndexes.includes(i) ? "rotate-180" : ""
+                }`}
+              />
             </div>
           </div>
 
-          {openIndexes.includes(i) && (
-            <>
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div>
-                  <Label htmlFor={`position-${i}`} className="mb-1 block">
-                    Jabatan <span className="text-red-500">*</span>
-                  </Label>
-                  <Input
-                    id="position"
-                    value={exp.position}
-                    onChange={(e) =>
-                      handleChange(e, "organizationExperiences", i)
-                    }
-                    placeholder="Jabatan"
-                    className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0"
-                  />
-                  {formErrors[`position-${i}`] && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {formErrors[`position-${i}`]}
-                    </p>
-                  )}
-                </div>
-
-                <div>
-                  <Label htmlFor={`organization-${i}`} className="mb-1 block">
-                    Organisasi <span className="text-red-500">*</span>
-                  </Label>
-                  <Input
-                    id="organization"
-                    value={exp.organization}
-                    onChange={(e) =>
-                      handleChange(e, "organizationExperiences", i)
-                    }
-                    placeholder="Nama Organisasi"
-                    className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0"
-                  />
-                  {formErrors[`organization-${i}`] && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {formErrors[`organization-${i}`]}
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                <div>
-                  <Label htmlFor={`startDate-${i}`} className="mb-1 block">
-                    Waktu Mulai <span className="text-red-500">*</span>
-                  </Label>
-                  <MonthPickerInput
-                    id="startDate"
-                    value={exp.startDate}
-                    onChange={(e) => handleChange(e, "organizationExperiences", i)}
-                    placeholder="Pilih Bulan"
-                  />
-                  {formErrors[`startDate-${i}`] && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {formErrors[`startDate-${i}`]}
-                    </p>
-                  )}
-                </div>
-
-                <div>
-                  <Label htmlFor={`endDate-${i}`} className="mb-1 block">
-                    Waktu Akhir <span className="text-red-500">*</span>
-                  </Label>
-                  <MonthPickerInput
-                    id="endDate"
-                    value={exp.endDate === "Saat Ini" ? "" : exp.endDate}
-                    onChange={(e) => handleChange(e, "organizationExperiences", i)}
-                    placeholder="Pilih Bulan"
-                    disabled={exp.endDate === "Saat Ini"}
-                  />
-                  <div className="flex items-center gap-2 mt-2">
-                    <Checkbox
-                      id={`isOngoing-${i}`}
-                      checked={exp.endDate === "Saat Ini"}
-                      onCheckedChange={(checked) => {
-                        const syntheticEvent = {
-                          target: {
-                            id: "endDate",
-                            value: checked ? "Saat Ini" : "",
-                          },
-                        } as ChangeEvent<HTMLInputElement>;
-                        handleChange(syntheticEvent, "organizationExperiences", i);
-                      }}
-                    />
-                    <Label
-                      htmlFor={`isOngoing-${i}`}
-                      className="text-sm font-normal cursor-pointer"
-                    >
-                      Saat Ini
+          <div
+            className="grid transition-all duration-200"
+            style={{
+              gridTemplateRows: openIndexes.includes(i) ? "1fr" : "0fr",
+            }}
+          >
+            <div className="overflow-hidden">
+              <div className="p-4 space-y-4">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label htmlFor={`position-${i}`}>
+                      Jabatan <span className="text-red-500">*</span>
                     </Label>
+                    <Input
+                      id="position"
+                      value={exp.position}
+                      onChange={(e) =>
+                        handleChange(e, "organizationExperiences", i)
+                      }
+                      placeholder="Jabatan"
+                      className="text-neutral-900"
+                    />
+                    {formErrors[`position-${i}`] && (
+                      <p className="text-sm text-red-500">
+                        {formErrors[`position-${i}`]}
+                      </p>
+                    )}
                   </div>
-                  {formErrors[`endDate-${i}`] && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {formErrors[`endDate-${i}`]}
+
+                  <div className="space-y-2">
+                    <Label htmlFor={`organization-${i}`}>
+                      Organisasi <span className="text-red-500">*</span>
+                    </Label>
+                    <Input
+                      id="organization"
+                      value={exp.organization}
+                      onChange={(e) =>
+                        handleChange(e, "organizationExperiences", i)
+                      }
+                      placeholder="Nama Organisasi"
+                      className="text-neutral-900"
+                    />
+                    {formErrors[`organization-${i}`] && (
+                      <p className="text-sm text-red-500">
+                        {formErrors[`organization-${i}`]}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label htmlFor={`startDate-${i}`}>
+                      Waktu Mulai <span className="text-red-500">*</span>
+                    </Label>
+                    <MonthPickerInput
+                      id="startDate"
+                      value={exp.startDate}
+                      onChange={(e) => handleChange(e, "organizationExperiences", i)}
+                      placeholder="Pilih Bulan"
+                    />
+                    {formErrors[`startDate-${i}`] && (
+                      <p className="text-sm text-red-500">
+                        {formErrors[`startDate-${i}`]}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor={`endDate-${i}`}>
+                      Waktu Akhir <span className="text-red-500">*</span>
+                    </Label>
+                    <MonthPickerInput
+                      id="endDate"
+                      value={exp.endDate === "Saat Ini" ? "" : exp.endDate}
+                      onChange={(e) => handleChange(e, "organizationExperiences", i)}
+                      placeholder="Pilih Bulan"
+                      disabled={exp.endDate === "Saat Ini"}
+                    />
+                    <div className="flex items-center gap-2 mt-2">
+                      <Checkbox
+                        id={`isOngoing-${i}`}
+                        checked={exp.endDate === "Saat Ini"}
+                        onCheckedChange={(checked) => {
+                          const syntheticEvent = {
+                            target: {
+                              id: "endDate",
+                              value: checked ? "Saat Ini" : "",
+                            },
+                          } as ChangeEvent<HTMLInputElement>;
+                          handleChange(syntheticEvent, "organizationExperiences", i);
+                        }}
+                      />
+                      <Label
+                        htmlFor={`isOngoing-${i}`}
+                        className="text-sm font-normal cursor-pointer text-neutral-500"
+                      >
+                        Saat Ini
+                      </Label>
+                    </div>
+                    {formErrors[`endDate-${i}`] && (
+                      <p className="text-sm text-red-500">
+                        {formErrors[`endDate-${i}`]}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor={`description-${i}`}>
+                    Deskripsi <span className="text-red-500">*</span>
+                  </Label>
+                  <TextArea
+                    id="description"
+                    value={exp.description[0] || ""}
+                    onChange={(e) =>
+                      handleChange(e, "organizationExperiences", i)
+                    }
+                    placeholder="Ceritakan pengalamanmu selama berorganisasi"
+                    className="text-neutral-900 min-h-[100px]"
+                  />
+                  {formErrors[`description-${i}`] && (
+                    <p className="text-sm text-red-500">
+                      {formErrors[`description-${i}`]}
                     </p>
                   )}
                 </div>
               </div>
-
-              <div>
-                <Label htmlFor={`description-${i}`} className="mb-1 block">
-                  Deskripsi <span className="text-red-500">*</span>
-                </Label>
-                <TextArea
-                  id="description"
-                  value={exp.description[0] || ""}
-                  onChange={(e) =>
-                    handleChange(e, "organizationExperiences", i)
-                  }
-                  placeholder="Ceritakan pengalamanmu selama berorganisasi"
-                  className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0 min-h-[100px]"
-                />
-                {formErrors[`description-${i}`] && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {formErrors[`description-${i}`]}
-                  </p>
-                )}
-              </div>
-            </>
-          )}
+            </div>
+          </div>
         </div>
       ))}
 
@@ -261,10 +270,11 @@ export function StepFourForm({
           addSectionItem("organizationExperiences");
           setOpenIndexes((prev) => [...prev, newIndex]);
         }}
-        className="text-emerald-500 font-semibold hover:bg-transparent hover:text-emerald-600 ml-2"
-        variant="ghost"
+        variant="outline"
+        className="w-full border-dashed border-2 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"
       >
-        + Tambah organisasi lain
+        <Plus className="w-4 h-4 mr-2" />
+        Tambah organisasi lain
       </Button>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>

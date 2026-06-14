@@ -10,7 +10,7 @@ import { ArrowUpRight } from "lucide-react";
 import { useScroll } from "@/hooks/use-scroll";
 import { useSession } from "@/lib/auth/auth-client";
 
-export function Header() {
+export function Header({ alwaysVisible = false }: { alwaysVisible?: boolean }) {
   const { data: session } = useSession();
   const scrollDirection = useScroll();
 
@@ -37,7 +37,7 @@ export function Header() {
     <header
       className={cn(
         "fixed top-0 z-50 w-full border-b bg-white/70 backdrop-blur-sm transition-transform duration-300",
-        scrollDirection === "down" ? "-translate-y-full" : "translate-y-0",
+        scrollDirection === "down" && !alwaysVisible ? "-translate-y-full" : "translate-y-0",
       )}
     >
       <div className="relative container mx-auto flex h-16 max-w-7xl items-center justify-between px-4">

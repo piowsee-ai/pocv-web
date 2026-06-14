@@ -5,7 +5,7 @@ import { TextArea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import type { WorkExperience } from "@/types/form-data";
 import { Button } from "@/components/ui/button";
-import { ChevronDown, ChevronUp, Trash } from "lucide-react";
+import { ChevronDown, Plus, Trash2 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -85,59 +85,68 @@ export function StepThreeStory({
   };
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-4">
       {workExperiences.map((exp, i) => (
         <div
           key={i}
-          className="relative space-y-6 rounded-lg border-2 bg-white px-6 pb-6 pt-2 shadow-sm"
+          className="rounded-xl bg-neutral-50 border border-neutral-200 overflow-hidden"
         >
           <div
-            className="-mx-6 px-6 pb-2 border-b border-gray-200 flex justify-between items-center cursor-pointer"
+            className="px-4 py-3 bg-white border-b border-neutral-100 flex justify-between items-center cursor-pointer"
             onClick={() => toggleDropdown(i)}
           >
-            <h2 className="text-lg font-semibold text-gray-800">
+            <h2 className="text-sm font-semibold text-emerald-700">
               Perusahaan {i + 1}
             </h2>
             <div className="flex items-center gap-2">
               {workExperiences.length > 1 && (
-                <Trash
-                  size={15}
-                  className="text-red-500 hover:text-red-700 cursor-pointer"
+                <button
+                  type="button"
+                  className="p-1 rounded hover:bg-red-50 transition-colors"
                   onClick={(e) => {
                     e.stopPropagation();
                     handleDeleteClick(i);
                   }}
-                />
+                >
+                  <Trash2 className="w-4 h-4 text-red-500 hover:text-red-600" />
+                </button>
               )}
 
-              {openIndexes.includes(i) ? (
-                <ChevronUp size={20} />
-              ) : (
-                <ChevronDown size={20} />
-              )}
+              <ChevronDown
+                className={`w-4 h-4 text-neutral-400 transition-transform duration-200 ${
+                  openIndexes.includes(i) ? "rotate-180" : ""
+                }`}
+              />
             </div>
           </div>
-          {openIndexes.includes(i) && (
-            <>
-              <div>
-                <Label htmlFor={`description-${i}`} className="mb-1 block">
-                  Ceritakan Pengalamanmu <span className="text-red-500">*</span>
-                </Label>
-                <TextArea
-                  id="description"
-                  value={exp.description[0] || ""}
-                  onChange={(e) => handleChange(e, "workExperiences", i)}
-                  placeholder="Tulis pengalaman kerja atau proyekmu secara bebas, misalnya: Saya memiliki pengalaman 5 tahun di PT Teknologi Maju sebagai UI/UX Designer, di mana saya mengerjakan..."
-                  className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0 min-h-[100px]"
-                />
-                {formErrors[`description-${i}`] && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {formErrors[`description-${i}`]}
-                  </p>
-                )}
+          <div
+            className="grid transition-all duration-200"
+            style={{
+              gridTemplateRows: openIndexes.includes(i) ? "1fr" : "0fr",
+            }}
+          >
+            <div className="overflow-hidden">
+              <div className="p-4 space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor={`description-${i}`}>
+                    Ceritakan Pengalamanmu <span className="text-red-500">*</span>
+                  </Label>
+                  <TextArea
+                    id="description"
+                    value={exp.description[0] || ""}
+                    onChange={(e) => handleChange(e, "workExperiences", i)}
+                    placeholder="Tulis pengalaman kerja atau proyekmu secara bebas, misalnya: Saya memiliki pengalaman 5 tahun di PT Teknologi Maju sebagai UI/UX Designer, di mana saya mengerjakan..."
+                    className="text-neutral-900 min-h-[100px]"
+                  />
+                  {formErrors[`description-${i}`] && (
+                    <p className="text-sm text-red-500">
+                      {formErrors[`description-${i}`]}
+                    </p>
+                  )}
+                </div>
               </div>
-            </>
-          )}
+            </div>
+          </div>
         </div>
       ))}
 
@@ -148,10 +157,11 @@ export function StepThreeStory({
           addSectionItem("workExperiences");
           setOpenIndexes((prev) => [...prev, newIndex]);
         }}
-        className="text-emerald-500 font-semibold hover:bg-transparent hover:text-emerald-600 ml-2 cursor-pointer"
-        variant="ghost"
+        variant="outline"
+        className="w-full border-dashed border-2 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"
       >
-        + Tambah pekerjaan lain
+        <Plus className="w-4 h-4 mr-2" />
+        Tambah pekerjaan lain
       </Button>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>

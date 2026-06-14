@@ -1,9 +1,8 @@
 "use client";
 
-import { useState, ChangeEvent, FormEvent } from "react";
+import { useState, useCallback, ChangeEvent, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
 import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
@@ -15,6 +14,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import { Loader2, ChevronLeft, ChevronRight, Send } from "lucide-react";
 
 import { StepOneForm } from "@/components/create/step-one/form";
 import { StepTwoForm } from "@/components/create/step-two/form";
@@ -25,6 +25,13 @@ import { StepFourForm } from "@/components/create/step-four/form";
 import { StepFourStory } from "@/components/create/step-four/story";
 
 import type { FormData } from "@/types/form-data";
+
+const STEPS = [
+  { id: 1, label: "Pribadi" },
+  { id: 2, label: "Pendidikan" },
+  { id: 3, label: "Profesional" },
+  { id: 4, label: "Organisasi" },
+];
 
 export function WizardStep() {
   const router = useRouter();
@@ -189,6 +196,86 @@ export function WizardStep() {
     }));
   };
 
+  const validateStepData = useCallback(
+    (targetStep: number): boolean => {
+      const errors: Record<string, string> = {};
+
+      if (targetStep === 1) {
+        if (!formData.personalData.name) errors.name = "Nama Lengkap harus diisi.";
+
+        if (!formData.personalData.phone) {
+          errors.phone = "Nomor Telepon harus diisi.";
+        } else if (!/^\d{10,15}$/.test(formData.personalData.phone)) {
+          errors.phone = "Nomor Telepon harus berupa 10-15 digit angka.";
+        }
+
+        if (!formData.personalData.email) {
+          errors.email = "Alamat Email harus diisi.";
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.personalData.email)) {
+          errors.email = "Format email tidak valid.";
+        }
+
+        if (formData.personalData.linkedin && !/^(https?:\/\/)?(www\.)?linkedin\.com\/.+$/i.test(formData.personalData.linkedin)) {
+          errors.linkedin = "Format LinkedIn URL tidak valid. Contoh: linkedin.com/in/username";
+        }
+
+        if (formData.personalData.github && !/^(https?:\/\/)?(www\.)?github\.com\/.+$/i.test(formData.personalData.github)) {
+          errors.github = "Format GitHub URL tidak valid. Contoh: github.com/username";
+        }
+
+        if (!formData.educations) errors.education = "Pendidikan harus diisi.";
+      }
+
+      if (targetStep === 2) {
+        formData.educations.forEach((exp, i) => {
+          if (useDefaultInputEdu) {
+            if (!exp.degree) errors[`degree-${i}`] = `Gelar harus diisi.`;
+            if (!exp.major) errors[`major-${i}`] = `Program Studi harus diisi.`;
+            if (!exp.institution) errors[`institution-${i}`] = `Institusi harus diisi.`;
+            if (!exp.startDate) errors[`startDate-${i}`] = `Waktu Mulai harus diisi.`;
+            if (!exp.endDate) errors[`endDate-${i}`] = `Waktu Akhir harus diisi.`;
+          }
+          if (!exp.description?.[0])
+            errors[`description-${i}`] = `Deskripsi harus diisi.`;
+        });
+      }
+
+      if (targetStep === 3) {
+        formData.workExperiences.forEach((exp, i) => {
+          if (useDefaultInputWork) {
+            if (!exp.position) errors[`position-${i}`] = `Jabatan harus diisi.`;
+            if (!exp.company) errors[`company-${i}`] = `Perusahaan harus diisi.`;
+            if (!exp.startDate)
+              errors[`startDate-${i}`] = `Waktu Mulai harus diisi.`;
+            if (!exp.endDate) errors[`endDate-${i}`] = `Waktu Akhir harus diisi.`;
+          }
+
+          if (!exp.description?.[0])
+            errors[`description-${i}`] = `Deskripsi harus diisi.`;
+        });
+      }
+
+      if (targetStep === 4 && !skipOrganizationExperience) {
+        formData.organizationExperiences.forEach((exp, i) => {
+          if (useDefaultInputOrg) {
+            if (!exp.position) errors[`position-${i}`] = `Jabatan harus diisi.`;
+            if (!exp.organization)
+              errors[`organization-${i}`] = `Nama organisasi harus diisi.`;
+            if (!exp.startDate)
+              errors[`startDate-${i}`] = `Waktu Mulai harus diisi.`;
+            if (!exp.endDate) errors[`endDate-${i}`] = `Waktu Akhir harus diisi.`;
+          }
+
+          if (!exp.description?.[0])
+            errors[`description-${i}`] = `Deskripsi harus diisi.`;
+        });
+      }
+
+      return Object.keys(errors).length === 0;
+    },
+    [formData, useDefaultInputEdu, useDefaultInputWork, useDefaultInputOrg, skipOrganizationExperience],
+  );
+
   const validateStep = () => {
     const errors: Record<string, string> = {};
     if (step === 1) {
@@ -266,6 +353,36 @@ export function WizardStep() {
   const nextStep = () => validateStep() && setStep((prev) => prev + 1);
   const prevStep = () => setStep((prev) => prev - 1);
 
+  const handleStepClick = (targetStepId: number) => {
+    if (targetStepId === step) return;
+
+    // Allow going back to any previous step freely
+    if (targetStepId < step) {
+      setStep(targetStepId);
+      return;
+    }
+
+    // For going forward, all steps from current up to (targetStepId - 1) must be valid
+    for (let s = 1; s < targetStepId; s++) {
+      if (!validateStepData(s)) {
+        // If current step is invalid, show errors for it
+        if (s === step) {
+          validateStep();
+        }
+        return;
+      }
+    }
+    setStep(targetStepId);
+  };
+
+  const canNavigateToStep = (targetStepId: number): boolean => {
+    if (targetStepId <= step) return true;
+    for (let s = 1; s < targetStepId; s++) {
+      if (!validateStepData(s)) return false;
+    }
+    return true;
+  };
+
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (validateStep()) setSubmitDialogOpen(true);
@@ -321,274 +438,331 @@ export function WizardStep() {
     }
   };
 
-  const progress = (100 / 4) * (step - 1);
+  const progress = (100 / 4) * step;
 
   return (
-    <div className="max-w-2xl mx-auto mt-10 bg-white rounded-3xl [box-shadow:0_0_30px_5px_rgba(0,0,0,0.10)] dark:bg-neutral-800 overflow-hidden">
-      <div className="flex items-center gap-2 px-6 pt-4 pb-2">
-        <div className="w-12 h-6 flex items-center justify-center px-2 py-0.5 bg-rose-300 text-black-700 text-sm font-semibold rounded-md">
-          {Math.round(progress)}%
-        </div>
-        <p className="text-sm text-neutral-600 dark:text-neutral-300">
-          Progress pengisian resume awalmu
-        </p>
-      </div>
-
-      <Progress
-        value={progress}
-        className="h-0.75 mt-1.5 rounded-none [&>div]:bg-rose-300"
-      />
-
-      <div className="px-10 py-6">
-        <form onSubmit={handleSubmit}>
-          {(() => {
-            if (step === 1) {
-              return (
-                <>
-                  <h2 className="text-2xl font-bold text-neutral-900 dark:text-white mb-1">
-                    Detail Pribadi
-                  </h2>
-                  <p className="text-sm text-neutral-600 dark:text-neutral-300 mb-6">
-                    Pengguna yang menambahkan nomor telepon dan email menerima
-                    lebih banyak umpan balik positif dari perekrut.
-                  </p>
-                  <StepOneForm
-                    formData={formData}
-                    formErrors={formErrors}
-                    handleChange={handleChange}
-                  />
-                </>
-              );
-            } else if (step === 2) {
-              return (
-                <>
-                  <div className="flex items-center justify-between mb-4">
-                    <div>
-                      <h2 className="text-2xl font-bold text-neutral-900 dark:text-white mb-1">
-                        Pendidikan
-                      </h2>
-                      <p className="text-sm text-neutral-600 dark:text-neutral-300 pr-10">
-                        Bagikan riwayat pendidikanmu.
-                      </p>
-                    </div>
-
-                    <div className="flex flex-col items-center">
-                      <Switch
-                        checked={useDefaultInputEdu}
-                        onCheckedChange={setUseDefaultInputEdu}
-                        className="cursor-pointer"
-                      />
-                      <span className="text-[10px] text-neutral-600 dark:text-neutral-300 mt-1 whitespace-nowrap w-17.5 text-center">
-                        {useDefaultInputEdu ? "Input Default" : "Input Bebas"}
-                      </span>
-                    </div>
-                  </div>
-
-                  {useDefaultInputEdu ? (
-                    <StepTwoForm
-                      formData={formData}
-                      formErrors={formErrors}
-                      handleChange={handleChange}
-                      addSectionItem={addSectionItem}
-                      removeSectionItem={removeSectionItem}
-                      openIndexes={openIndexesEdu}
-                      setOpenIndexes={setOpenIndexesEdu}
-                    />
-                  ) : (
-                    <StepTwoStory
-                      formData={formData}
-                      formErrors={formErrors}
-                      handleChange={handleChange}
-                      addSectionItem={addSectionItem}
-                      removeSectionItem={removeSectionItem}
-                      openIndexes={openIndexesEdu}
-                      setOpenIndexes={setOpenIndexesEdu}
-                    />
-                  )}
-                </>
-              );
-            } else if (step === 3) {
-              return (
-                <>
-                  <div className="flex items-center justify-between mb-4">
-                    <div>
-                      <h2 className="text-2xl font-bold text-neutral-900 dark:text-white mb-1">
-                        Pengalaman Profesional
-                      </h2>
-                      <p className="text-sm text-neutral-600 dark:text-neutral-300 pr-10">
-                        Bagikan pengalaman kerja atau proyekmu. Kamu bisa
-                        menulis secara bebas atau mengisi kolom terstruktur di
-                        bawah.
-                      </p>
-                    </div>
-
-                    <div className="flex flex-col items-center">
-                      <Switch
-                        checked={useDefaultInputWork}
-                        onCheckedChange={setUseDefaultInputWork}
-                        className="cursor-pointer"
-                      />
-                      <span className="text-[10px] text-neutral-600 dark:text-neutral-300 mt-1 whitespace-nowrap w-17.5 text-center">
-                        {useDefaultInputWork ? "Input Default" : "Input Bebas"}
-                      </span>
-                    </div>
-                  </div>
-
-                  {useDefaultInputWork ? (
-                    <StepThreeForm
-                      formData={formData}
-                      formErrors={formErrors}
-                      handleChange={handleChange}
-                      addSectionItem={addSectionItem}
-                      removeSectionItem={removeSectionItem}
-                      openIndexes={openIndexesWork}
-                      setOpenIndexes={setOpenIndexesWork}
-                    />
-                  ) : (
-                    <StepThreeStory
-                      formData={formData}
-                      formErrors={formErrors}
-                      handleChange={handleChange}
-                      addSectionItem={addSectionItem}
-                      removeSectionItem={removeSectionItem}
-                      openIndexes={openIndexesWork}
-                      setOpenIndexes={setOpenIndexesWork}
-                    />
-                  )}
-                </>
-              );
-            } else if (step === 4) {
-              return (
-                <>
-                  <div className="flex items-center justify-between mb-4">
-                    <div>
-                      <h2 className="text-2xl font-bold text-neutral-900 dark:text-white mb-1">
-                        Pengalaman Organisasi{" "}
-                        <span className="text-sm font-normal text-neutral-500">
-                          (Opsional)
-                        </span>
-                      </h2>
-                      <p className="text-sm text-neutral-600 dark:text-neutral-300 pr-10">
-                        Bagikan pengalaman organisasimu. Kamu bisa menulis
-                        secara bebas atau mengisi kolom terstruktur di bawah.
-                      </p>
-                    </div>
-
-                    {!skipOrganizationExperience && (
-                      <div className="flex flex-col items-center">
-                        <Switch
-                          checked={useDefaultInputOrg}
-                          onCheckedChange={setUseDefaultInputOrg}
-                          className="cursor-pointer"
-                        />
-                        <span className="text-[10px] text-neutral-600 dark:text-neutral-300 mt-1 whitespace-nowrap w-17.5 text-center">
-                          {useDefaultInputOrg ? "Input Default" : "Input Bebas"}
-                        </span>
+    <>
+      <div className="max-w-3xl mx-auto px-4 sm:px-6">
+        <div className="min-h-screen border-x border-neutral-200 bg-white">
+          <div className="flex min-h-screen flex-col">
+            <div className="sticky top-0 z-40 pt-6">
+              <div className="border-b border-neutral-100 bg-white px-6 pt-5 pb-4 sm:px-8">
+                <div className="mb-3 flex items-center justify-between">
+                  {STEPS.map((s, idx) => {
+                    const navigable = canNavigateToStep(s.id);
+                    return (
+                      <div key={s.id} className="flex items-center">
+                        <div className="flex flex-col items-center">
+                          <button
+                            type="button"
+                            onClick={() => handleStepClick(s.id)}
+                            disabled={!navigable}
+                            className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium transition-colors ${
+                              navigable ? "cursor-pointer" : "cursor-not-allowed"
+                            } ${
+                              step === s.id
+                                ? "bg-emerald-600 text-white"
+                                : step > s.id
+                                  ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-200"
+                                  : navigable
+                                    ? "bg-neutral-100 text-neutral-500 hover:bg-neutral-200"
+                                    : "bg-neutral-100 text-neutral-400"
+                            }`}
+                          >
+                            {s.id}
+                          </button>
+                          <span
+                            className={`mt-1.5 text-xs font-medium ${
+                              step === s.id
+                                ? "text-emerald-700"
+                                : step > s.id
+                                  ? "text-emerald-600"
+                                  : "text-neutral-400"
+                            }`}
+                          >
+                            {s.label}
+                          </span>
+                        </div>
+                        {idx < STEPS.length - 1 && (
+                          <div
+                            className={`mx-2 mt-[-1rem] h-0.5 w-12 sm:w-20 ${
+                              step > s.id ? "bg-emerald-400" : "bg-neutral-200"
+                            }`}
+                          />
+                        )}
                       </div>
-                    )}
-                  </div>
+                    );
+                  })}
+                </div>
+                <div className="h-1.5 w-full rounded-full bg-neutral-200">
+                  <div
+                    className="h-1.5 rounded-full bg-gradient-to-r from-emerald-500 to-emerald-600 transition-all duration-300"
+                    style={{ width: `${progress}%` }}
+                  />
+                </div>
+                <p className="mt-2 text-xs font-medium text-emerald-600">
+                  {Math.round(progress)}% selesai
+                </p>
+              </div>
+            </div>
 
-                  <div className="flex items-center gap-2 mb-4">
-                    <Checkbox
-                      id="skipOrganization"
-                      checked={skipOrganizationExperience}
-                      onCheckedChange={(checked) =>
-                        setSkipOrganizationExperience(checked === true)
-                      }
-                    />
-                    <Label
-                      htmlFor="skipOrganization"
-                      className="text-sm font-normal text-neutral-600 dark:text-neutral-300 cursor-pointer"
+            <div className="flex flex-1 flex-col px-6 pt-8 pb-6 sm:px-8">
+              <form onSubmit={handleSubmit} className="flex flex-1 flex-col">
+                <div className="flex-1">
+                  {(() => {
+                    if (step === 1) {
+                      return (
+                        <>
+                          <div className="mb-8">
+                            <h2 className="mb-1 text-xl font-bold text-neutral-900">
+                              Detail Pribadi
+                            </h2>
+                            <p className="text-sm text-neutral-500">
+                              Pengguna yang menambahkan nomor telepon dan email menerima
+                              lebih banyak umpan balik positif dari perekrut.
+                            </p>
+                          </div>
+                          <StepOneForm
+                            formData={formData}
+                            formErrors={formErrors}
+                            handleChange={handleChange}
+                          />
+                        </>
+                      );
+                    } else if (step === 2) {
+                      return (
+                        <>
+                          <div className="mb-8 flex items-center justify-between gap-4">
+                            <div>
+                              <h2 className="mb-1 text-xl font-bold text-neutral-900">
+                                Pendidikan
+                              </h2>
+                              <p className="pr-10 text-sm text-neutral-500">
+                                Bagikan riwayat pendidikanmu.
+                              </p>
+                            </div>
+
+                            <div className="flex flex-col items-center">
+                              <Switch
+                                checked={useDefaultInputEdu}
+                                onCheckedChange={setUseDefaultInputEdu}
+                                className="cursor-pointer"
+                              />
+                              <span className="mt-1 w-17.5 whitespace-nowrap text-center text-[10px] text-neutral-500">
+                                {useDefaultInputEdu ? "Input Default" : "Input Bebas"}
+                              </span>
+                            </div>
+                          </div>
+
+                          {useDefaultInputEdu ? (
+                            <StepTwoForm
+                              formData={formData}
+                              formErrors={formErrors}
+                              handleChange={handleChange}
+                              addSectionItem={addSectionItem}
+                              removeSectionItem={removeSectionItem}
+                              openIndexes={openIndexesEdu}
+                              setOpenIndexes={setOpenIndexesEdu}
+                            />
+                          ) : (
+                            <StepTwoStory
+                              formData={formData}
+                              formErrors={formErrors}
+                              handleChange={handleChange}
+                              addSectionItem={addSectionItem}
+                              removeSectionItem={removeSectionItem}
+                              openIndexes={openIndexesEdu}
+                              setOpenIndexes={setOpenIndexesEdu}
+                            />
+                          )}
+                        </>
+                      );
+                    } else if (step === 3) {
+                      return (
+                        <>
+                          <div className="mb-8 flex items-center justify-between gap-4">
+                            <div>
+                              <h2 className="mb-1 text-xl font-bold text-neutral-900">
+                                Pengalaman Profesional
+                              </h2>
+                              <p className="pr-10 text-sm text-neutral-500">
+                                Bagikan pengalaman kerja atau proyekmu. Kamu bisa
+                                menulis secara bebas atau mengisi kolom terstruktur di
+                                bawah.
+                              </p>
+                            </div>
+
+                            <div className="flex flex-col items-center">
+                              <Switch
+                                checked={useDefaultInputWork}
+                                onCheckedChange={setUseDefaultInputWork}
+                                className="cursor-pointer"
+                              />
+                              <span className="mt-1 w-17.5 whitespace-nowrap text-center text-[10px] text-neutral-500">
+                                {useDefaultInputWork ? "Input Default" : "Input Bebas"}
+                              </span>
+                            </div>
+                          </div>
+
+                          {useDefaultInputWork ? (
+                            <StepThreeForm
+                              formData={formData}
+                              formErrors={formErrors}
+                              handleChange={handleChange}
+                              addSectionItem={addSectionItem}
+                              removeSectionItem={removeSectionItem}
+                              openIndexes={openIndexesWork}
+                              setOpenIndexes={setOpenIndexesWork}
+                            />
+                          ) : (
+                            <StepThreeStory
+                              formData={formData}
+                              formErrors={formErrors}
+                              handleChange={handleChange}
+                              addSectionItem={addSectionItem}
+                              removeSectionItem={removeSectionItem}
+                              openIndexes={openIndexesWork}
+                              setOpenIndexes={setOpenIndexesWork}
+                            />
+                          )}
+                        </>
+                      );
+                    } else if (step === 4) {
+                      return (
+                        <>
+                          <div className="mb-8 flex items-center justify-between gap-4">
+                            <div>
+                              <h2 className="mb-1 text-xl font-bold text-neutral-900">
+                                Pengalaman Organisasi{" "}
+                                <span className="text-sm font-normal text-neutral-400">
+                                  (Opsional)
+                                </span>
+                              </h2>
+                              <p className="pr-10 text-sm text-neutral-500">
+                                Bagikan pengalaman organisasimu. Kamu bisa menulis
+                                secara bebas atau mengisi kolom terstruktur di bawah.
+                              </p>
+                            </div>
+
+                            {!skipOrganizationExperience && (
+                              <div className="flex flex-col items-center">
+                                <Switch
+                                  checked={useDefaultInputOrg}
+                                  onCheckedChange={setUseDefaultInputOrg}
+                                  className="cursor-pointer"
+                                />
+                                <span className="mt-1 w-17.5 whitespace-nowrap text-center text-[10px] text-neutral-500">
+                                  {useDefaultInputOrg ? "Input Default" : "Input Bebas"}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+
+                          <div className="mb-6 flex items-center gap-2">
+                            <Checkbox
+                              id="skipOrganization"
+                              checked={skipOrganizationExperience}
+                              onCheckedChange={(checked: boolean | "indeterminate") =>
+                                setSkipOrganizationExperience(checked === true)
+                              }
+                            />
+                            <Label
+                              htmlFor="skipOrganization"
+                              className="cursor-pointer text-sm font-normal text-neutral-500"
+                            >
+                              Lewati bagian ini
+                            </Label>
+                          </div>
+
+                          {!skipOrganizationExperience && (
+                            <>
+                              {useDefaultInputOrg ? (
+                                <StepFourForm
+                                  formData={formData}
+                                  formErrors={formErrors}
+                                  handleChange={handleChange}
+                                  addSectionItem={addSectionItem}
+                                  removeSectionItem={removeSectionItem}
+                                  openIndexes={openIndexesOrg}
+                                  setOpenIndexes={setOpenIndexesOrg}
+                                />
+                              ) : (
+                                <StepFourStory
+                                  formData={formData}
+                                  formErrors={formErrors}
+                                  handleChange={handleChange}
+                                  addSectionItem={addSectionItem}
+                                  removeSectionItem={removeSectionItem}
+                                  openIndexes={openIndexesOrg}
+                                  setOpenIndexes={setOpenIndexesOrg}
+                                />
+                              )}
+                            </>
+                          )}
+                        </>
+                      );
+                    }
+                  })()}
+                </div>
+
+                <div className="mt-8 flex justify-between border-t border-neutral-100 pt-6">
+                  {step > 1 && (
+                    <Button
+                      type="button"
+                      onClick={prevStep}
+                      variant="outline"
+                      className="gap-1"
                     >
-                      Lewati bagian ini
-                    </Label>
-                  </div>
-
-                  {!skipOrganizationExperience && (
-                    <>
-                      {useDefaultInputOrg ? (
-                        <StepFourForm
-                          formData={formData}
-                          formErrors={formErrors}
-                          handleChange={handleChange}
-                          addSectionItem={addSectionItem}
-                          removeSectionItem={removeSectionItem}
-                          openIndexes={openIndexesOrg}
-                          setOpenIndexes={setOpenIndexesOrg}
-                        />
-                      ) : (
-                        <StepFourStory
-                          formData={formData}
-                          formErrors={formErrors}
-                          handleChange={handleChange}
-                          addSectionItem={addSectionItem}
-                          removeSectionItem={removeSectionItem}
-                          openIndexes={openIndexesOrg}
-                          setOpenIndexes={setOpenIndexesOrg}
-                        />
-                      )}
-                    </>
+                      <ChevronLeft className="h-4 w-4" />
+                      Kembali
+                    </Button>
                   )}
-                </>
-              );
-            }
-          })()}
-
-          <div className="mt-6 flex justify-between">
-            {step > 1 && (
-              <Button
-                type="button"
-                onClick={prevStep}
-                variant="green"
-                className="w-24"
-              >
-                Kembali
-              </Button>
-            )}
-            {step < 4 && (
-              <Button
-                type="button"
-                onClick={nextStep}
-                variant="green"
-                className="ml-auto w-24"
-              >
-                Lanjut
-              </Button>
-            )}
-            {step === 4 && (
-              <Button type="submit" variant="green" className="ml-auto w-24">
-                Kirim
-              </Button>
-            )}
+                  {step < 4 && (
+                    <Button
+                      type="button"
+                      onClick={nextStep}
+                      className="ml-auto gap-1 bg-emerald-600 hover:bg-emerald-700"
+                    >
+                      Lanjut
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+                  )}
+                  {step === 4 && (
+                    <Button type="submit" className="ml-auto gap-1 bg-emerald-600 hover:bg-emerald-700">
+                      <Send className="h-4 w-4" />
+                      Kirim
+                    </Button>
+                  )}
+                </div>
+              </form>
+            </div>
           </div>
-        </form>
+        </div>
       </div>
 
-      {/* TODO: add loading library */}
+      {/* Loading overlay */}
       {isSubmitting && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-neutral-800 rounded-lg p-6 flex flex-col items-center gap-4">
-            <div className="animate-spin rounded-full h-10 w-10 border-4 border-emerald-500 border-t-transparent"></div>
-            <p className="text-neutral-700 dark:text-neutral-300">
+          <div className="bg-white rounded-xl p-6 flex flex-col items-center gap-4 border border-neutral-200">
+            <Loader2 className="h-10 w-10 text-emerald-600 animate-spin" />
+            <p className="text-neutral-700">
               Sedang membuat CV dengan AI...
             </p>
           </div>
         </div>
       )}
 
-      {/* TODO: add error component; fix button style */}
+      {/* Error toast */}
       {submitError && (
-        <div className="fixed bottom-4 right-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg z-50">
+        <div className="fixed bottom-4 right-4 bg-red-500 text-white px-4 py-3 rounded-lg z-50 shadow-lg">
           <div className="flex items-center gap-2">
-            <span>{submitError}</span>
-            <Button
+            <span className="text-sm">{submitError}</span>
+            <button
               onClick={() => setSubmitError(null)}
-              variant="ghost"
-              size="sm"
-              className="text-red-700 hover:text-red-900 h-auto p-0"
+              className="text-white/80 hover:text-white ml-2"
             >
               ✕
-            </Button>
+            </button>
           </div>
         </div>
       )}
@@ -608,12 +782,12 @@ export function WizardStep() {
             >
               Batal
             </Button>
-            <Button variant="destructive" onClick={handleConfirmSubmit}>
+            <Button className="bg-emerald-600 hover:bg-emerald-700" onClick={handleConfirmSubmit}>
               Kirim
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+    </>
   );
 }

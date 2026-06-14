@@ -1,16 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { Edit, FileText, MoreVertical, Trash2, Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+  Edit,
+  FileText,
+  MoreVertical,
+  Trash2,
+  Plus,
+  User,
+  GraduationCap,
+  Briefcase,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -33,14 +34,14 @@ export function CVListSection() {
     return (
       <section className="container mx-auto max-w-7xl px-4 md:px-6 py-12">
         <div className="flex items-center justify-between mb-8">
-          <div className="h-8 w-48 bg-gray-200 rounded animate-pulse dark:bg-gray-800" />
-          <div className="h-10 w-32 bg-gray-200 rounded animate-pulse dark:bg-gray-800" />
+          <div className="h-8 w-48 bg-neutral-200 rounded animate-pulse" />
+          <div className="h-10 w-32 bg-neutral-200 rounded animate-pulse" />
         </div>
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {[1, 2, 3].map((i) => (
             <div
               key={i}
-              className="h-64 bg-gray-100 rounded-lg animate-pulse dark:bg-gray-800"
+              className="h-48 bg-white rounded-xl border border-neutral-200 animate-pulse"
             />
           ))}
         </div>
@@ -58,8 +59,7 @@ export function CVListSection() {
       <div className="flex items-center justify-between mb-8">
         <h2 className="text-2xl font-bold tracking-tight">Your CVs</h2>
         <Button asChild className="bg-emerald-600 hover:bg-emerald-700">
-          {/* TODO: create CV (dont forget to invalidateQuries on cv_list tanstack key after creating cv*/}
-          <Link href="/create-cv">
+          <Link href="/create">
             <Plus className="mr-2 h-4 w-4" />
             New CV
           </Link>
@@ -67,71 +67,108 @@ export function CVListSection() {
       </div>
 
       {CVs.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-lg border border-dashed p-12 text-center animate-in fade-in-50">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-900/20">
-            <FileText className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
+        <div className="flex flex-col items-center justify-center rounded-xl bg-white border border-dashed border-neutral-300 p-12 text-center">
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100">
+            <FileText className="h-6 w-6 text-emerald-600" />
           </div>
-          <h3 className="mt-4 text-lg font-semibold">No CVs created yet</h3>
-          <p className="mb-4 mt-2 text-sm text-muted-foreground max-w-sm">
-            You haven't created any CVs yet. Start building your professional
-            profile today.
+          <h3 className="mt-4 text-lg font-semibold text-neutral-900">
+            Belum ada CV
+          </h3>
+          <p className="mb-4 mt-2 text-sm text-neutral-500 max-w-sm">
+            Kamu belum membuat CV. Mulai buat profil profesionalmu sekarang.
           </p>
           <Button asChild variant="outline">
-            <Link href="/create-cv">Create Your First CV</Link>
+            <Link href="/create">Buat CV Pertamamu</Link>
           </Button>
         </div>
       ) : (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {CVs.map((cv) => (
-            <Card
+            <div
               key={cv.id}
-              className="group relative overflow-hidden transition-all hover:shadow-md"
+              className="rounded-xl bg-white border border-neutral-200 overflow-hidden transition-colors hover:border-emerald-300"
             >
-              <CardHeader>
-                <div className="flex items-start justify-between">
-                  <CardTitle className="truncate pr-4" title={cv.title}>
+              <div className="px-5 pt-5 pb-3 flex items-start justify-between">
+                <div className="min-w-0 flex-1">
+                  <h3
+                    className="font-semibold text-neutral-900 truncate"
+                    title={cv.title}
+                  >
                     {cv.title}
-                  </CardTitle>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 -mt-2 -mr-2"
-                      >
-                        <MoreVertical className="h-4 w-4" />
-                        <span className="sr-only">Open menu</span>
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem asChild>
-                        <Link href={`/editor/${cv.id}`}>
-                          <Edit className="mr-2 h-4 w-4" />
-                          Edit
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem className="text-red-600 focus:text-red-600">
-                        <Trash2 className="mr-2 h-4 w-4" />
-                        Delete
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                  </h3>
+                  <p className="text-xs text-neutral-500 mt-0.5">
+                    Diperbarui:{" "}
+                    {new Date(cv.updatedAt).toLocaleDateString("id-ID", {
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                    })}
+                  </p>
                 </div>
-                <CardDescription>
-                  Last updated: {new Date(cv.updatedAt).toLocaleDateString()}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="aspect-[4/3] w-full rounded-md bg-gradient-to-br from-white to-gray-50 border border-gray-100 shadow-sm flex items-center justify-center text-gray-200 dark:from-neutral-900 dark:to-neutral-800 dark:border-neutral-700 transition-all duration-300 group-hover:shadow-md group-hover:border-emerald-200 dark:group-hover:border-emerald-800">
-                  <FileText className="h-10 w-10 opacity-30 transition-transform duration-300 group-hover:scale-110" />
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 shrink-0"
+                    >
+                      <MoreVertical className="h-4 w-4" />
+                      <span className="sr-only">Open menu</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem asChild>
+                      <Link href={`/editor/${cv.id}`}>
+                        <Edit className="mr-2 h-4 w-4" />
+                        Edit
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem className="text-red-600 focus:text-red-600">
+                      <Trash2 className="mr-2 h-4 w-4" />
+                      Hapus
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+
+              {/* CV Preview */}
+              {cv.preview ? (
+                <div className="px-5 pb-3 space-y-2">
+                  {cv.preview.name && (
+                    <div className="flex items-center gap-2 text-sm text-neutral-700">
+                      <User className="h-3.5 w-3.5 text-neutral-400 shrink-0" />
+                      <span className="truncate">{cv.preview.name}</span>
+                    </div>
+                  )}
+                  {cv.preview.education && (
+                    <div className="flex items-center gap-2 text-sm text-neutral-600">
+                      <GraduationCap className="h-3.5 w-3.5 text-neutral-400 shrink-0" />
+                      <span className="truncate">{cv.preview.education}</span>
+                    </div>
+                  )}
+                  {cv.preview.work && (
+                    <div className="flex items-center gap-2 text-sm text-neutral-600">
+                      <Briefcase className="h-3.5 w-3.5 text-neutral-400 shrink-0" />
+                      <span className="truncate">{cv.preview.work}</span>
+                    </div>
+                  )}
                 </div>
-              </CardContent>
-              <CardFooter>
-                <Button asChild variant="secondary" className="w-full">
-                  <Link href={`/editor/${cv.id}`}>Open Editor</Link>
+              ) : (
+                <div className="px-5 pb-3 flex items-center justify-center py-4">
+                  <FileText className="h-8 w-8 text-neutral-200" />
+                </div>
+              )}
+
+              <div className="px-5 pb-5 pt-2">
+                <Button
+                  asChild
+                  variant="outline"
+                  className="w-full text-emerald-600 border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700"
+                >
+                  <Link href={`/editor/${cv.id}`}>Buka Editor</Link>
                 </Button>
-              </CardFooter>
-            </Card>
+              </div>
+            </div>
           ))}
         </div>
       )}

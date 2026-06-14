@@ -25,9 +25,9 @@ export function StepOneForm({
   handleChange,
 }: StepOneFormProps) {
   return (
-    <>
-      <div className="mb-4">
-        <Label htmlFor="name" className="mb-1 block">
+    <div className="space-y-4">
+      <div className="space-y-2">
+        <Label htmlFor="name">
           Nama Lengkap <span className="text-red-500">*</span>
         </Label>
         <Input
@@ -36,20 +36,17 @@ export function StepOneForm({
           onChange={handleChange}
           placeholder="Nama Lengkap"
           required
-          className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0"
+          className="text-neutral-900"
         />
         {formErrors.name && (
-          <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-            {formErrors.name}
-          </p>
+          <p className="text-sm text-red-500">{formErrors.name}</p>
         )}
       </div>
 
-      <div className="mb-4">
-        <Label htmlFor="phone" className="mb-1 block">
+      <div className="space-y-2">
+        <Label htmlFor="phone">
           Telepon <span className="text-red-500">*</span>
         </Label>
-
         <PhoneInput
           id="phone"
           value={formData.personalData.phone}
@@ -58,14 +55,12 @@ export function StepOneForm({
           required
         />
         {formErrors.phone && (
-          <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-            {formErrors.phone}
-          </p>
+          <p className="text-sm text-red-500">{formErrors.phone}</p>
         )}
       </div>
 
-      <div className="mb-4">
-        <Label htmlFor="email" className="mb-1 block">
+      <div className="space-y-2">
+        <Label htmlFor="email">
           Email <span className="text-red-500">*</span>
         </Label>
         <Input
@@ -74,50 +69,40 @@ export function StepOneForm({
           onChange={handleChange}
           placeholder="Alamat Email"
           required
-          className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0"
+          className="text-neutral-900"
         />
         {formErrors.email && (
-          <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-            {formErrors.email}
-          </p>
+          <p className="text-sm text-red-500">{formErrors.email}</p>
         )}
       </div>
 
-      <div className="mb-4">
-        <Label htmlFor="linkedin" className="mb-1 block">
-          LinkedIn (Opsional)
-        </Label>
+      <div className="space-y-2">
+        <Label htmlFor="linkedin">LinkedIn (Opsional)</Label>
         <Input
           id="linkedin"
           value={formData.personalData.linkedin}
           onChange={handleChange}
           placeholder="Tautan LinkedIn"
-          className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0"
+          className="text-neutral-900"
         />
         {formErrors.linkedin && (
-          <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-            {formErrors.linkedin}
-          </p>
+          <p className="text-sm text-red-500">{formErrors.linkedin}</p>
         )}
       </div>
 
-      <div className="mb-4">
-        <Label htmlFor="github" className="mb-1 block">
-          Github (Opsional)
-        </Label>
+      <div className="space-y-2">
+        <Label htmlFor="github">Github (Opsional)</Label>
         <Input
           id="github"
           value={formData.personalData.github}
           onChange={handleChange}
           placeholder="Tautan Github"
-          className="bg-neutral-200 focus-visible:ring-0 focus-visible:ring-offset-0"
+          className="text-neutral-900"
         />
         {formErrors.github && (
-          <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-            {formErrors.github}
-          </p>
+          <p className="text-sm text-red-500">{formErrors.github}</p>
         )}
       </div>
-    </>
+    </div>
   );
 }

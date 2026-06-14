@@ -21,12 +21,32 @@ export const CVService = {
   async getAllCVByUserId(userId: string): Promise<CVList[]> {
     const retrievedCVs = await CVRepository.findAllCVByUserId(userId);
 
-    return retrievedCVs.map((cv) => ({
-      id: cv.id,
-      title: cv.title,
-      createdAt: cv.createdAt,
-      updatedAt: cv.updatedAt,
-    }));
+    return retrievedCVs.map((cv) => {
+      const content = cv.content as unknown as FormData | null;
+      const preview = content
+        ? {
+            name: content.personalData?.name || "",
+            email: content.personalData?.email || "",
+            phone: content.personalData?.phone || "",
+            education:
+              content.educations?.[0]?.institution ||
+              content.educations?.[0]?.description?.[0] ||
+              "",
+            work:
+              content.workExperiences?.[0]?.company
+                ? `${content.workExperiences[0].position} at ${content.workExperiences[0].company}`
+                : content.workExperiences?.[0]?.description?.[0] || "",
+          }
+        : undefined;
+
+      return {
+        id: cv.id,
+        title: cv.title,
+        createdAt: cv.createdAt,
+        updatedAt: cv.updatedAt,
+        preview,
+      };
+    });
   },
 
   async getCVDetail(cvId: string, userId: string): Promise<FormData | null> {
