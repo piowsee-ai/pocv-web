@@ -83,8 +83,12 @@
           <div class="entry-title">
             {{ edu.institution }}{% if edu.location %}<span class="location-text"> - {{ edu.location }}</span>{% endif
             %}
+            <span class="entry-date-copy">
+              {% if edu.startDate and edu.endDate %}{{ edu.startDate }} - {{ edu.endDate }}{% elif edu.startDate %}{{
+              edu.startDate }}{% elif edu.endDate %}{{ edu.endDate }}{% endif %}
+            </span>
           </div>
-          <div class="entry-date">
+          <div class="entry-date" aria-hidden="true">
             {% if edu.startDate and edu.endDate %}{{ edu.startDate }} - {{ edu.endDate }}{% elif edu.startDate %}{{
             edu.startDate }}{% elif edu.endDate %}{{ edu.endDate }}{% endif %}
           </div>
@@ -121,8 +125,12 @@
         <div class="entry-header">
           <div class="entry-title">
             {{ exp.company }}{% if exp.location %}<span class="location-text"> - {{ exp.location }}</span>{% endif %}
+            <span class="entry-date-copy">
+              {% if exp.startDate and exp.endDate %}{{ exp.startDate }} - {{ exp.endDate }}{% elif exp.startDate %}{{
+              exp.startDate }}{% elif exp.endDate %}{{ exp.endDate }}{% endif %}
+            </span>
           </div>
-          <div class="entry-date">
+          <div class="entry-date" aria-hidden="true">
             {% if exp.startDate and exp.endDate %}{{ exp.startDate }} - {{ exp.endDate }}{% elif exp.startDate %}{{
             exp.startDate }}{% elif exp.endDate %}{{ exp.endDate }}{% endif %}
           </div>
@@ -152,8 +160,14 @@
       {% for org in data.organizationExperiences %}
       <div class="entry">
         <div class="entry-header">
-          <div class="entry-title">{{ org.organization }}</div>
-          <div class="entry-date">
+          <div class="entry-title">
+            {{ org.organization }}
+            <span class="entry-date-copy">
+              {% if org.startDate and org.endDate %}{{ org.startDate }} - {{ org.endDate }}{% elif org.startDate %}{{
+              org.startDate }}{% elif org.endDate %}{{ org.endDate }}{% endif %}
+            </span>
+          </div>
+          <div class="entry-date" aria-hidden="true">
             {% if org.startDate and org.endDate %}{{ org.startDate }} - {{ org.endDate }}{% elif org.startDate %}{{
             org.startDate }}{% elif org.endDate %}{{ org.endDate }}{% endif %}
           </div>
@@ -213,9 +227,14 @@
         <div class="entry-header">
           <div class="entry-title">
             {{ item.title }}
+            {% if item.years %}
+            <span class="entry-date-copy">
+              {{ item.years }}
+            </span>
+            {% endif %}
           </div>
           {% if item.years %}
-          <div class="entry-date">
+          <div class="entry-date" aria-hidden="true">
             {{ item.years }}
           </div>
           {% endif %}
@@ -247,7 +266,7 @@
     <div class="section">
       <h2 class="section-title">{{ data.sectionTitles.others if data.sectionTitles and data.sectionTitles.others else
         'Skills, Achievements & Other Experience' }}</h2>
-      <ul class="additional-list" style="font-size: 10pt; margin: 0; padding-left: 18px;">
+      <ul class="additional-list">
         {% for item in data.othersItems %}
         {% if item.title or item.descriptionHtml %}
         <li>{% if item.title %}<span style="font-weight: bold;">{{ item.title }}:</span> {% endif %}<span

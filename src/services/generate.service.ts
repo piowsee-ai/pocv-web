@@ -114,6 +114,33 @@ function normalizeDescription(description: string | string[] | undefined): strin
   return [];
 }
 
+function normalizeMaxGpa(maxGpa: string | undefined): string {
+  if (!maxGpa) return "4.0";
+
+  const num = parseFloat(maxGpa);
+  if (Number.isNaN(num)) return maxGpa;
+  if (num >= 100) return "100";
+  if (num >= 5) return "5.0";
+  return "4.0";
+}
+
+function splitGpa(gpa: string | undefined, maxGpa: string | undefined): { gpa: string; maxGpa: string } {
+  if (!gpa) return { gpa: "", maxGpa: normalizeMaxGpa(maxGpa) };
+
+  const match = gpa.match(/^([\d.]+)\s*\/\s*([\d.]+)$/);
+  if (match) {
+    return {
+      gpa: match[1],
+      maxGpa: normalizeMaxGpa(maxGpa || match[2]),
+    };
+  }
+
+  return {
+    gpa,
+    maxGpa: normalizeMaxGpa(maxGpa),
+  };
+}
+
 /**
  * Format date from YYYY-MM to "Mon YYYY" format
  */
@@ -158,12 +185,17 @@ function filterEmptyEntries(data: FormData): FormData & { formattedDates: Record
     // Also normalize description to array format and format dates
     educations: data.educations?.filter(
       (edu) => edu.institution?.trim() || edu.degree?.trim() || edu.major?.trim()
-    ).map(edu => ({
-      ...edu,
-      description: normalizeDescription(edu.description),
-      startDate: formatDate(edu.startDate),
-      endDate: edu.isCurrent ? "Present" : formatDate(edu.endDate),
-    })) || [],
+    ).map(edu => {
+      const gpa = splitGpa(edu.gpa, edu.maxGpa);
+
+      return {
+        ...edu,
+        ...gpa,
+        description: normalizeDescription(edu.description),
+        startDate: formatDate(edu.startDate),
+        endDate: edu.isCurrent ? "Present" : formatDate(edu.endDate),
+      };
+    }) || [],
     // Filter work experiences - only include if company or position is present
     workExperiences: data.workExperiences?.filter(
       (exp) => exp.company?.trim() || exp.position?.trim()
@@ -259,6 +291,7 @@ export async function generatePDF(
     const pdfOptions: PDFOptions = {
       format: options?.format === "F4" ? undefined : (options?.format ?? "A4"),
       printBackground: true,
+      tagged: true,
       margin: {
         top: "0.3in",
         right: "0.3in",

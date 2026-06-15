@@ -20,7 +20,7 @@ export const WorkExperienceSchema: z.ZodType<WorkExperience> = z.object({
   startDate: z.string(),
   endDate: z.string(),
   description: z.array(z.string().max(MAX_LENGTH.DESCRIPTION)),
-});
+}).passthrough();
 
 export const EducationSchema: z.ZodType<Education> = z.object({
   id: z.string().optional(),
@@ -32,7 +32,7 @@ export const EducationSchema: z.ZodType<Education> = z.object({
   startDate: z.string(),
   endDate: z.string(),
   description: z.array(z.string().max(MAX_LENGTH.DESCRIPTION)),
-});
+}).passthrough();
 
 export const OrganizationExperienceSchema: z.ZodType<OrganizationExperience> =
   z.object({
@@ -42,7 +42,7 @@ export const OrganizationExperienceSchema: z.ZodType<OrganizationExperience> =
     startDate: z.string(),
     endDate: z.string(),
     description: z.array(z.string().max(MAX_LENGTH.DESCRIPTION)),
-  });
+  }).passthrough();
 
 export const PersonalDataSchema: z.ZodType<PersonalData> = z.object({
   name: z.string().max(MAX_LENGTH.NAME),
@@ -58,7 +58,7 @@ export const PersonalProjectSchema: z.ZodType<PersonalProject> = z.object({
   id: z.string().optional(),
   name: z.string().max(MAX_LENGTH.NAME),
   description: z.array(z.string().max(MAX_LENGTH.DESCRIPTION)),
-});
+}).passthrough();
 
 export const AdditionalInfoSchema: z.ZodType<AdditionalInfo> = z.object({
   skills: z.array(z.string()),
@@ -73,7 +73,7 @@ export const CustomSectionItemSchema: z.ZodType<CustomSectionItem> = z.object({
   subtitle: z.string().max(MAX_LENGTH.SUBTITLE),
   years: z.string(),
   description: z.array(z.string().max(MAX_LENGTH.DESCRIPTION)),
-});
+}).passthrough();
 
 export const CustomSectionSchema: z.ZodType<CustomSection> = z.object({
   sectionKey: z.string(),
@@ -81,7 +81,7 @@ export const CustomSectionSchema: z.ZodType<CustomSection> = z.object({
   sectionType: z.enum(["text", "itemList", "stringList"]),
   text: z.string().max(MAX_LENGTH.DESCRIPTION),
   items: z.array(CustomSectionItemSchema),
-});
+}).passthrough();
 
 export const FormDataSchema: z.ZodType<FormData> = z.object({
   personalData: PersonalDataSchema,
@@ -92,4 +92,4 @@ export const FormDataSchema: z.ZodType<FormData> = z.object({
   personalProjects: z.array(PersonalProjectSchema),
   additional: AdditionalInfoSchema,
   customSections: z.array(CustomSectionSchema),
-});
+}).passthrough();

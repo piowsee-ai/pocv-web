@@ -3,9 +3,10 @@
 import React from "react";
 import type { FormData } from "@/types/editor-form-data";
 
-// A4 dimensions in pixels at 96 DPI
-const A4_WIDTH_PX = 794;
-const A4_HEIGHT_PX = 1123;
+// F4 dimensions used by PDF download, rendered at 96 DPI.
+const PDF_PAGE_WIDTH_PX = 8.28 * 96;
+const PDF_PAGE_HEIGHT_PX = 11.71 * 96;
+const PDF_PAGE_MARGIN_PX = 0.3 * 96;
 
 interface CVPreviewProps {
   data: FormData;
@@ -69,25 +70,78 @@ function hasProjectContent(project: { name?: string }): boolean {
   return Boolean(project.name?.trim());
 }
 
+function getGpaDisplay(gpa: string | undefined, maxGpa: string | undefined): string {
+  if (!gpa) return "";
+  if (gpa.includes("/")) return gpa;
+  return `${gpa}/${maxGpa || "4.0"}`;
+}
+
+function parseDateValue(dateStr: string): Date | null {
+  if (!dateStr || /\b(expected|present)\b/i.test(dateStr)) return null;
+
+  const yyyyMmMatch = dateStr.match(/^(\d{4})-(\d{2})$/);
+  if (yyyyMmMatch) {
+    return new Date(parseInt(yyyyMmMatch[1], 10), parseInt(yyyyMmMatch[2], 10) - 1);
+  }
+
+  const mmYyyyMatch = dateStr.match(/^(\d{1,2})\/(\d{4})$/);
+  if (mmYyyyMatch) {
+    return new Date(parseInt(mmYyyyMatch[2], 10), parseInt(mmYyyyMatch[1], 10) - 1);
+  }
+
+  const parsed = new Date(dateStr);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+}
+
+function formatParsedDate(date: Date): string {
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    year: "numeric",
+  });
+}
+
+function withExpectedSuffix(displayDate: string, rawDate: string): string {
+  if (!displayDate || /\(Expected\)/i.test(displayDate)) return displayDate;
+
+  const parsedEndDate = parseDateValue(rawDate);
+  if (!parsedEndDate) return displayDate;
+
+  return parsedEndDate > new Date() ? `${displayDate} (Expected)` : displayDate;
+}
+
+function getEntryDateDisplay(dateText: string | undefined): string {
+  if (!dateText) return "";
+
+  const parts = dateText.split(" - ");
+  if (parts.length !== 2) return dateText;
+
+  const startDate = parseDateValue(parts[0].trim());
+  const endDate = parseDateValue(parts[1].trim());
+
+  if (!startDate) return dateText;
+  if (!endDate) return `${formatParsedDate(startDate)} - Present`;
+
+  const formattedEnd = formatParsedDate(endDate);
+  return `${formatParsedDate(startDate)} - ${withExpectedSuffix(formattedEnd, parts[1].trim())}`;
+}
+
 export function CVPreview({ data, containerWidth }: CVPreviewProps) {
   const contentRef = React.useRef<HTMLDivElement>(null);
   const [contentHeight, setContentHeight] = React.useState<number>(0);
 
-  // Calculate scale based on container width
-  // CV should ONLY scale DOWN, never UP beyond original A4 size
-  // If containerWidth is provided and smaller than A4, scale down proportionally
-  // Otherwise, use scale = 1 (A4 actual size)
+  // Calculate scale based on container width. The preview mirrors the PDF's
+  // F4 page size and only scales down, never up beyond the original size.
   const padding = 32; // 16px padding on each side
-  const availableWidth = containerWidth ? containerWidth - padding : A4_WIDTH_PX;
+  const availableWidth = containerWidth ? containerWidth - padding : PDF_PAGE_WIDTH_PX;
 
-  // Scale is always <= 1 (never larger than A4)
-  const scale = Math.max(Math.min(availableWidth / A4_WIDTH_PX, 1), 0.2);
+  // Scale is always <= 1 (never larger than the PDF page).
+  const scale = Math.max(Math.min(availableWidth / PDF_PAGE_WIDTH_PX, 1), 0.2);
 
   // Measure content height and update container
   React.useEffect(() => {
     if (contentRef.current) {
       const height = contentRef.current.scrollHeight;
-      setContentHeight(height * scale);
+      setContentHeight(height);
     }
   }, [scale, data]);
 
@@ -130,6 +184,7 @@ export function CVPreview({ data, containerWidth }: CVPreviewProps) {
   const getDateRange = (startDate: string, endDate: string, isCurrent?: boolean): string => {
     const start = formatDate(startDate);
     const end = formatDate(endDate);
+    const endWithExpected = withExpectedSuffix(end, endDate);
 
     // If isCurrent is checked
     if (isCurrent) {
@@ -140,9 +195,9 @@ export function CVPreview({ data, containerWidth }: CVPreviewProps) {
 
     // Normal date range
     if (!start && !end) return "";
-    if (!start) return end; // Only end date
+    if (!start) return endWithExpected; // Only end date
     if (!end) return start; // Only start date
-    return `${start} - ${end}`;
+    return `${start} - ${endWithExpected}`;
   };
 
   // CSS for the HTML content rendering
@@ -151,32 +206,146 @@ export function CVPreview({ data, containerWidth }: CVPreviewProps) {
       word-break: break-word;
       overflow-wrap: break-word;
     }
+    .cv-pdf-page {
+      line-height: 1.4;
+      color: #000;
+      background-color: #fff;
+    }
+    .cv-pdf-content {
+      padding: ${PDF_PAGE_MARGIN_PX}px;
+    }
+    .cv-pdf-header {
+      text-align: center;
+      margin-bottom: 25px;
+      margin-top: 9.5px;
+    }
+    .cv-pdf-header-name {
+      font-size: 18pt;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 4px;
+    }
+    .cv-pdf-contact {
+      display: flex;
+      color: #505050;
+      justify-content: center;
+      flex-wrap: wrap;
+      font-size: 8.5pt;
+      margin-bottom: 2px;
+    }
+    .cv-pdf-section {
+      margin-bottom: 11px;
+    }
+    .cv-pdf-section-title {
+      font-size: 12.5pt;
+      font-weight: bold;
+      margin-bottom: 8px;
+      border-bottom: 1.5px solid #000;
+      padding-bottom: 2px;
+      padding-left: 0;
+    }
+    .cv-pdf-entry {
+      margin-bottom: 10px;
+      padding-left: 0;
+    }
+    .cv-pdf-entry-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 1.5px;
+      font-size: 9pt;
+    }
+    .cv-pdf-entry-title {
+      font-weight: bold;
+      font-size: 9pt;
+    }
+    .cv-pdf-entry-date {
+      font-size: 8.5pt;
+      font-weight: 400;
+      white-space: nowrap;
+      color: black;
+      text-align: right;
+    }
+    .cv-pdf-entry-subtitle {
+      font-style: italic;
+      font-size: 9pt;
+      margin-bottom: 4px;
+    }
     .html-content {
       word-break: break-word;
       overflow-wrap: break-word;
+      text-align: justify;
+      text-justify: inter-word;
     }
     .html-content ul {
-      list-style-type: disc;
-      list-style-position: outside;
-      padding-left: 1.25rem;
+      list-style: none;
+      padding-left: 0;
+      margin: 0;
+    }
+    ul.html-content {
+      list-style: none;
+      padding-left: 0;
       margin: 0;
     }
     .html-content ol {
-      list-style-type: decimal;
-      list-style-position: outside;
-      padding-left: 1.25rem;
+      list-style: none;
+      counter-reset: cv-preview-list;
+      padding-left: 0;
+      margin: 0;
+    }
+    ol.html-content {
+      list-style: none;
+      counter-reset: cv-preview-list;
+      padding-left: 0;
       margin: 0;
     }
     .html-content li {
+      position: relative;
+      display: block;
       margin-bottom: 2px;
-      padding-left: 0;
+      padding-left: 0.75rem;
+      text-align: left;
+      text-justify: auto;
+    }
+    .html-content ul > li::before {
+      content: "\\2022";
+      position: absolute;
+      left: 0;
+      width: 0.4rem;
+      text-align: left;
+    }
+    ul.html-content > li::before {
+      content: "\\2022";
+      position: absolute;
+      left: 0;
+      width: 0.4rem;
+      text-align: left;
+    }
+    .html-content ol > li {
+      counter-increment: cv-preview-list;
+      padding-left: 1rem;
+    }
+    .html-content ol > li::before {
+      content: counter(cv-preview-list) ".";
+      position: absolute;
+      left: 0;
+      width: 0.75rem;
+      text-align: right;
+    }
+    ol.html-content > li::before {
+      content: counter(cv-preview-list) ".";
+      position: absolute;
+      left: 0;
+      width: 0.75rem;
+      text-align: right;
     }
     .html-content li p {
       display: inline;
       margin: 0;
     }
     .html-content p {
-      margin: 0;
+      margin: 0 0 4px 0;
     }
     .html-content strong {
       font-weight: 600;
@@ -188,28 +357,30 @@ export function CVPreview({ data, containerWidth }: CVPreviewProps) {
 
   // Fixed font sizes (will be scaled via transform)
   const fontSize = {
-    name: "19pt",
-    contact: "9.5pt",
-    sectionTitle: "13.5pt",
-    body: "10pt",
-    date: "9.5pt",
+    name: "18pt",
+    contact: "8.5pt",
+    sectionTitle: "12.5pt",
+    body: "9pt",
+    date: "8.5pt",
   };
 
-  // Container style - width is fixed, height is min A4 but grows with content
-  const minHeightScaled = A4_HEIGHT_PX * scale;
-  const actualHeight = contentHeight > 0 ? Math.max(contentHeight, minHeightScaled) : minHeightScaled;
+  const actualPageHeight = contentHeight > 0 ? Math.max(contentHeight, PDF_PAGE_HEIGHT_PX) : PDF_PAGE_HEIGHT_PX;
+  const pageBreakCount = Math.floor((actualPageHeight - 1) / PDF_PAGE_HEIGHT_PX);
 
   const containerStyle: React.CSSProperties = {
-    width: `${A4_WIDTH_PX * scale}px`,
-    height: `${actualHeight}px`,
+    width: `${PDF_PAGE_WIDTH_PX * scale}px`,
+    height: `${actualPageHeight * scale}px`,
     overflow: 'hidden',
   };
 
-  // Page style - always fixed A4 width, min A4 height but can grow
+  // Page style - always fixed F4 width, min F4 height but can grow.
   const pageStyle: React.CSSProperties = {
-    width: `${A4_WIDTH_PX}px`,
-    minHeight: `${A4_HEIGHT_PX}px`,
+    width: `${PDF_PAGE_WIDTH_PX}px`,
+    minHeight: `${PDF_PAGE_HEIGHT_PX}px`,
     fontFamily: "Arial, sans-serif",
+    textAlign: "justify",
+    textJustify: "inter-word",
+    position: "relative",
   };
 
   return (
@@ -218,25 +389,41 @@ export function CVPreview({ data, containerWidth }: CVPreviewProps) {
 
       <div
         ref={contentRef}
-        className="bg-white"
+        className="bg-white cv-pdf-page"
         style={{
           ...pageStyle,
           transform: `scale(${scale})`,
           transformOrigin: 'top left',
         }}
       >
-        <div style={{ padding: "0.4in" }}>
+        {Array.from({ length: pageBreakCount }, (_, index) => (
+          <div
+            key={`page-break-${index}`}
+            aria-hidden="true"
+            style={{
+              position: "absolute",
+              top: `${(index + 1) * PDF_PAGE_HEIGHT_PX}px`,
+              left: 0,
+              right: 0,
+              borderTop: "1.5px dashed #9ca3af",
+              pointerEvents: "none",
+              zIndex: 2,
+            }}
+          />
+        ))}
+
+        <div className="cv-pdf-content">
           {/* Header Section */}
-          <div className="text-center mb-4">
+          <div className="text-center mb-4 cv-pdf-header">
             <h1
-              className="font-bold uppercase tracking-wide mb-1"
+              className="font-bold uppercase tracking-wide mb-1 cv-pdf-header-name"
               style={{ fontSize: fontSize.name, letterSpacing: "0.8px" }}
             >
               {data.personalData.name || "Nama Lengkap"}
             </h1>
 
             <div
-              className="flex justify-center flex-wrap text-gray-600"
+              className="flex justify-center flex-wrap text-gray-600 cv-pdf-contact"
               style={{ fontSize: fontSize.contact }}
             >
               {(() => {
@@ -291,15 +478,15 @@ export function CVPreview({ data, containerWidth }: CVPreviewProps) {
 
           {/* Summary Section */}
           {hasSummary(data.summary) && (
-            <div className="mb-3">
+            <div className="mb-3 cv-pdf-section">
               <h2
-                className="font-bold border-b-2 border-black pb-0.5 pl-1 mb-2"
+                className="font-bold border-b-2 border-black pb-0.5 mb-2 cv-pdf-section-title"
                 style={{ fontSize: fontSize.sectionTitle }}
               >
                 {data.sectionTitles?.summary || "Summary"}
               </h2>
               <div
-                className="pl-3 html-content"
+                className="html-content cv-pdf-entry"
                 style={{ fontSize: fontSize.body }}
                 dangerouslySetInnerHTML={{ __html: data.summary }}
               />
@@ -308,35 +495,35 @@ export function CVPreview({ data, containerWidth }: CVPreviewProps) {
 
           {/* Education Section */}
           {data.educations && data.educations.filter(hasEducationContent).length > 0 && (
-            <div className="mb-3">
+            <div className="mb-3 cv-pdf-section">
               <h2
-                className="font-bold border-b-2 border-black pb-0.5 pl-1 mb-2"
+                className="font-bold border-b-2 border-black pb-0.5 mb-2 cv-pdf-section-title"
                 style={{ fontSize: fontSize.sectionTitle }}
               >
                 {data.sectionTitles?.education || "Education"}
               </h2>
               {data.educations.filter(hasEducationContent).map((edu, index) => (
-                <div key={edu.id || index} className="mb-2.5 pl-3">
+                <div key={edu.id || index} className="mb-2.5 cv-pdf-entry">
                   <div
-                    className="flex justify-between items-baseline mb-0.5"
+                    className="flex justify-between items-baseline mb-0.5 cv-pdf-entry-header"
                     style={{ fontSize: fontSize.body }}
                   >
-                    <div className="font-bold">
+                    <div className="font-bold cv-pdf-entry-title">
                       {edu.institution}
                       {edu.location && (
                         <span className="text-gray-500"> - {edu.location}</span>
                       )}
                     </div>
                     <div
-                      className="whitespace-nowrap"
+                      className="whitespace-nowrap cv-pdf-entry-date"
                       style={{ fontSize: fontSize.date }}
                     >
                       {getDateRange(edu.startDate, edu.endDate, edu.isCurrent)}
                     </div>
                   </div>
-                  <div className="italic mb-1" style={{ fontSize: fontSize.body }}>
+                  <div className="italic mb-1 cv-pdf-entry-subtitle" style={{ fontSize: fontSize.body }}>
                     {edu.degree} in {edu.major}
-                    {edu.gpa && `, GPA: ${edu.gpa}${edu.maxGpa ? `/${edu.maxGpa}` : ""}`}
+                    {edu.gpa && `, GPA: ${getGpaDisplay(edu.gpa, edu.maxGpa)}`}
                   </div>
                   {hasDescription(edu) && (
                     <div
@@ -352,31 +539,31 @@ export function CVPreview({ data, containerWidth }: CVPreviewProps) {
 
           {/* Work Experience Section */}
           {data.workExperiences && data.workExperiences.filter(hasWorkExperienceContent).length > 0 && (
-            <div className="mb-3">
+            <div className="mb-3 cv-pdf-section">
               <h2
-                className="font-bold border-b-2 border-black pb-0.5 pl-1 mb-2"
+                className="font-bold border-b-2 border-black pb-0.5 mb-2 cv-pdf-section-title"
                 style={{ fontSize: fontSize.sectionTitle }}
               >
                 {data.sectionTitles?.workExperience || "Work Experience"}
               </h2>
               {data.workExperiences.filter(hasWorkExperienceContent).map((exp, index) => (
-                <div key={exp.id || index} className="mb-2.5 pl-3">
+                <div key={exp.id || index} className="mb-2.5 cv-pdf-entry">
                   <div
-                    className="flex justify-between items-baseline mb-0.5"
+                    className="flex justify-between items-baseline mb-0.5 cv-pdf-entry-header"
                     style={{ fontSize: fontSize.body }}
                   >
-                    <div className="font-bold">
+                    <div className="font-bold cv-pdf-entry-title">
                       {exp.company}
                       {exp.location && <span className="text-gray-500"> - {exp.location}</span>}
                     </div>
                     <div
-                      className="whitespace-nowrap"
+                      className="whitespace-nowrap cv-pdf-entry-date"
                       style={{ fontSize: fontSize.date }}
                     >
                       {getDateRange(exp.startDate, exp.endDate, exp.isCurrent)}
                     </div>
                   </div>
-                  <div className="italic mb-1" style={{ fontSize: fontSize.body }}>
+                  <div className="italic mb-1 cv-pdf-entry-subtitle" style={{ fontSize: fontSize.body }}>
                     {exp.position}
                   </div>
                   {hasDescription(exp) && (
@@ -394,28 +581,28 @@ export function CVPreview({ data, containerWidth }: CVPreviewProps) {
           {/* Organization Experience Section */}
           {data.organizationExperiences &&
             data.organizationExperiences.filter(hasOrganizationContent).length > 0 && (
-              <div className="mb-3">
+              <div className="mb-3 cv-pdf-section">
                 <h2
-                  className="font-bold border-b-2 border-black pb-0.5 pl-1 mb-2"
+                  className="font-bold border-b-2 border-black pb-0.5 mb-2 cv-pdf-section-title"
                   style={{ fontSize: fontSize.sectionTitle }}
                 >
                   {data.sectionTitles?.organization || "Organisational Experience"}
                 </h2>
                 {data.organizationExperiences.filter(hasOrganizationContent).map((org, index) => (
-                  <div key={org.id || index} className="mb-2.5 pl-3">
+                  <div key={org.id || index} className="mb-2.5 cv-pdf-entry">
                     <div
-                      className="flex justify-between items-baseline mb-0.5"
+                      className="flex justify-between items-baseline mb-0.5 cv-pdf-entry-header"
                       style={{ fontSize: fontSize.body }}
                     >
-                      <div className="font-bold">{org.organization}</div>
+                      <div className="font-bold cv-pdf-entry-title">{org.organization}</div>
                       <div
-                        className="whitespace-nowrap"
+                        className="whitespace-nowrap cv-pdf-entry-date"
                         style={{ fontSize: fontSize.date }}
                       >
                         {getDateRange(org.startDate, org.endDate, org.isCurrent)}
                       </div>
                     </div>
-                    <div className="italic mb-1" style={{ fontSize: fontSize.body }}>
+                    <div className="italic mb-1 cv-pdf-entry-subtitle" style={{ fontSize: fontSize.body }}>
                       {org.position}
                     </div>
                     {hasDescription(org) && (
@@ -432,20 +619,20 @@ export function CVPreview({ data, containerWidth }: CVPreviewProps) {
 
           {/* Projects Section */}
           {data.personalProjects && data.personalProjects.filter(hasProjectContent).length > 0 && (
-            <div className="mb-3">
+            <div className="mb-3 cv-pdf-section">
               <h2
-                className="font-bold border-b-2 border-black pb-0.5 pl-1 mb-2"
+                className="font-bold border-b-2 border-black pb-0.5 mb-2 cv-pdf-section-title"
                 style={{ fontSize: fontSize.sectionTitle }}
               >
                 {data.sectionTitles?.projects || "Projects"}
               </h2>
               {data.personalProjects.filter(hasProjectContent).map((project, index) => (
-                <div key={project.id || index} className="mb-2.5 pl-3">
+                <div key={project.id || index} className="mb-2.5 cv-pdf-entry">
                   <div
-                    className="flex justify-between items-baseline mb-0.5"
+                    className="flex justify-between items-baseline mb-0.5 cv-pdf-entry-header"
                     style={{ fontSize: fontSize.body }}
                   >
-                    <div className="font-bold">{project.name}</div>
+                    <div className="font-bold cv-pdf-entry-title">{project.name}</div>
                   </div>
                   {hasDescription(project) && (
                     <div
@@ -465,33 +652,33 @@ export function CVPreview({ data, containerWidth }: CVPreviewProps) {
             if (!hasContent) return null;
 
             return (
-              <div key={section.sectionKey} className="mb-3">
+              <div key={section.sectionKey} className="mb-3 cv-pdf-section">
                 <h2
-                  className="font-bold border-b-2 border-black pb-0.5 pl-1 mb-2"
+                  className="font-bold border-b-2 border-black pb-0.5 mb-2 cv-pdf-section-title"
                   style={{ fontSize: fontSize.sectionTitle }}
                 >
                   {section.sectionTitle || "Untitled"}
                 </h2>
                 {section.items.filter(item => item.title?.trim()).map((item, index) => (
-                  <div key={item.id || index} className="mb-2.5 pl-3">
+                  <div key={item.id || index} className="mb-2.5 cv-pdf-entry">
                     <div
-                      className="flex justify-between items-baseline mb-0.5"
+                      className="flex justify-between items-baseline mb-0.5 cv-pdf-entry-header"
                       style={{ fontSize: fontSize.body }}
                     >
-                      <div className="font-bold">
+                      <div className="font-bold cv-pdf-entry-title">
                         {item.title}
                       </div>
                       {item.years && (
                         <div
-                          className="whitespace-nowrap"
+                          className="whitespace-nowrap cv-pdf-entry-date"
                           style={{ fontSize: fontSize.date }}
                         >
-                          {item.years}
+                          {getEntryDateDisplay(item.years)}
                         </div>
                       )}
                     </div>
                     {item.subtitle && (
-                      <div className="italic mb-1" style={{ fontSize: fontSize.body }}>
+                      <div className="italic mb-1 cv-pdf-entry-subtitle" style={{ fontSize: fontSize.body }}>
                         {item.subtitle}
                       </div>
                     )}
@@ -510,14 +697,14 @@ export function CVPreview({ data, containerWidth }: CVPreviewProps) {
 
           {/* Others Section - Dynamic items with free titles */}
           {data.othersItems && data.othersItems.length > 0 && data.othersItems.some(item => item.title || item.descriptionHtml) && (
-            <div className="mb-3">
+            <div className="mb-3 cv-pdf-section">
               <h2
-                className="font-bold border-b-2 border-black pb-0.5 pl-1 mb-2"
+                className="font-bold border-b-2 border-black pb-0.5 mb-2 cv-pdf-section-title"
                 style={{ fontSize: fontSize.sectionTitle }}
               >
                 {data.sectionTitles?.others || "Skills, Achievements & Other Experience"}
               </h2>
-              <ul className="pl-6 space-y-0.5" style={{ fontSize: fontSize.body, listStyleType: "disc" }}>
+              <ul className="html-content space-y-0.5" style={{ fontSize: fontSize.body }}>
                 {data.othersItems.filter(item => item.title || item.descriptionHtml).map((item) => {
                   return (
                     <li key={item.id}>

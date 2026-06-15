@@ -3,7 +3,6 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import type { FormData } from "@/types/editor-form-data";
-import type { FormData as APIFormData } from "@/types/form-data";
 import type { CustomSectionItem } from "@/types/editor-form-data";
 import { Button } from "@/components/ui/button";
 import { EditorHeader } from "./editor-header";
@@ -476,7 +475,7 @@ export function CVEditor({ cvId, initialData }: CVEditorProps) {
   const progress = Math.round(((currentStepIndex + 1) / STEPS.length) * 100);
 
   // Transform data for API - convert to strict APIFormData structure
-  const transformDataForAPI = useCallback((formData: FormData): APIFormData => {
+  const transformDataForAPI = useCallback((formData: FormData): FormData => {
     console.log("Transforming data for API..."); // Debug log
     return {
       personalData: {
@@ -496,11 +495,14 @@ export function CVEditor({ cvId, initialData }: CVEditorProps) {
         major: edu.major || "",
         location: edu.location || "",
         gpa: edu.gpa || "",
+        maxGpa: edu.maxGpa || "4.0",
         startDate: edu.startDate || "",
         endDate: edu.endDate || "",
+        isCurrent: edu.isCurrent || false,
         description: edu.descriptionHtml 
           ? htmlToDescription(edu.descriptionHtml)
           : Array.isArray(edu.description) ? edu.description : [edu.description || ""].filter(Boolean),
+        descriptionHtml: edu.descriptionHtml || descriptionToHtml(edu.description),
       })),
       workExperiences: formData.workExperiences.map((work) => ({
         id: work.id,
@@ -509,9 +511,11 @@ export function CVEditor({ cvId, initialData }: CVEditorProps) {
         location: work.location || "",
         startDate: work.startDate || "",
         endDate: work.endDate || "",
+        isCurrent: work.isCurrent || false,
         description: work.descriptionHtml 
           ? htmlToDescription(work.descriptionHtml)
           : Array.isArray(work.description) ? work.description : [work.description || ""].filter(Boolean),
+        descriptionHtml: work.descriptionHtml || descriptionToHtml(work.description),
       })),
       organizationExperiences: formData.organizationExperiences.map((org) => ({
         id: org.id,
@@ -519,9 +523,11 @@ export function CVEditor({ cvId, initialData }: CVEditorProps) {
         organization: org.organization || "",
         startDate: org.startDate || "",
         endDate: org.endDate || "",
+        isCurrent: org.isCurrent || false,
         description: org.descriptionHtml
           ? htmlToDescription(org.descriptionHtml)
           : Array.isArray(org.description) ? org.description : [org.description || ""].filter(Boolean),
+        descriptionHtml: org.descriptionHtml || descriptionToHtml(org.description),
       })),
       personalProjects: (formData.personalProjects || []).map((project) => ({
         id: project.id,
@@ -529,6 +535,7 @@ export function CVEditor({ cvId, initialData }: CVEditorProps) {
         description: project.descriptionHtml
           ? htmlToDescription(project.descriptionHtml)
           : Array.isArray(project.description) ? project.description : [project.description || ""].filter(Boolean),
+        descriptionHtml: project.descriptionHtml || descriptionToHtml(project.description),
       })),
       additional: formData.additional || {
         skills: [],
@@ -549,8 +556,12 @@ export function CVEditor({ cvId, initialData }: CVEditorProps) {
           description: item.descriptionHtml
             ? htmlToDescription(item.descriptionHtml)
             : Array.isArray(item.description) ? item.description : [item.description || ""].filter(Boolean),
+          descriptionHtml: item.descriptionHtml || descriptionToHtml(item.description),
         })),
       })),
+      sectionTitles: formData.sectionTitles,
+      sectionOrder: formData.sectionOrder,
+      othersItems: formData.othersItems || [],
     };
   }, []);
 
