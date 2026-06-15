@@ -292,6 +292,7 @@ export async function generatePDF(
       format: options?.format === "F4" ? undefined : (options?.format ?? "A4"),
       printBackground: true,
       tagged: true,
+      outline: true,
       margin: {
         top: "0.3in",
         right: "0.3in",

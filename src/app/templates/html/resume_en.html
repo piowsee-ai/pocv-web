@@ -20,7 +20,7 @@
     <div class="main-watermark">BELUM BAYAR</div>
   </div>
   {% endif %}
-  <div class="resume">
+  <main class="resume" role="document">
     <!-- Header Section -->
     <div class="header">
       <h1 class="header-name">{{ data.personalData.name }}</h1>
@@ -63,35 +63,31 @@
 
     <!-- Summary Section -->
     {% if data.summary %}
-    <div class="section">
+    <section class="section">
       <h2 class="section-title">{{ data.sectionTitles.summary if data.sectionTitles and data.sectionTitles.summary else
         'Summary' }}</h2>
       <div class="entry html-content">
         {{ data.summary | safe }}
       </div>
-    </div>
+    </section>
     {% endif %}
 
     <!-- Education Section -->
     {% if data.educations and data.educations.length > 0 %}
-    <div class="section">
+    <section class="section">
       <h2 class="section-title">{{ data.sectionTitles.education if data.sectionTitles and data.sectionTitles.education
         else 'Education' }}</h2>
       {% for edu in data.educations %}
-      <div class="entry">
+      <article class="entry">
         <div class="entry-header">
-          <div class="entry-title">
+          <h3 class="entry-title">
             {{ edu.institution }}{% if edu.location %}<span class="location-text"> - {{ edu.location }}</span>{% endif
             %}
-            <span class="entry-date-copy">
-              {% if edu.startDate and edu.endDate %}{{ edu.startDate }} - {{ edu.endDate }}{% elif edu.startDate %}{{
-              edu.startDate }}{% elif edu.endDate %}{{ edu.endDate }}{% endif %}
-            </span>
-          </div>
-          <div class="entry-date" aria-hidden="true">
+          </h3>
+          <time class="entry-date">
             {% if edu.startDate and edu.endDate %}{{ edu.startDate }} - {{ edu.endDate }}{% elif edu.startDate %}{{
             edu.startDate }}{% elif edu.endDate %}{{ edu.endDate }}{% endif %}
-          </div>
+          </time>
         </div>
         <div class="entry-subheader">
           <div class="entry-subtitle">
@@ -110,30 +106,26 @@
           {% endfor %}
         </ul>
         {% endif %}
-      </div>
+      </article>
       {% endfor %}
-    </div>
+    </section>
     {% endif %}
 
     <!-- Work Experience Section -->
     {% if data.workExperiences and data.workExperiences.length > 0 %}
-    <div class="section">
+    <section class="section">
       <h2 class="section-title">{{ data.sectionTitles.workExperience if data.sectionTitles and
         data.sectionTitles.workExperience else 'Work Experience' }}</h2>
       {% for exp in data.workExperiences %}
-      <div class="entry">
+      <article class="entry">
         <div class="entry-header">
-          <div class="entry-title">
+          <h3 class="entry-title">
             {{ exp.company }}{% if exp.location %}<span class="location-text"> - {{ exp.location }}</span>{% endif %}
-            <span class="entry-date-copy">
-              {% if exp.startDate and exp.endDate %}{{ exp.startDate }} - {{ exp.endDate }}{% elif exp.startDate %}{{
-              exp.startDate }}{% elif exp.endDate %}{{ exp.endDate }}{% endif %}
-            </span>
-          </div>
-          <div class="entry-date" aria-hidden="true">
+          </h3>
+          <time class="entry-date">
             {% if exp.startDate and exp.endDate %}{{ exp.startDate }} - {{ exp.endDate }}{% elif exp.startDate %}{{
             exp.startDate }}{% elif exp.endDate %}{{ exp.endDate }}{% endif %}
-          </div>
+          </time>
         </div>
         <div class="entry-subtitle">{{ exp.position }}</div>
         {% if exp.descriptionHtml %}
@@ -147,30 +139,26 @@
           {% endfor %}
         </ul>
         {% endif %}
-      </div>
+      </article>
       {% endfor %}
-    </div>
+    </section>
     {% endif %}
 
     <!-- Organizations Section -->
     {% if data.organizationExperiences and data.organizationExperiences.length > 0 %}
-    <div class="section">
+    <section class="section">
       <h2 class="section-title">{{ data.sectionTitles.organization if data.sectionTitles and
         data.sectionTitles.organization else 'Organisational Experience' }}</h2>
       {% for org in data.organizationExperiences %}
-      <div class="entry">
+      <article class="entry">
         <div class="entry-header">
-          <div class="entry-title">
+          <h3 class="entry-title">
             {{ org.organization }}
-            <span class="entry-date-copy">
-              {% if org.startDate and org.endDate %}{{ org.startDate }} - {{ org.endDate }}{% elif org.startDate %}{{
-              org.startDate }}{% elif org.endDate %}{{ org.endDate }}{% endif %}
-            </span>
-          </div>
-          <div class="entry-date" aria-hidden="true">
+          </h3>
+          <time class="entry-date">
             {% if org.startDate and org.endDate %}{{ org.startDate }} - {{ org.endDate }}{% elif org.startDate %}{{
             org.startDate }}{% elif org.endDate %}{{ org.endDate }}{% endif %}
-          </div>
+          </time>
         </div>
         <div class="entry-subtitle">{{ org.position }}</div>
         {% if org.descriptionHtml %}
@@ -184,20 +172,20 @@
           {% endfor %}
         </ul>
         {% endif %}
-      </div>
+      </article>
       {% endfor %}
-    </div>
+    </section>
     {% endif %}
 
     <!-- Personal Projects Section -->
     {% if data.personalProjects and data.personalProjects.length > 0 %}
-    <div class="section">
+    <section class="section">
       <h2 class="section-title">{{ data.sectionTitles.projects if data.sectionTitles and data.sectionTitles.projects
         else 'Projects' }}</h2>
       {% for project in data.personalProjects %}
-      <div class="entry">
+      <article class="entry">
         <div class="entry-header">
-          <div class="entry-title">{{ project.name }}</div>
+          <h3 class="entry-title">{{ project.name }}</h3>
         </div>
         {% if project.descriptionHtml %}
         <div class="html-content">
@@ -210,33 +198,28 @@
           {% endfor %}
         </ul>
         {% endif %}
-      </div>
+      </article>
       {% endfor %}
-    </div>
+    </section>
     {% endif %}
 
     <!-- Custom Sections -->
     {% if data.customSections and data.customSections.length > 0 %}
     {% for section in data.customSections %}
     {% if section.items and section.items.length > 0 %}
-    <div class="section">
+    <section class="section">
       <h2 class="section-title">{{ section.sectionTitle or 'Untitled' }}</h2>
       {% for item in section.items %}
       {% if item.title %}
-      <div class="entry">
+      <article class="entry">
         <div class="entry-header">
-          <div class="entry-title">
+          <h3 class="entry-title">
             {{ item.title }}
-            {% if item.years %}
-            <span class="entry-date-copy">
-              {{ item.years }}
-            </span>
-            {% endif %}
-          </div>
+          </h3>
           {% if item.years %}
-          <div class="entry-date" aria-hidden="true">
+          <time class="entry-date">
             {{ item.years }}
-          </div>
+          </time>
           {% endif %}
         </div>
         {% if item.subtitle %}
@@ -253,17 +236,17 @@
           {% endfor %}
         </ul>
         {% endif %}
-      </div>
+      </article>
       {% endif %}
       {% endfor %}
-    </div>
+    </section>
     {% endif %}
     {% endfor %}
     {% endif %}
 
     <!-- Others Section - Dynamic items with free titles -->
     {% if data.othersItems and data.othersItems.length > 0 %}
-    <div class="section">
+    <section class="section">
       <h2 class="section-title">{{ data.sectionTitles.others if data.sectionTitles and data.sectionTitles.others else
         'Skills, Achievements & Other Experience' }}</h2>
       <ul class="additional-list">
@@ -275,10 +258,10 @@
         {% endif %}
         {% endfor %}
       </ul>
-    </div>
+    </section>
     {% endif %}
 
-  </div>
+  </main>
 
   <script>
     // Helper function to parse "MM/YYYY" formatted dates

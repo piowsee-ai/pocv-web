@@ -92,41 +92,29 @@ body {
 }
 
 .entry-header {
-    display: block;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) max-content;
+    column-gap: 12px;
+    align-items: baseline;
     margin-bottom: 1.5px;
     font-size: 9pt;
 }
 
-.entry-header::after {
-    content: "";
-    display: block;
-    clear: both;
-}
-
 .entry-title {
-    display: inline;
     font-weight: bold;
     font-size: 9pt;
+    min-width: 0;
+    margin: 0;
+    line-height: inherit;
 }
 
 .entry-date {
-    float: right;
-    margin-left: 12px;
     font-size: 8.5pt;
     font-weight: 400;
     white-space: nowrap;
     color: black;
     text-align: right;
-    -webkit-user-select: none;
-    user-select: none;
-}
-
-.entry-date-copy {
-    color: transparent;
-    display: inline;
-    font-size: 0.1px;
-    line-height: 0;
-    white-space: nowrap;
+    justify-self: end;
 }
 
 .entry-subheader {
@@ -149,32 +137,27 @@ body {
 }
 
 .entry-details {
-    padding-left: 0;
-    list-style: none;
-    margin-top: 3.5px;
+    padding-left: 0.9rem;
+    list-style: disc;
+    list-style-position: outside;
+    margin: 3.5px 0 0;
     font-size: 9pt;
 }
 
 .entry-details li {
-    position: relative;
-    display: block;
+    display: list-item;
     margin-bottom: 1px;
-    padding-left: 0.75rem;
+    padding-left: 0;
     text-align: left;
     text-justify: auto;
 }
 
 .entry-details li::before {
-    content: "";
-    position: absolute;
-    left: 0.05rem;
-    top: 0.56em;
-    width: 0.32em;
-    height: 0.32em;
-    border-radius: 50%;
-    background: currentColor;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
+    content: none;
+}
+
+.entry-details li::marker {
+    font-size: 0.82em;
 }
 
 /* ===== SKILLS SECTION ===== */
@@ -208,30 +191,27 @@ body {
 
 /* ===== ACHIEVEMENTS LIST ===== */
 .achievements-list {
-    padding-left: 0;
-    list-style: none;
+    padding-left: 0.9rem;
+    list-style: disc;
+    list-style-position: outside;
+    margin: 0;
     font-size: 9pt;
 }
 
 .achievements-list li {
-    position: relative;
+    display: list-item;
     margin-bottom: 3px;
-    padding-left: 0.75rem;
+    padding-left: 0;
     text-align: left;
     text-justify: auto;
 }
 
 .achievements-list li::before {
-    content: "";
-    position: absolute;
-    left: 0.05rem;
-    top: 0.56em;
-    width: 0.32em;
-    height: 0.32em;
-    border-radius: 50%;
-    background: currentColor;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
+    content: none;
+}
+
+.achievements-list li::marker {
+    font-size: 0.82em;
 }
 
 .location-text {
@@ -259,9 +239,10 @@ body {
 }
 
 .html-content ul {
-    list-style: none;
+    list-style: disc;
+    list-style-position: outside;
     margin: 0;
-    padding-left: 0;
+    padding-left: 0.9rem;
 }
 
 .html-content ol {
@@ -272,25 +253,19 @@ body {
 }
 
 .html-content li {
-    position: relative;
-    display: block;
+    display: list-item;
     margin-bottom: 2px;
-    padding-left: 0.75rem;
+    padding-left: 0;
     text-align: left;
     text-justify: auto;
 }
 
 .html-content ul > li::before {
-    content: "";
-    position: absolute;
-    left: 0.05rem;
-    top: 0.56em;
-    width: 0.32em;
-    height: 0.32em;
-    border-radius: 50%;
-    background: currentColor;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
+    content: none;
+}
+
+.html-content ul > li::marker {
+    font-size: 0.82em;
 }
 
 .html-content ol > li {
@@ -316,32 +291,27 @@ body {
 }
 
 .additional-list {
-    list-style: none;
+    list-style: disc;
+    list-style-position: outside;
     margin: 0;
-    padding-left: 0;
+    padding-left: 0.9rem;
     font-size: 9pt;
 }
 
 .additional-list li {
-    position: relative;
-    display: block;
+    display: list-item;
     margin-bottom: 2px;
-    padding-left: 0.75rem;
+    padding-left: 0;
     text-align: left;
     text-justify: auto;
 }
 
 .additional-list li::before {
-    content: "";
-    position: absolute;
-    left: 0.05rem;
-    top: 0.56em;
-    width: 0.32em;
-    height: 0.32em;
-    border-radius: 50%;
-    background: currentColor;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
+    content: none;
+}
+
+.additional-list li::marker {
+    font-size: 0.82em;
 }
 
 /* ===== PRINT OPTIMIZATION ===== */
